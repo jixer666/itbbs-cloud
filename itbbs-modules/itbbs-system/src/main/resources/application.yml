@@ -1,10 +1,6 @@
 mybatis-plus:
-  mapper-locations: classpath:/mapper/**/*.xml
-  type-aliases-package: com.abc.itbbs.**.domain.entity
-  global-config:
-    db-config:
-      id-type: auto
-      logic-delete-value: 1
-      logic-not-delete-value: 0
+  mapperLocations: classpath*:mapper/**/*Mapper.xml
+  typeAliasesPackage: com.abc.itbbs.**.domain.entity
   configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     map-underscore-to-camel-case: true

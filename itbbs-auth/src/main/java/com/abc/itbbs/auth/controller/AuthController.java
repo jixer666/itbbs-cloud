@@ -3,6 +3,7 @@ package com.abc.itbbs.auth.controller;
 import com.abc.itbbs.auth.domain.dto.CaptchaDTO;
 import com.abc.itbbs.auth.domain.dto.LoginDTO;
 import com.abc.itbbs.auth.domain.dto.RegisterDTO;
+import com.abc.itbbs.auth.domain.vo.MenuRouterVO;
 import com.abc.itbbs.auth.service.AuthService;
 import com.abc.itbbs.common.captcha.domain.vo.CaptchaVO;
 import com.abc.itbbs.common.core.domain.vo.ApiResult;
@@ -12,7 +13,10 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
+@RequestMapping("/auth")
 public class AuthController {
     
     @Autowired
@@ -48,5 +52,22 @@ public class AuthController {
         EmailVO emailRegisterVO = authService.sendRegisterEmail(emailDTO);
 
         return ApiResult.success(emailRegisterVO);
+    }
+
+
+    @ApiOperation("获取菜单权限")
+    @GetMapping("/routes")
+    public ApiResult<List<MenuRouterVO>> getMenuRoutes() {
+        List<MenuRouterVO> routers = authService.getMenuRoutes();
+
+        return ApiResult.success(routers);
+    }
+
+    @ApiOperation("获取白名单菜单权限")
+    @GetMapping("/white/routes")
+    public ApiResult<List<MenuRouterVO>> getMenuWhiteRoutes() {
+        List<MenuRouterVO> routers = authService.getMenuWhiteRoutes();
+
+        return ApiResult.success(routers);
     }
 }

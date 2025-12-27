@@ -3,6 +3,7 @@ package com.abc.itbbs.system.domain.dto;
 import cn.hutool.core.collection.CollUtil;
 import com.abc.itbbs.common.core.util.AssertUtils;
 import com.abc.itbbs.api.system.domain.enums.MenuTypeEnum;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 import java.util.List;

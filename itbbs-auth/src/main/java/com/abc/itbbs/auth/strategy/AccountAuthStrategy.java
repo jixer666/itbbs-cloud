@@ -5,6 +5,7 @@ import com.abc.itbbs.auth.convert.UserConvert;
 import com.abc.itbbs.auth.domain.dto.LoginDTO;
 import com.abc.itbbs.auth.domain.dto.RegisterDTO;
 import com.abc.itbbs.common.captcha.service.CaptchaService;
+import com.abc.itbbs.common.core.domain.vo.ApiResult;
 import com.abc.itbbs.common.security.context.SecurityAuthContext;
 import com.abc.itbbs.common.security.domain.dto.LoginUserDTO;
 import com.abc.itbbs.api.system.domain.entity.User;
@@ -54,7 +55,7 @@ public class AccountAuthStrategy implements AuthStrategy {
 
     public void preRegisterCheck(RegisterDTO registerDTO) {
         registerDTO.checkAccountParams();
-        User user = userServiceClient.getUserByUsername(registerDTO.getUsername());
+        User user = ApiResult.invokeRemoteMethod(userServiceClient.getUserByUsername(registerDTO.getUsername()));
         AssertUtils.isEmpty(user, "用户已存在");
 
         Boolean checkCaptcha = captchaService.checkCaptchaImg(registerDTO.getUuid(), registerDTO.getCode());

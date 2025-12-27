@@ -1,6 +1,7 @@
 package com.abc.itbbs.common.security.config;
 
 import com.abc.itbbs.common.core.config.SystemConfig;
+import com.abc.itbbs.common.security.filter.FeignTokenFilter;
 import com.abc.itbbs.common.security.service.impl.AuthenticationEntryPointImpl;
 import com.abc.itbbs.common.security.service.impl.LogoutSuccessHandlerImpl;
 import com.abc.itbbs.common.security.filter.JwtTokenFilter;
@@ -42,6 +43,9 @@ public class SecurityConfig {
 
     @Autowired
     private JwtTokenFilter jwtTokenFilter;
+
+    @Autowired
+    private FeignTokenFilter feignTokenFilter;
 
     /**
      * 身份验证实现
@@ -93,6 +97,8 @@ public class SecurityConfig {
                 // 添加CORS filter
                 .addFilterBefore(corsFilter, JwtTokenFilter.class)
                 .addFilterBefore(corsFilter, LogoutFilter.class)
+                // 添加Feign filter
+                .addFilterBefore(feignTokenFilter, JwtTokenFilter.class)
                 .build();
     }
 

@@ -1,5 +1,6 @@
 package com.abc.itbbs.system.controller;
 
+import com.abc.itbbs.api.system.domain.entity.User;
 import com.abc.itbbs.common.core.annotation.Permission;
 import com.abc.itbbs.common.core.domain.vo.ApiResult;
 import com.abc.itbbs.common.core.domain.vo.PageResult;
@@ -76,6 +77,30 @@ public class UserController {
         return ApiResult.success();
     }
 
+
+    @ApiOperation("远程保存用户")
+    @PostMapping("/feign/user")
+    public ApiResult<Void> saveUserByFeign(@RequestBody User user) {
+        userService.saveUser(user);
+
+        return ApiResult.success();
+    }
+
+    @ApiOperation("远程保存用户")
+    @GetMapping("/feign/username/{username}")
+    public ApiResult<User> getUserByUsernameByFeign(@PathVariable("username") String username) {
+        User user = userService.getUserByUsername(username);
+
+        return ApiResult.success(user);
+    }
+
+    @ApiOperation("远程保存用户")
+    @GetMapping("/feign/email/{email}")
+    public ApiResult<User> getUserByEmail(@PathVariable("email") String email) {
+        User user = userService.getUserByEmail(email);
+
+        return ApiResult.success(user);
+    }
 
 
 }

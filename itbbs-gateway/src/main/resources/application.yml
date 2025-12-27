@@ -1,3 +1,10 @@
 spring:
   application:
     name: itbbs-gateway
+
+
+# 通用配置
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    com.alibaba.nacos: WARN

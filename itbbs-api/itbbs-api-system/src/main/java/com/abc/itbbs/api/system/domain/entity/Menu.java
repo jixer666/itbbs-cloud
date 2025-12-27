@@ -4,6 +4,7 @@ import com.abc.itbbs.api.system.domain.enums.MenuTypeEnum;
 import com.abc.itbbs.common.core.domain.entity.BaseEntity;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -39,18 +40,22 @@ public class Menu extends BaseEntity {
 
     private Integer hidden;
 
+    @JsonIgnore
     public boolean isMuLu() {
         return menuType.equals(MenuTypeEnum.MU_LU.getType());
     }
 
+    @JsonIgnore
     public boolean isCaiDan() {
         return menuType.equals(MenuTypeEnum.CAI_DAN.getType());
     }
 
+    @JsonIgnore
     public boolean isAnNiu() {
         return menuType.equals(MenuTypeEnum.AN_NIU.getType());
     }
 
+    @JsonIgnore
     public Boolean isFront() {
         return menuType.equals(MenuTypeEnum.FRONT.getType());
     }

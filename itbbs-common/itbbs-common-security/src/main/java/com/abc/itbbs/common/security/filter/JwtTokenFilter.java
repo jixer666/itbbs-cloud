@@ -1,5 +1,7 @@
 package com.abc.itbbs.common.security.filter;
 
+import com.abc.itbbs.common.core.constant.CommonConstants;
+import com.abc.itbbs.common.core.module.threadlocal.ThreadLocalTempVar;
 import com.abc.itbbs.common.core.util.StringUtils;
 import com.abc.itbbs.common.security.domain.dto.LoginUserDTO;
 import com.abc.itbbs.common.security.service.TokenService;
@@ -26,20 +28,34 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
+        Boolean isFeignRequest = (Boolean) request.getAttribute(CommonConstants.FEIGN_REQUEST_FLAG);
+        if (Objects.nonNull(isFeignRequest) && isFeignRequest) {
+            chain.doFilter(request, response);
+            return;
+        }
+
         String token = tokenService.getToken(request);
+        ThreadLocalTempVar.setTempTokenVar(token);
         if (StringUtils.isEmpty(token)) {
             chain.doFilter(request, response);
             return;
         }
+
         LoginUserDTO loginUserDTO = tokenService.getLoginUserDTO(token);
         if (Objects.isNull(loginUserDTO)) {
             chain.doFilter(request, response);
             return;
         }
+
         tokenService.validateToken(loginUserDTO);
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginUserDTO, null, loginUserDTO.getAuthorities());
         authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-        chain.doFilter(request, response);
+
+        try {
+            chain.doFilter(request, response);
+        } finally {
+            ThreadLocalTempVar.removeTempTokenVar();
+        }
     }
 }

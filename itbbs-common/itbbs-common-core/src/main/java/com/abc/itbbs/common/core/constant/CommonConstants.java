@@ -197,6 +197,12 @@ public class CommonConstants {
     /**
      * 系统名称
      */
-    public static final String SYSTEM_NAME = "ItBBS";
+    public static final String SYSTEM_NAME = "ITBBS";
 
+
+    /**
+     * 内部Feign远程调用的请求头
+     */
+    public static final String FEIGN_TOKEN_HEADER = "x-feign-token";
+    public static final String FEIGN_REQUEST_FLAG = "isFeignRequest";
 }

@@ -35,6 +35,8 @@
     <file url="file://$PROJECT_DIR$/itbbs-gateway/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/itbbs-member/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/itbbs-member/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/itbbs-modules/itbbs-blog/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/itbbs-modules/itbbs-blog/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/itbbs-modules/itbbs-system/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/itbbs-modules/itbbs-system/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/itbbs-modules/src/main/java" charset="UTF-8" />

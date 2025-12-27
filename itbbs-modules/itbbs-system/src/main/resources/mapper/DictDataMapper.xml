@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.abc.itbbs.system.mapper..DictDataMapper">
+<mapper namespace="com.abc.itbbs.system.mapper.DictDataMapper">
 
     <resultMap type="DictData" id="DictDataResult">
         <result property="dictDataId"    column="dict_data_id"    />
