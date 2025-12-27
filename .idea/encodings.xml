@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$APPLICATION_HOME_DIR$/src/main/java" charset="UTF-8" />
+    <file url="file://$APPLICATION_HOME_DIR$/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/itbbs-Interaction/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/itbbs-Interaction/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/itbbs-api/itbbs-api-system/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/itbbs-api/itbbs-api-system/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/itbbs-api/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/itbbs-api/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/itbbs-auth/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/itbbs-auth/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/itbbs-common/itbbs-common-captcha/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/itbbs-common/itbbs-common-captcha/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/itbbs-common/itbbs-common-core/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/itbbs-common/itbbs-common-core/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/itbbs-common/itbbs-common-email/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/itbbs-common/itbbs-common-email/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/itbbs-common/itbbs-common-gen/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/itbbs-common/itbbs-common-gen/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/itbbs-common/itbbs-common-oss/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/itbbs-common/itbbs-common-oss/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/itbbs-common/itbbs-common-redis/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/itbbs-common/itbbs-common-redis/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/itbbs-common/itbbs-common-security/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/itbbs-common/itbbs-common-security/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/itbbs-common/itbbs-common-web/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/itbbs-common/itbbs-common-web/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/itbbs-common/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/itbbs-common/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/itbbs-content/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/itbbs-content/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/itbbs-gateway/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/itbbs-gateway/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/itbbs-member/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/itbbs-member/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/itbbs-modules/itbbs-system/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/itbbs-modules/itbbs-system/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/itbbs-modules/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/itbbs-modules/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
+  </component>
+</project>
