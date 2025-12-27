@@ -2,6 +2,7 @@ package com.abc.itbbs.common.core.domain.vo;
 
 import com.abc.itbbs.common.core.constant.HttpStatus;
 import com.abc.itbbs.common.core.domain.enums.BizCodeEnum;
+import com.abc.itbbs.common.core.util.AssertUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -39,5 +40,12 @@ public class ApiResult<T> implements Serializable {
 
     public static <T> ApiResult<T> fail(BizCodeEnum bizCodeEnum) {
         return new ApiResult<>(bizCodeEnum.getCode(), bizCodeEnum.getMsg(),null);
+    }
+
+    public static <T> T invokeRemoteMethod(ApiResult<T> apiResult) {
+        AssertUtils.isNotEmpty(apiResult, "返回参数不能为空");
+        AssertUtils.isTrue(HttpStatus.SUCCESS == apiResult.getCode(), apiResult.getMsg());
+
+        return apiResult.getData();
     }
 }

@@ -3,6 +3,7 @@ package com.abc.itbbs.auth.strategy;
 import com.abc.itbbs.api.system.UserServiceClient;
 import com.abc.itbbs.auth.domain.dto.LoginDTO;
 import com.abc.itbbs.auth.domain.dto.RegisterDTO;
+import com.abc.itbbs.common.core.domain.vo.ApiResult;
 import com.abc.itbbs.common.email.service.EmailService;
 import com.abc.itbbs.common.security.domain.dto.LoginUserDTO;
 import com.abc.itbbs.api.system.domain.entity.User;
@@ -34,7 +35,7 @@ public class EmailAuthStrategy implements AuthStrategy {
 
     public void preRegisterCheck(RegisterDTO registerDTO) {
         registerDTO.checkEmailParams();
-        User user = userServiceClient.getUserByEmail(registerDTO.getEmail());
+        User user = ApiResult.invokeRemoteMethod(userServiceClient.getUserByEmail(registerDTO.getEmail()));
         AssertUtils.isEmpty(user, "邮箱已被绑定");
 
         Boolean checkEmailCode = emailService.checkEmailCode(registerDTO.getEmailUuid(), registerDTO.getEmailCode());

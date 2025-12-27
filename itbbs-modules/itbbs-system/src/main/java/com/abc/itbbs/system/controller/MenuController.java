@@ -1,5 +1,6 @@
 package com.abc.itbbs.system.controller;
 
+import com.abc.itbbs.api.system.domain.entity.Menu;
 import com.abc.itbbs.common.core.annotation.Permission;
 import com.abc.itbbs.common.core.domain.vo.ApiResult;
 import com.abc.itbbs.common.core.domain.vo.PageResult;
@@ -9,6 +10,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Api(tags = "菜单接口")
 @RestController
@@ -52,6 +55,14 @@ public class MenuController {
         menuService.deleteMenu(menuDTO);
 
         return ApiResult.success();
+    }
+
+    @ApiOperation("远程根据用户ID获取菜单列表")
+    @GetMapping("/system/menu/feign/userId/{userId}")
+    public ApiResult<List<Menu>> getMenusByUserId(@PathVariable("userId") Long userId) {
+        List<Menu> menuList = menuService.getMenusByUserId(userId);
+
+        return ApiResult.success(menuList);
     }
 
 

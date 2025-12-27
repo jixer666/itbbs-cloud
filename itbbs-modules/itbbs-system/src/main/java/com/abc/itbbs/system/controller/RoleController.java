@@ -11,6 +11,8 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Api(tags = "角色接口")
 @RestController
 @RequestMapping("/system/role")
@@ -71,5 +73,13 @@ public class RoleController {
         roleService.deleteRole(roleDTO);
 
         return ApiResult.success();
+    }
+
+    @ApiOperation("远程通过用户ID获取角色Key列表")
+    @GetMapping("/system/role/feign/userId/{userId}")
+    public ApiResult<List<String>>  getRoleKeysByUserId(@PathVariable("userId") Long userId) {
+        List<String> roleKeyList = roleService.getRoleKeysByUserId(userId);
+
+        return ApiResult.success(roleKeyList);
     }
 }

@@ -4,6 +4,7 @@ import com.abc.itbbs.api.system.MenuServiceClient;
 import com.abc.itbbs.api.system.RoleServiceClient;
 import com.abc.itbbs.api.system.UserServiceClient;
 import com.abc.itbbs.api.system.domain.entity.Menu;
+import com.abc.itbbs.common.core.domain.vo.ApiResult;
 import com.abc.itbbs.common.core.util.AssertUtils;
 import com.abc.itbbs.common.security.context.SecurityAuthContext;
 import com.abc.itbbs.common.security.domain.dto.LoginUserDTO;
@@ -35,12 +36,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userServiceClient.getUserByUsername(username);
+        User user = ApiResult.invokeRemoteMethod(userServiceClient.getUserByUsername(username));
         AssertUtils.isNotEmpty(user, "用户不存在");
         AssertUtils.isTrue(SecurityUtils.matchesPassword(SecurityAuthContext.getContext().getCredentials().toString(),
                 user.getPassword()), "账号或者密码错误");
 
-        List<String> roles = roleServiceClient.getRoleKeysByUserId(user.getUserId());
+        List<String> roles = ApiResult.invokeRemoteMethod(roleServiceClient.getRoleKeysByUserId(user.getUserId()));
         Set<String> perms = menuServiceClient.getMenusByUserId(user.getUserId())
                 .stream()
                 .map(Menu::getPerms)
