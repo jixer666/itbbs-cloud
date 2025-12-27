@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.abc</groupId>
+    <artifactId>itbbs</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <modules>
+
+        <module>itbbs-common</module>
+        <module>itbbs-modules</module>
+        <module>itbbs-auth</module>
+        <module>itbbs-gateway</module>
+        <module>itbbs-api</module>
+    </modules>
+
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <spring-boot.version>2.6.3</spring-boot.version>
+        <spring-cloud.version>2021.0.1</spring-cloud.version>
+        <spring-cloud-alibaba.version>2021.0.1.0</spring-cloud-alibaba.version>
+        <mybatis-plus.version>3.2.0</mybatis-plus.version>
+        <mysql-connector.version>8.0.17</mysql-connector.version>
+        <lombok.version>1.18.30</lombok.version>
+        <hutool.version>5.8.18</hutool.version>
+        <commons-lang.version>2.6</commons-lang.version>
+        <httpclient.version>4.5.1</httpclient.version>
+        <httpcore.version>4.4.12</httpcore.version>
+        <validation-api.version>2.0.1.Final</validation-api.version>
+        <servlet-api.version>2.5</servlet-api.version>
+        <itbbs.version>1.0-SNAPSHOT</itbbs.version>
+        <jjwt.version>0.9.1</jjwt.version>
+        <knife4j.version>2.0.9</knife4j.version>
+        <pagehelper.version>1.4.6</pagehelper.version>
+        <velocity.version>2.0</velocity.version>
+        <kaptcha.version>2.3.2</kaptcha.version>
+        <fastjson.version>2.0.43</fastjson.version>
+        <minio.version>8.4.5</minio.version>
+        <okhttp.version>4.8.1</okhttp.version>
+        <simplemagic.version>1.17</simplemagic.version>
+
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.abc</groupId>
+                <artifactId>itbbs-common</artifactId>
+                <version>${itbbs.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.abc</groupId>
+                <artifactId>itbbs-common-core</artifactId>
+                <version>${itbbs.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.abc</groupId>
+                <artifactId>itbbs-common-security</artifactId>
+                <version>${itbbs.version}</version>
+            </dependency>
+
+
+            <dependency>
+                <groupId>com.abc</groupId>
+                <artifactId>itbbs-common-redis</artifactId>
+                <version>${itbbs.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.abc</groupId>
+                <artifactId>itbbs-common-email</artifactId>
+                <version>${itbbs.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.abc</groupId>
+                <artifactId>itbbs-common-captcha</artifactId>
+                <version>${itbbs.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.abc</groupId>
+                <artifactId>itbbs-common-oss</artifactId>
+                <version>${itbbs.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.abc</groupId>
+                <artifactId>itbbs-common-gen</artifactId>
+                <version>${itbbs.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.abc</groupId>
+                <artifactId>itbbs-api</artifactId>
+                <version>${itbbs.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.abc</groupId>
+                <artifactId>itbbs-api-system</artifactId>
+                <version>${itbbs.version}</version>
+            </dependency>
+
+
+            <!-- Spring Boot 依赖管理 -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Spring Cloud 依赖管理 -->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Spring Cloud Alibaba 依赖管理 -->
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+                <version>${spring-cloud-alibaba.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- MyBatis Plus -->
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+
+            <!-- MySQL 驱动 -->
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${mysql-connector.version}</version>
+            </dependency>
+
+            <!-- Lombok -->
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+            </dependency>
+
+            <!-- Hutool 工具包 -->
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-all</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+
+            <!-- Apache Commons Lang -->
+            <dependency>
+                <groupId>commons-lang</groupId>
+                <artifactId>commons-lang</artifactId>
+                <version>${commons-lang.version}</version>
+            </dependency>
+
+            <!-- HTTP 客户端 -->
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>${httpclient.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpcore</artifactId>
+                <version>${httpcore.version}</version>
+            </dependency>
+
+            <!-- 验证 API -->
+            <dependency>
+                <groupId>javax.validation</groupId>
+                <artifactId>validation-api</artifactId>
+                <version>${validation-api.version}</version>
+            </dependency>
+
+            <!-- Servlet API -->
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>servlet-api</artifactId>
+                <version>${servlet-api.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.xiaoymin</groupId>
+                <artifactId>knife4j-spring-boot-starter</artifactId>
+                <version>${knife4j.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.pagehelper</groupId>
+                <artifactId>pagehelper-spring-boot-starter</artifactId>
+                <version>${pagehelper.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.velocity</groupId>
+                <artifactId>velocity-engine-core</artifactId>
+                <version>${velocity.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.penggle</groupId>
+                <artifactId>kaptcha</artifactId>
+                <version>${kaptcha.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.alibaba.fastjson2</groupId>
+                <artifactId>fastjson2</artifactId>
+                <version>${fastjson.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.minio</groupId>
+                <artifactId>minio</artifactId>
+                <version>${minio.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.squareup.okhttp3</groupId>
+                <artifactId>okhttp</artifactId>
+                <version>${okhttp.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.j256.simplemagic</groupId>
+                <artifactId>simplemagic</artifactId>
+                <version>${simplemagic.version}</version>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+
+</project>
