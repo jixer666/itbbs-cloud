@@ -44,4 +44,10 @@ export default {
   border-radius: 10px;
   background: #fafbff;
 }
+::v-deep .el-card__header {
+  padding: 10px !important;
+}
+::v-deep .el-card__body {
+  padding: 10px !important;
+}
 </style>

@@ -26,7 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -109,7 +108,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public List<MenuRouterVO> getMenuWhiteRoutes() {
-        List<Menu> menus = ApiResult.invokeRemoteMethod(menuServiceClient.getMenusByMenuType(MenuTypeEnum.FRONT.getType()));
+        List<Menu> menus = ApiResult.invokeRemoteMethod(menuServiceClient.getMenusByMenuType(MenuTypeEnum.FRONT_NAVBAR.getType()));
 
         return buildMenuRouter(MenuConstants.DEFAULT_MENU_PARENT_ID, menus);
     }

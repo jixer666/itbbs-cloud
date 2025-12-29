@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.abc.itbbs.blog.mapper.ArticleMapper">
+
+    <resultMap type="Article" id="ArticleResult">
+            <result property="articleId"    column="article_id"    />
+            <result property="userId"    column="user_id"    />
+            <result property="title"    column="title"    />
+            <result property="content"    column="content"    />
+            <result property="categoryId"    column="category_id"    />
+            <result property="tagDetails"    column="tag_details"    />
+            <result property="cover"    column="cover"    />
+            <result property="type"    column="type"    />
+            <result property="visibleRange"    column="visible_range"    />
+            <result property="creationStatement"    column="creation_statement"    />
+            <result property="viewsCount"    column="views_count"    />
+            <result property="likeCount"    column="like_count"    />
+            <result property="createTime"    column="create_time"    />
+            <result property="updateTime"    column="update_time"    />
+            <result property="status"    column="status"    />
+            <result property="ver"    column="ver"    />
+    </resultMap>
+
+    <sql id="selectArticleVo">
+        select article_id, user_id, title, content, category_id, tag_details, cover, type, visible_range, creation_statement, views_count, like_count, create_time, update_time, status, ver from tb_article
+    </sql>
+
+    <select id="selectArticleList" resultMap="ArticleResult">
+        <include refid="selectArticleVo" />
+    </select>
+
+
+</mapper>

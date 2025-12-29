@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.abc.itbbs.blog.mapper.ArticleHisMapper">
+
+    <resultMap type="ArticleHis" id="ArticleHisResult">
+            <result property="articleHisId"    column="article_his_id"    />
+            <result property="articleId"    column="article_id"    />
+            <result property="title"    column="title"    />
+            <result property="content"    column="content"    />
+            <result property="categoryId"    column="category_id"    />
+            <result property="categoryName"    column="category_name"    />
+            <result property="tagDetails"    column="tag_details"    />
+            <result property="cover"    column="cover"    />
+            <result property="type"    column="type"    />
+            <result property="visibleRange"    column="visible_range"    />
+            <result property="creationStatement"    column="creation_statement"    />
+            <result property="createTime"    column="create_time"    />
+            <result property="updateTime"    column="update_time"    />
+            <result property="status"    column="status"    />
+            <result property="ver"    column="ver"    />
+    </resultMap>
+
+    <sql id="selectArticleHisVo">
+        select article_his_id, article_id, title, content, category_id, category_name, tag_details, cover, type, visible_range, creation_statement, create_time, update_time, status, ver from tb_article_his
+    </sql>
+
+    <select id="selectArticleHisList" resultMap="ArticleHisResult">
+        <include refid="selectArticleHisVo" />
+    </select>
+
+
+</mapper>

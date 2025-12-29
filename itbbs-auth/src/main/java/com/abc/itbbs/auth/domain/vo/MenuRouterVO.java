@@ -25,4 +25,6 @@ public class MenuRouterVO {
 
     private Boolean front;
 
+    private Integer menuType;
+
 }

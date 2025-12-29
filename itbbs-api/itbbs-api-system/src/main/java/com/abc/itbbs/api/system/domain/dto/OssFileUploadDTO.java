@@ -1,4 +1,4 @@
-package com.abc.itbbs.common.oss.domain.dto;
+package com.abc.itbbs.api.system.domain.dto;
 
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;

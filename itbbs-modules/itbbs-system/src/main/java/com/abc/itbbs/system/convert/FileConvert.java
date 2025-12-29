@@ -6,10 +6,10 @@ import com.abc.itbbs.common.core.exception.GlobalException;
 import com.abc.itbbs.common.core.util.IdUtils;
 import com.abc.itbbs.common.oss.domain.dto.FileDTO;
 import com.abc.itbbs.common.oss.domain.dto.OssFileDTO;
-import com.abc.itbbs.common.oss.domain.dto.OssFileUploadDTO;
+import com.abc.itbbs.api.system.domain.dto.OssFileUploadDTO;
 import com.abc.itbbs.common.oss.domain.entity.File;
 import com.abc.itbbs.common.security.util.SecurityUtils;
-import com.abc.itbbs.system.domain.vo.FileVO;
+import com.abc.itbbs.api.system.domain.vo.FileVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
 

@@ -22,6 +22,7 @@ public class MenuConvert {
         menuRouterVO.setMeta(buildMetaVo(menu));
         menuRouterVO.setHidden(menu.getHidden().equals(CommonConstants.NO));
         menuRouterVO.setFront(menu.isFront());
+        menuRouterVO.setMenuType(menu.getMenuType());
         if (CollectionUtils.isNotEmpty(children) && menu.isMuLu()) {
             menuRouterVO.setAlwaysShow(true);
             menuRouterVO.setRedirect(MenuConstants.NO_REDIRECT);

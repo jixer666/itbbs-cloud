@@ -71,4 +71,10 @@ export default {
   color: #8a8f99;
   font-size: 12px;
 }
+::v-deep .el-card__header {
+  padding: 10px !important;
+}
+::v-deep .el-card__body {
+  padding: 10px !important;
+}
 </style>

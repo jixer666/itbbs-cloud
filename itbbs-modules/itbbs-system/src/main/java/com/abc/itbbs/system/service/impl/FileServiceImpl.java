@@ -7,7 +7,7 @@ import com.abc.itbbs.common.oss.domain.entity.File;
 import com.abc.itbbs.common.core.domain.service.BaseServiceImpl;
 import com.abc.itbbs.common.core.util.AssertUtils;
 import com.abc.itbbs.system.convert.FileConvert;
-import com.abc.itbbs.system.domain.vo.FileVO;
+import com.abc.itbbs.api.system.domain.vo.FileVO;
 import com.abc.itbbs.system.mapper.FileMapper;
 import com.abc.itbbs.system.service.FileService;
 import org.springframework.beans.BeanUtils;

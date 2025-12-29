@@ -95,7 +95,8 @@
             <el-radio :label="1">目录</el-radio>
             <el-radio :label="2">菜单</el-radio>
             <el-radio :label="3">按钮</el-radio>
-            <el-radio :label="4">前台</el-radio>
+            <el-radio :label="4">前台导航栏</el-radio>
+            <el-radio :label="5">前台路由</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-row>
@@ -112,12 +113,12 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item v-if="menuForm.menuType === 1 || menuForm.menuType === 2 || menuForm.menuType === 4" label="路由路径">
+            <el-form-item v-if="menuForm.menuType === 1 || menuForm.menuType === 2 || menuForm.menuType === 4 || menuForm.menuType === 5" label="路由路径">
               <el-input v-model="menuForm.path" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item v-if="menuForm.menuType === 2 || menuForm.menuType === 4" label="组件路径">
+            <el-form-item v-if="menuForm.menuType === 2 || menuForm.menuType === 4 || menuForm.menuType === 5" label="组件路径">
               <el-input v-model="menuForm.component" />
             </el-form-item>
           </el-col>

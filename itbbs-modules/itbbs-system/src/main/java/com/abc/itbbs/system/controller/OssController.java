@@ -1,8 +1,8 @@
 package com.abc.itbbs.system.controller;
 
 import com.abc.itbbs.common.core.domain.vo.ApiResult;
-import com.abc.itbbs.common.oss.domain.dto.OssFileUploadDTO;
-import com.abc.itbbs.system.domain.vo.FileVO;
+import com.abc.itbbs.api.system.domain.dto.OssFileUploadDTO;
+import com.abc.itbbs.api.system.domain.vo.FileVO;
 import com.abc.itbbs.system.service.OssService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

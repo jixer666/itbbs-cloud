@@ -57,6 +57,6 @@ public class Menu extends BaseEntity {
 
     @JsonIgnore
     public Boolean isFront() {
-        return menuType.equals(MenuTypeEnum.FRONT.getType());
+        return menuType.equals(MenuTypeEnum.FRONT_NAVBAR.getType()) || menuType.equals(MenuTypeEnum.FRONT_ROUTER.getType());
     }
 }

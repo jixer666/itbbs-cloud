@@ -58,8 +58,8 @@
         <where>
             <if test="menuName != null">m.menu_name like concat('%', #{menuName}, '%')</if>
             <if test="front != null">
-                <if test="front">m.menu_type = 4</if>
-                <if test="!front">m.menu_type != 4</if>
+                <if test="front">m.menu_type = 4 or m.menu_type = 5</if>
+                <if test="!front">m.menu_type != 4 and m.menu_type != 5</if>
             </if>
         </where>
     </select>

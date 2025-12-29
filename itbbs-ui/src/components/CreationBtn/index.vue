@@ -1,6 +1,6 @@
 <template>
   <div class="creation-btn">
-    <el-button type="primary" round>创作</el-button>
+    <el-button type="primary" round @click="toCreation">创作</el-button>
   </div>
 </template>
 
@@ -10,6 +10,11 @@ export default {
   data() {
     return {
 
+    }
+  },
+  methods: {
+    toCreation() {
+      this.$router.push('/creation')
     }
   }
 }

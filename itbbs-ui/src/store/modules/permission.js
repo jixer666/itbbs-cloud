@@ -104,17 +104,16 @@ const mutations = {
     state.topbarRouters = routes
   },
   SET_SIDEBAR_ROUTERS: (state, routes) => {
-    // const filterFrontRouters = routes.filter(route => {
-    //   if (route.front) {
-    //     return false
-    //   }
-    //   if (route.children && route.children.length > 0) {
-    //     route.children = route.children.filter(child => child.menType !== 4)
-    //   }
-    //   return true
-    // })
-    // console.log(filterFrontRouters)
-    state.sidebarRouters = routes
+    const filterFrontRouters = routes.filter(route => {
+      if (route.front) {
+        return false
+      }
+      if (route.children && route.children.length > 0) {
+        route.children = route.children.filter(child => child.menuType !== 5)
+      }
+      return true
+    })
+    state.sidebarRouters = filterFrontRouters
   }
 }
 
