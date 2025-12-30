@@ -15,6 +15,9 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Map;
+
 @Api(tags = "用户接口")
 @RestController
 @RequestMapping("/system/user")
@@ -100,6 +103,14 @@ public class UserController {
         User user = userService.getUserByEmail(email);
 
         return ApiResult.success(user);
+    }
+
+    @ApiOperation("远程批量查询用户")
+    @GetMapping("/feign/list/map")
+    public ApiResult<Map<Long, User>> getUserMapByUserIds(@RequestBody List<Long> userIds) {
+        Map<Long, User> userMap = userService.getUserMapByUserIds(userIds);
+
+        return ApiResult.success(userMap);
     }
 
 

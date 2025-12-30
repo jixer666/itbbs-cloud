@@ -6,6 +6,8 @@ import com.abc.itbbs.blog.domain.enums.ArticleStatusEnum;
 import com.abc.itbbs.common.core.util.IdUtils;
 import com.abc.itbbs.blog.domain.dto.ArticleDTO;
 import com.abc.itbbs.blog.domain.entity.Article;
+import com.abc.itbbs.common.core.util.JsoupUtils;
+import com.abc.itbbs.common.core.util.StringUtils;
 import com.abc.itbbs.common.security.util.SecurityUtils;
 
 /**
@@ -22,6 +24,12 @@ public class ArticleConvert {
         article.setTagDetails(JSONUtil.toJsonStr(article.getTagDetails()));
         article.setCommonParams();
         article.setStatus(ArticleStatusEnum.PENDING.getStatus());
+
+        if (StringUtils.isEmpty(articleDTO.getSummary())) {
+            String parseContent = JsoupUtils.parseHtml(article.getContent());
+            String summary = StringUtils.truncateText(parseContent, 200);
+            article.setSummary(summary);
+        }
 
         return article;
     }

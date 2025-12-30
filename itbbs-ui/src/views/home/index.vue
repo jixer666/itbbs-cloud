@@ -34,6 +34,7 @@ import Banner from '@/components/Banner'
 import FeedItem from '@/components/FeedItem'
 import AuthorRecommend from '@/components/AuthorRecommend'
 import OfficialBlog from '@/components/OfficialBlog'
+import { getArticlePage } from '@/api/blog/article'
 
 export default {
   name: 'Home',
@@ -43,7 +44,9 @@ export default {
     FeedItem,
     AuthorRecommend,
     OfficialBlog
+
   },
+
   data() {
     return {
       keyword: 'jenkins springboot',
@@ -67,56 +70,15 @@ export default {
         '操作系统',
         '硬件开发'
       ],
-      feed: [
-        {
-          id: 1,
-          author: '汽车电子实验室',
-          authorAvatar: 'https://dummyimage.com/40x40/9bd/fff.png&text=A',
-          time: '刚刚',
-          title: '电子电气架构 —— 新能源汽车领域有哪些新技术（下）',
-          desc: '从域控到中央计算平台，围绕整车以太网、服务化架构、OTA、安全与功能升级做一次梳理……',
-          views: '41',
-          likes: '0',
-          favs: '0',
-          thumb: 'https://dummyimage.com/260x160/ddd/666.png&text=EV'
-        },
-        {
-          id: 2,
-          author: 'OpenTiny社区',
-          authorAvatar: 'https://dummyimage.com/40x40/7c9/fff.png&text=O',
-          time: '2小时前',
-          title: 'Vue2/Vue3 迁移头秃？Renderless 架构让组件“无缝穿梭”',
-          desc: '问题来了：这个组件只能在 Vue3 中使用？如何同时支持 Vue2 和 Vue3？',
-          views: '608',
-          likes: '17',
-          favs: '18',
-          thumb: 'https://dummyimage.com/260x160/f2b/fff.png&text=Vue'
-        },
-        {
-          id: 3,
-          author: '码界奇点',
-          authorAvatar: 'https://dummyimage.com/40x40/f99/fff.png&text=M',
-          time: '昨天',
-          title: '基于 Spring Boot 的后台管理系统设计与实现',
-          desc: '一个采用 Java 语言开发的现代企业级后台管理平台，重点包括：登录鉴权、权限模型、菜单路由、系统监控……',
-          views: '1.0k',
-          likes: '8',
-          favs: '24',
-          thumb: 'https://dummyimage.com/260x160/cde/345.png&text=Boot'
-        },
-        {
-          id: 4,
-          author: '代码方舟',
-          authorAvatar: 'https://dummyimage.com/40x40/6aa/fff.png&text=J',
-          time: '3天前',
-          title: 'Java 进阶：基于 Spring Boot 集成云端数据人脸比对 V3 的最佳实践',
-          desc: '企业级应用常见的数据加密与身份验证需求，如何安全对接远程 API、处理回调、重试与幂等……',
-          views: '805',
-          likes: '20',
-          favs: '13',
-          thumb: 'https://dummyimage.com/260x160/ddd/666.png&text=API'
-        }
-      ],
+      feed: [],
+      // 分页相关
+      pagination: {
+        current: 1,
+        size: 10,
+        total: 0
+      },
+      loading: false,
+      hasMore: true, // 是否还有更多数据
       authors: [
         {
           id: 1,
@@ -144,6 +106,96 @@ export default {
         }
       ],
       official: ['CSDN 官方账号入驻', '技术博客', '社区精选', '活动中心']
+    }
+  },
+
+  // 监听滚动事件
+  mounted() {
+    // 初始化加载数据
+    this.loadArticles()
+
+    // 添加滚动事件监听
+    window.addEventListener('scroll', this.handleScroll)
+  },
+
+  // 组件销毁前移除事件监听
+  beforeDestroy() {
+    window.removeEventListener('scroll', this.handleScroll)
+  },
+
+  methods: {
+    /**
+     * 加载文章列表
+     */
+    loadArticles() {
+      if (this.loading || !this.hasMore) return
+
+      this.loading = true
+
+      const params = {
+        current: this.pagination.current,
+        size: this.pagination.size
+      }
+
+      getArticlePage(params).then(res => {
+        const articles = res.data.list
+
+        this.feed = [...this.feed, ...articles]
+
+        // 更新分页信息
+        this.pagination.total = res.data.total
+        this.pagination.current++
+
+        // 检查是否还有更多数据
+        this.hasMore = this.feed.length < res.data.total
+      }).catch(error => {
+        console.error('获取文章列表异常:', error)
+      }).finally(() => {
+        this.loading = false
+      })
+    },
+
+    /**
+     * 处理滚动事件
+     */
+    handleScroll() {
+      // 计算页面滚动到底部的距离
+      const scrollTop = document.documentElement.scrollTop || document.body.scrollTop
+      const windowHeight = document.documentElement.clientHeight || document.body.clientHeight
+      const scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight
+
+      // 当距离底部小于100px时加载更多
+      if (scrollHeight - scrollTop - windowHeight < 100) {
+        if (!this.loading && this.hasMore) {
+          this.loadArticles()
+        }
+      }
+    },
+
+    /**
+     * 格式化时间显示
+     */
+    formatTime(dateString) {
+      if (!dateString) return '刚刚'
+
+      const date = new Date(dateString)
+      const now = new Date()
+      const diffMs = now - date
+      const diffMinutes = Math.floor(diffMs / 60000)
+      const diffHours = Math.floor(diffMs / 3600000)
+      const diffDays = Math.floor(diffMs / 86400000)
+
+      if (diffMinutes < 1) {
+        return '刚刚'
+      } else if (diffHours < 1) {
+        return `${diffMinutes}分钟前`
+      } else if (diffDays < 1) {
+        return `${diffHours}小时前`
+      } else if (diffDays < 7) {
+        return `${diffDays}天前`
+      } else {
+        return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
+      }
     }
   }
 }

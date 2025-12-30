@@ -45,7 +45,7 @@ module.exports = {
         target: baseUrl,
         changeOrigin: true,
         headers: {
-          Host: 'system.itbbs.com'  
+          Host: 'system.itbbs.com'
         },
         pathRewrite: {
           '^/system-api': ''
@@ -55,10 +55,20 @@ module.exports = {
         target: baseUrl,
         changeOrigin: true,
         headers: {
-          Host: 'auth.itbbs.com'  
+          Host: 'auth.itbbs.com'
         },
         pathRewrite: {
           '^/auth-api': ''
+        }
+      },
+      '/blog-api': {
+        target: baseUrl,
+        changeOrigin: true,
+        headers: {
+          Host: 'blog.itbbs.com'
+        },
+        pathRewrite: {
+          '^/blog-api': ''
         }
       },
       // springdoc proxy

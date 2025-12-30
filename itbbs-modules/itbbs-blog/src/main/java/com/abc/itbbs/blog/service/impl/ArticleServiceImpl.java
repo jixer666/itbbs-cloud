@@ -1,8 +1,13 @@
 package com.abc.itbbs.blog.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.abc.itbbs.api.system.UserServiceClient;
+import com.abc.itbbs.api.system.domain.entity.User;
+import com.abc.itbbs.blog.constant.TemplateConstants;
 import com.abc.itbbs.blog.service.TemplateService;
+import com.abc.itbbs.common.core.constant.FileSuffixConstants;
 import com.abc.itbbs.common.core.domain.service.BaseServiceImpl;
+import com.abc.itbbs.common.core.domain.vo.ApiResult;
 import com.abc.itbbs.common.core.domain.vo.PageResult;
 import com.abc.itbbs.common.core.util.AssertUtils;
 import com.abc.itbbs.blog.convert.ArticleConvert;
@@ -11,12 +16,19 @@ import com.abc.itbbs.blog.domain.entity.Article;
 import com.abc.itbbs.blog.domain.vo.ArticleVO;
 import com.abc.itbbs.blog.mapper.ArticleMapper;
 import com.abc.itbbs.blog.service.ArticleService;
+import com.abc.itbbs.common.security.util.SecurityUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 /**
  * 文章业务处理
@@ -36,12 +48,32 @@ public class ArticleServiceImpl extends BaseServiceImpl<ArticleMapper, Article> 
     @Autowired
     private TemplateService templateService;
 
+    @Autowired
+    private ThreadPoolTaskExecutor threadPoolTaskExecutor;
+
+    @Autowired
+    private UserServiceClient userServiceClient;
+
     @Override
     public PageResult getArticlePageWithUiParam(ArticleDTO articleDTO) {
         startPage();
-        List<Article> articles = articleMapper.selectArticleList(articleDTO);
+        List<Article> articles = articleMapper.selectArticleListWithoutContent(articleDTO);
+
+        Map<Long, User> userMap = ApiResult.invokeRemoteMethod(userServiceClient.getUserMapByUserIds(
+                articles.stream().map(Article::getUserId).collect(Collectors.toList()))
+        );
+
         List<ArticleVO> articleVOList = pageList2CustomList(articles, (List<Article> list) -> {
-            return BeanUtil.copyToList(list, ArticleVO.class);
+            return list.stream().map(item -> {
+                ArticleVO articleVO = BeanUtil.copyProperties(item, ArticleVO.class);
+
+                User user = userMap.get(item.getUserId());
+                if (Objects.nonNull(user)) {
+                    articleVO.setNickname(user.getNickname());
+                }
+
+                return articleVO;
+            }).collect(Collectors.toList());
         });
 
         return buildPageResult(articleVOList);
@@ -50,9 +82,15 @@ public class ArticleServiceImpl extends BaseServiceImpl<ArticleMapper, Article> 
     @Override
     public void updateArticle(ArticleDTO articleDTO) {
         articleDTO.checkUpdateParams();
+
         Article article = articleMapper.selectById(articleDTO.getArticleId());
         AssertUtils.isNotEmpty(article, "文章不存在");
+        AssertUtils.isTrue(SecurityUtils.getUserId().equals(article.getUserId()), "无权限");
+
         BeanUtils.copyProperties(articleDTO, article);
+
+        article.setUpdateTime(new Date());
+
         articleMapper.updateById(article);
     }
 
@@ -71,15 +109,21 @@ public class ArticleServiceImpl extends BaseServiceImpl<ArticleMapper, Article> 
     }
 
     private void afterSaveArticle(Article article) {
-        // 保存静态文件
-        saveArticleStaticHtmlToOss(article);
+        CompletableFuture<Void> genHtmlFuture = CompletableFuture.runAsync(() -> {
+            // 保存静态文件
+            templateService.saveStaticToOss(article.getArticleId() + FileSuffixConstants.HTML,
+                    TemplateConstants.ARTICLE_TEMPLATE,
+                    BeanUtil.beanToMap(article, false, true)
+            );
+        }, threadPoolTaskExecutor);
 
+
+        // TODO 审核文件内容
         // TODO 保存向量数据库
         // TODO 保存ES
-    }
 
-    private void saveArticleStaticHtmlToOss(Article article) {
-        templateService.saveStaticHtmlToOss("", BeanUtil.beanToMap(article, false, true));
+
+        CompletableFuture.allOf(genHtmlFuture).join();
     }
 
     @Override

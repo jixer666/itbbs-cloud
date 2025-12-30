@@ -9,6 +9,7 @@
             <result property="userId"    column="user_id"    />
             <result property="title"    column="title"    />
             <result property="content"    column="content"    />
+            <result property="summary"    column="summary"    />
             <result property="categoryId"    column="category_id"    />
             <result property="tagDetails"    column="tag_details"    />
             <result property="cover"    column="cover"    />
@@ -24,11 +25,19 @@
     </resultMap>
 
     <sql id="selectArticleVo">
-        select article_id, user_id, title, content, category_id, tag_details, cover, type, visible_range, creation_statement, views_count, like_count, create_time, update_time, status, ver from tb_article
+        select article_id, user_id, title, content, summary, category_id, tag_details, cover, type, visible_range, creation_statement, views_count, like_count, create_time, update_time, status, ver from tb_article
+    </sql>
+
+    <sql id="selectArticleWithoutVo">
+        select article_id, user_id, title, summary, category_id, tag_details, cover, type, visible_range, create_time, status, ver from tb_article
     </sql>
 
     <select id="selectArticleList" resultMap="ArticleResult">
         <include refid="selectArticleVo" />
+    </select>
+    <select id="selectArticleListWithoutContent" resultMap="ArticleResult">
+        <include refid="selectArticleWithoutVo" />
+
     </select>
 
 

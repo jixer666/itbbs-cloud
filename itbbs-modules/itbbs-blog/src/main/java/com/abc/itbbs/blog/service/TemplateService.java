@@ -8,6 +8,6 @@ import java.util.Map;
  */
 public interface TemplateService {
 
-    void saveStaticHtmlToOss(String templateName, Map<String, Object> contextMap);
+    void saveStaticToOss(String filename, String templateName, Map<String, Object> contextMap);
 
 }

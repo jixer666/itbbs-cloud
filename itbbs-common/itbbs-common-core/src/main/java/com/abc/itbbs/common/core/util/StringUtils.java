@@ -629,4 +629,52 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
         }
         return sb.toString();
     }
+
+    /**
+     * 截断字符串：智能截取，避免在中文中间截断
+     * @param text
+     * @param maxLength
+     * @return
+     */
+    public static String truncateText(String text, int maxLength) {
+        if (text.length() <= maxLength) {
+            return text;
+        }
+
+        // 先截取前maxLength+10个字符，然后找合适的截断点
+        String truncated = text.substring(0, Math.min(maxLength + 10, text.length()));
+
+        // 查找合适的截断位置（标点符号后）
+        int lastPunctuation = Math.max(
+                truncated.lastIndexOf("。"),
+                Math.max(
+                        truncated.lastIndexOf("."),
+                        Math.max(
+                                truncated.lastIndexOf("！"),
+                                Math.max(
+                                        truncated.lastIndexOf("!"),
+                                        Math.max(
+                                                truncated.lastIndexOf("？"),
+                                                truncated.lastIndexOf("?")
+                                        )
+                                )
+                        )
+                )
+        );
+
+        // 如果在后10个字符内找到标点，就在标点后截断
+        if (lastPunctuation > maxLength - 20 && lastPunctuation > 0) {
+            return truncated.substring(0, lastPunctuation + 1);
+        }
+
+        // 否则在最近的空格处截断
+        int lastSpace = truncated.lastIndexOf(" ", maxLength);
+        if (lastSpace > maxLength - 30 && lastSpace > 0) {
+            return truncated.substring(0, lastSpace) + "...";
+        }
+
+        // 直接截断
+        return truncated.substring(0, maxLength) + "...";
+    }
+
 }

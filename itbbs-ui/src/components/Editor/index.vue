@@ -14,11 +14,11 @@
         <div id="editor-container">
           <!-- 标题输入 -->
           <div id="title-container">
-            <input
+            <el-input
               v-model="pageTitle"
               :placeholder="titlePlaceholder"
               @keyup.enter="focusEditor"
-            >
+            />
           </div>
 
           <!-- 编辑器区域 -->
@@ -523,26 +523,23 @@ export default {
         this.$message.warning('请至少选择一个标签')
         return
       }
+      console.log(this.html)
 
       // 构造发布数据
       const articleData = {
         title: this.pageTitle,
-        content: this.html,
-        summary: this.articleSettings.summary || this.generateSummary(),
-        category: this.articleSettings.category,
-        tags: this.articleSettings.tags,
+        content: this.editor.getHtml(),
+        summary: this.articleSettings.summary,
+        categoryId: this.articleSettings.category,
+        tagDetailsList: this.articleSettings.tags,
         cover: this.articleSettings.cover,
-        articleType: this.articleSettings.articleType,
+        type: this.articleSettings.articleType,
         reprintStatement: this.articleSettings.reprintStatement,
-        visibility: this.articleSettings.visibility,
+        visibleRange: this.articleSettings.visibility,
         creationStatement: this.articleSettings.creationStatement
       }
 
       this.$emit('publish', articleData)
-      console.log('发布文章:', articleData)
-
-      // 发布成功后返回首页
-      // this.$router.push("/");
     },
 
     /**
@@ -555,11 +552,11 @@ export default {
         content: this.html,
         summary: this.articleSettings.summary,
         category: this.articleSettings.category,
-        tags: this.articleSettings.tags,
+        tagDetailsList: this.articleSettings.tags,
         cover: this.articleSettings.cover,
-        articleType: this.articleSettings.articleType,
+        type: this.articleSettings.articleType,
         reprintStatement: this.articleSettings.reprintStatement,
-        visibility: 'draft',
+        visibleRange: 'draft',
         creationStatement: this.articleSettings.creationStatement
       }
 
@@ -588,7 +585,6 @@ export default {
      * 内容变化回调
      */
     onChange(editor) {
-      console.log('内容变化:', editor.getHtml())
       this.html = editor.getHtml()
       this.$emit('update:content', this.html)
       this.$emit('change', this.html)
@@ -1094,10 +1090,10 @@ export default {
   margin-bottom: 20px;
 }
 
-#title-container input {
+#title-container .el-input {
   font-size: 30px;
-  border: 0;
-  outline: none;
+  border: none !important;
+  outline: none !important;
   width: 100%;
   line-height: 1.5;
   font-weight: 500;
@@ -1105,7 +1101,7 @@ export default {
   background: transparent;
 }
 
-#title-container input::placeholder {
+#title-container .el-input::placeholder {
   color: #8a919f;
 }
 

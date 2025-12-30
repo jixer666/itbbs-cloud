@@ -20,6 +20,8 @@ public class ArticleHisVO {
 
     private String content;
 
+    private String summary;
+
     private Long categoryId;
 
     private String categoryName;

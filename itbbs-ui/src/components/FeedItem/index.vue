@@ -10,7 +10,7 @@
           <el-avatar :size="18" :src="item.authorAvatar" />
           <span class="author">{{ item.author }}</span>
           <span class="dot">·</span>
-          <span class="time">{{ item.time }}</span>
+          <span class="time">{{ item.createTime }}</span>
         </div>
 
         <div class="feed-title">{{ item.title }}</div>

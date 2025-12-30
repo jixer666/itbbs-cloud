@@ -8,6 +8,9 @@ import com.abc.itbbs.system.domain.vo.UserRoleVO;
 import com.abc.itbbs.system.domain.vo.UserVO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+import java.util.Map;
+
 public interface UserService extends IService<User> {
 
     User getUserById(Long userId);
@@ -30,4 +33,5 @@ public interface UserService extends IService<User> {
 
     User getUserByEmail(String email);
 
+    Map<Long, User> getUserMapByUserIds(List<Long> userIds);
 }

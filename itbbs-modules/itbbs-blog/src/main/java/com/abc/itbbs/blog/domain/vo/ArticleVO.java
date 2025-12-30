@@ -44,5 +44,7 @@ public class ArticleVO {
 
     private Integer ver;
 
+    private String nickname;
+
 
 }

@@ -18,6 +18,8 @@
 
 <script>
 import TencentDocEditor from '@/components/Editor/index.vue'
+import { addArticle } from '@/api/blog/article'
+import { getCategoryPage } from '@/api/blog/category'
 
 export default {
   name: 'CreationPage',
@@ -55,13 +57,7 @@ export default {
       ],
 
       // 分类
-      categories: [
-        { value: '前端', label: '前端' },
-        { value: '后端', label: '后端' },
-        { value: '设计', label: '设计' },
-        { value: '产品', label: '产品' },
-        { value: '运营', label: '运营' }
-      ]
+      categories: []
     }
   },
 
@@ -69,8 +65,8 @@ export default {
     // 页面挂载后可以初始化一些数据
     console.log('创作页面已挂载')
 
-    // 可以从路由参数或API加载已有文章数据
-    // this.loadArticleData();
+    // 从API加载分类数据
+    this.loadCategories()
   },
 
   beforeDestroy() {
@@ -80,13 +76,29 @@ export default {
 
   methods: {
     /**
+     * 加载分类数据
+     */
+    loadCategories() {
+      // 调用API获取分类列表
+      getCategoryPage({}).then(res => {
+        // 将返回的分类数据转换为下拉框需要的格式
+        this.categories = res.data.list.map(category => {
+          return {
+            value: category.categoryId,
+            label: category.categoryName
+          }
+        })
+      }).catch(error => {
+        console.error('获取分类数据异常:', error)
+      })
+    },
+    /**
      * 处理发布事件
      */
     handlePublish(articleData) {
-      console.log('发布文章:', articleData)
-
-      // 这里可以添加实际的发布逻辑
-      this.$message.success('文章发布成功')
+      addArticle(articleData).then(res => {
+        this.$message.success('文章发布成功')
+      })
 
       // 发布成功后可以跳转到其他页面
       // this.$router.push("/");
@@ -116,7 +128,6 @@ export default {
      * 处理设置变化事件
      */
     handleSettingsChange(settings) {
-      console.log('设置变化:', settings)
       this.articleSettings = { ...this.articleSettings, ...settings }
     },
 

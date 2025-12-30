@@ -16,4 +16,6 @@ import java.util.List;
 @Mapper
 public interface ArticleMapper extends BaseMapper<Article> {
     List<Article> selectArticleList(ArticleDTO articleDTO);
+
+    List<Article> selectArticleListWithoutContent(ArticleDTO articleDTO);
 }

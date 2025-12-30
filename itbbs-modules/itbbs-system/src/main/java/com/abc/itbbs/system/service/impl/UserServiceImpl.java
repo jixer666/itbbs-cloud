@@ -15,6 +15,7 @@ import com.abc.itbbs.system.domain.vo.UserVO;
 import com.abc.itbbs.system.mapper.UserMapper;
 import com.abc.itbbs.system.service.RoleService;
 import com.abc.itbbs.system.service.UserService;
+import com.abc.itbbs.system.service.cache.UserCache;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,13 +23,18 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implements UserService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private UserCache userCache;
 
     @Autowired
     private RoleService roleService;
@@ -132,5 +138,14 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
     public User getUserByEmail(String email) {
         AssertUtils.isNotEmpty(email, "邮箱不能为空");
         return userMapper.selectOne(new LambdaQueryWrapper<User>().eq(User::getEmail, email));
+    }
+
+    @Override
+    public Map<Long, User> getUserMapByUserIds(List<Long> userIds) {
+        if (CollUtil.isEmpty(userIds)) {
+            return new HashMap<>();
+        }
+
+        return userCache.
     }
 }

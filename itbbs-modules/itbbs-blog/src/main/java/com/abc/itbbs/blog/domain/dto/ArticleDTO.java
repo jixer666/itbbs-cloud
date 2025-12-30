@@ -22,6 +22,8 @@ public class ArticleDTO {
 
     private String content;
 
+    private String summary;
+
     private Long categoryId;
 
     private List<String> tagDetailsList;
@@ -45,6 +47,7 @@ public class ArticleDTO {
     public void checkUpdateParams() {
         AssertUtils.isNotEmpty(this, "文章参数不能为空");
         AssertUtils.isNotEmpty(articleId, "文章ID不能为空");
+        checkSaveParams();
     }
 
     public void checkSaveParams() {

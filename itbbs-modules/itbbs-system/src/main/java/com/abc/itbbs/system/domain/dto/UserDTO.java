@@ -20,6 +20,8 @@ public class UserDTO {
     // 用于分配角色
     private List<Long> roleIds;
 
+    private List<Long> userIds;
+
     public void checkSaveUserRoleParams() {
         AssertUtils.isNotEmpty(this, "用户参数不能为空");
         AssertUtils.isNotEmpty(userId, "用户ID不能为空");

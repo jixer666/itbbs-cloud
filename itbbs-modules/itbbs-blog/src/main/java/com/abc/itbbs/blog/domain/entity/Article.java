@@ -35,6 +35,9 @@ public class Article extends BaseEntity {
     @ApiModelProperty("内容")
     private String content;
 
+    @ApiModelProperty("摘要")
+    private String summary;
+
     @ApiModelProperty("分类ID")
     private Long categoryId;
 

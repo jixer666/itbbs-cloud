@@ -6,6 +6,10 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author LiJunXi
@@ -23,4 +27,6 @@ public interface UserServiceClient {
     @GetMapping("/system/user/feign/email/{email}")
     ApiResult<User> getUserByEmail(@PathVariable("email") String email);
 
+    @PostMapping("/system/user/feign/list/map")
+    ApiResult<Map<Long, User>> getUserMapByUserIds(@RequestBody List<Long> collect);
 }
