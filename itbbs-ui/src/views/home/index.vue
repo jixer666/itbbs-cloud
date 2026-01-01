@@ -11,11 +11,17 @@
 
         <!-- 内容列表 -->
         <div class="feed">
-          <FeedItem
-            v-for="item in feed"
-            :key="item.id"
-            :item="item"
-          />
+          <div v-if="feed && feed.length > 0">
+            <FeedItem
+              v-for="(item, index) in feed"
+              :key="index"
+              :item="item"
+            />
+          </div>
+          <div v-else class="empty-container">
+            暂无数据
+            <!-- <el-empty description="暂无数据"></el-empty> -->
+          </div>
         </div>
       </el-main>
 
@@ -44,7 +50,6 @@ export default {
     FeedItem,
     AuthorRecommend,
     OfficialBlog
-
   },
 
   data() {
@@ -132,12 +137,11 @@ export default {
 
       this.loading = true
 
-      const params = {
-        current: this.pagination.current,
-        size: this.pagination.size
-      }
-
-      getArticlePage(params).then(res => {
+      getArticlePage({
+        currentPage: this.pagination.current,
+        pageSize: this.pagination.size,
+        status: 3
+      }).then(res => {
         const articles = res.data.list
 
         this.feed = [...this.feed, ...articles]
@@ -288,6 +292,13 @@ export default {
 .feed {
   display: flex;
   flex-direction: column;
+}
+
+.empty-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 0;
 }
 
 ::v-deep .el-card {

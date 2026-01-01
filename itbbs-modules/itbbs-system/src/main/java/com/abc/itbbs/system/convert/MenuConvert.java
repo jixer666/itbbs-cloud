@@ -79,7 +79,7 @@ public class MenuConvert {
         if (Objects.isNull(menu.getHidden())) {
             menu.setHidden(CommonConstants.YES);
         }
-        menu.setCommonParams();
+        menu.setInsertParams();
 
         return menu;
     }

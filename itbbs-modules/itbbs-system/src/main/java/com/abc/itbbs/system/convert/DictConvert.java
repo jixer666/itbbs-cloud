@@ -11,7 +11,7 @@ public class DictConvert {
         Dict dict = BeanUtil.copyProperties(dictDTO, Dict.class);
         dict.setDictId(IdUtils.getId());
         dict.setUserId(SecurityUtils.getUserId());
-        dict.setCommonParams();
+        dict.setInsertParams();
 
         return dict;
     }

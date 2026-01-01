@@ -16,9 +16,9 @@ export function updateArticle(data) {
   })
 }
 
-export function addArticle(data) {
+export function addArticleDraft(data) {
   return request({
-    url: process.env.VUE_APP_BLOG_BASE_API + '/blog/article',
+    url: process.env.VUE_APP_BLOG_BASE_API + '/blog/article/draft',
     method: 'post',
     data: data
   })

@@ -19,6 +19,8 @@
     <file url="file://$PROJECT_DIR$/itbbs-common/itbbs-common-email/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/itbbs-common/itbbs-common-gen/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/itbbs-common/itbbs-common-gen/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/itbbs-common/itbbs-common-mq/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/itbbs-common/itbbs-common-mq/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/itbbs-common/itbbs-common-oss/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/itbbs-common/itbbs-common-oss/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/itbbs-common/itbbs-common-redis/src/main/java" charset="UTF-8" />

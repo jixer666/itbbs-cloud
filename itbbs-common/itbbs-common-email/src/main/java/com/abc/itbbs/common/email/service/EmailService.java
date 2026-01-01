@@ -9,5 +9,5 @@ public interface EmailService {
 
     void invalidEmailCode(String emailUuid);
 
-    Boolean checkEmailCode(java.lang.String emailUuid, java.lang.String emailCode);
+    Boolean checkEmailCode(String emailUuid, String emailCode);
 }

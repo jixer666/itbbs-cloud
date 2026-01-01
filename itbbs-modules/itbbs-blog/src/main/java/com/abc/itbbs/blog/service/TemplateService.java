@@ -1,5 +1,7 @@
 package com.abc.itbbs.blog.service;
 
+import com.abc.itbbs.api.system.domain.vo.FileVO;
+
 import java.util.Map;
 
 /**
@@ -8,6 +10,6 @@ import java.util.Map;
  */
 public interface TemplateService {
 
-    void saveStaticToOss(String filename, String templateName, Map<String, Object> contextMap);
+    FileVO saveStaticToOss(String filename, String templateName, Map<String, Object> contextMap);
 
 }

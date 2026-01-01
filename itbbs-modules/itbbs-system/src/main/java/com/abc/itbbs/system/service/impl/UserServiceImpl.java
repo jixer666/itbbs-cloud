@@ -11,7 +11,7 @@ import com.abc.itbbs.system.convert.UserConvert;
 import com.abc.itbbs.system.domain.dto.UserDTO;
 import com.abc.itbbs.system.domain.dto.UserResetPwdDTO;
 import com.abc.itbbs.system.domain.vo.UserRoleVO;
-import com.abc.itbbs.system.domain.vo.UserVO;
+import com.abc.itbbs.api.system.domain.vo.UserVO;
 import com.abc.itbbs.system.mapper.UserMapper;
 import com.abc.itbbs.system.service.RoleService;
 import com.abc.itbbs.system.service.UserService;
@@ -146,6 +146,6 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
             return new HashMap<>();
         }
 
-        return userCache.
+        return userCache.getBatch(userIds);
     }
 }

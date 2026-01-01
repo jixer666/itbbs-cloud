@@ -1,0 +1,34 @@
+package com.abc.itbbs.blog.listener;
+
+import com.abc.itbbs.blog.domain.entity.Article;
+import com.abc.itbbs.common.mq.constant.RabbitMQConstants;
+import com.rabbitmq.client.Channel;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.rabbit.annotation.RabbitHandler;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+
+/**
+ * @author LiJunXi
+ * @date 2026/1/1
+ */
+@Slf4j
+@Component
+@RabbitListener(queues = RabbitMQConstants.BLOG_ARTICLE_VECTOR_QUEUE)
+public class ArticleCreateVectorEventListener {
+
+    /**
+     * 文章发布向量数据库事件监听
+     */
+    @RabbitHandler
+    public void handleArticleVectorEvent(Article article, Message message, Channel channel) throws IOException {
+        log.info("===开始消费文章向量数据构建===");
+        // TODO
+        channel.basicAck(message.getMessageProperties().getDeliveryTag(),false);
+        log.info("===完成消费文章向量数据构建===");
+    }
+
+}

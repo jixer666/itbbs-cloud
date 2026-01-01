@@ -7,7 +7,7 @@ import com.abc.itbbs.api.system.domain.entity.User;
 import com.abc.itbbs.system.domain.dto.RegisterDTO;
 import com.abc.itbbs.system.domain.vo.RoleVO;
 import com.abc.itbbs.system.domain.vo.UserRoleVO;
-import com.abc.itbbs.system.domain.vo.UserVO;
+import com.abc.itbbs.api.system.domain.vo.UserVO;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.List;
@@ -22,7 +22,7 @@ public class UserConvert {
                 .avatar(CommonConstants.DEFAULT_AVATAR)
                 .build();
         user.setUserId(IdUtils.getId());
-        user.setCommonParams();
+        user.setInsertParams();
 
         return user;
     }

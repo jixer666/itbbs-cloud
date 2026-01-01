@@ -18,6 +18,6 @@ public class GenerateTableColumnConvert {
         generateTableColumn.setColumnType(GenerateUtils.getColumnType(generateTableColumn.getColumnType()));
         generateTableColumn.setJavaField(StringUtils.toCamelCase(generateTableColumn.getColumnName()));
         generateTableColumn.setJavaType(GenerateUtils.getJavaType(generateTableColumn.getColumnType()));
-        generateTableColumn.setCommonParams();
+        generateTableColumn.setInsertParams();
     }
 }

@@ -205,4 +205,10 @@ public class CommonConstants {
      */
     public static final String FEIGN_TOKEN_HEADER = "x-feign-token";
     public static final String FEIGN_REQUEST_FLAG = "isFeignRequest";
+
+    /**
+     * MQ传递请求头
+     */
+    public static final String MQ_USER_INFO = "mq-user-info";
+
 }

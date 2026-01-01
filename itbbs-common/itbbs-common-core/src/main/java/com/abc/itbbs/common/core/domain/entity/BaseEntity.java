@@ -2,6 +2,7 @@ package com.abc.itbbs.common.core.domain.entity;
 
 import com.abc.itbbs.common.core.domain.enums.StatusEnum;
 import com.abc.itbbs.common.core.constant.CommonConstants;
+import com.abc.itbbs.common.core.util.AssertUtils;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
@@ -26,11 +27,15 @@ public class BaseEntity implements Serializable {
 
     private Integer status;
 
-    public void setCommonParams() {
+    public void setInsertParams() {
         this.setCreateTime(new Date());
         this.setUpdateTime(new Date());
         this.setStatus(StatusEnum.NORMAL.getStatus());
         this.setVer(CommonConstants.DEFAULT_VER);
     }
 
+    public void setUpdateParams() {
+        this.setUpdateTime(new Date());
+        this.setVer(ver + 1);
+    }
 }

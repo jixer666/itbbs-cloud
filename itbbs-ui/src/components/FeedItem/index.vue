@@ -7,24 +7,24 @@
     <div class="feed-row">
       <div class="feed-left">
         <div class="feed-meta">
-          <el-avatar :size="18" :src="item.authorAvatar" />
-          <span class="author">{{ item.author }}</span>
+          <el-avatar :size="25" :src="item.userInfo.avatar" />
+          <span class="author">{{ item.userInfo.nickname }}</span>
           <span class="dot">·</span>
-          <span class="time">{{ item.createTime }}</span>
+          <span class="time">{{ formatTime(item.createTime) }}</span>
         </div>
 
-        <div class="feed-title">{{ item.title }}</div>
-        <div class="feed-desc">{{ item.desc }}</div>
+        <div class="feed-title" @click="toArticlePage(item.htmlFilePath)">{{ item.title }}</div>
+        <div class="feed-desc">{{ item.summary }}</div>
 
         <div class="feed-actions">
-          <span class="action"><i class="el-icon-view" /> 阅读 {{ item.views }}</span>
-          <span class="action"><i class="el-icon-thumb" /> 赞 {{ item.likes }}</span>
-          <span class="action"><i class="el-icon-star-off" /> 收藏 {{ item.favs }}</span>
+          <span class="action"><i class="el-icon-view" /> 阅读 {{ item.viewsCount }}</span>
+          <span class="action"><i class="el-icon-thumb" /> 赞 {{ item.likeCount }}</span>
+          <span class="action"><i class="el-icon-star-off" /> 收藏 {{ item.collectCount }}</span>
         </div>
       </div>
 
       <div class="feed-right">
-        <div class="thumb" :style="{ backgroundImage: `url(${item.thumb})` }" />
+        <div class="thumb" :style="{ backgroundImage: `url(${item.cover})` }" />
       </div>
     </div>
   </el-card>
@@ -37,6 +37,45 @@ export default {
     item: {
       type: Object,
       required: true
+    }
+  },
+  methods: {
+    toArticlePage(path) {
+      location.href = path
+    },
+    formatTime(time) {
+      const date = new Date(time)
+      const now = new Date()
+      const diffMs = now - date // 时间差（毫秒）
+
+      // 计算秒、分钟、小时、天数
+      const diffSeconds = Math.floor(diffMs / 1000)
+      const diffMinutes = Math.floor(diffSeconds / 60)
+      const diffHours = Math.floor(diffMinutes / 60)
+      const diffDays = Math.floor(diffHours / 24)
+
+      // 一天之内显示"xxx之前"
+      if (diffHours < 24) {
+        if (diffMinutes < 1) {
+          return '刚刚'
+        } else if (diffMinutes < 60) {
+          return `${diffMinutes}分钟前`
+        } else {
+          return `${diffHours}小时前`
+        }
+      }
+      // 一周之内显示"xxx天之前"
+      else if (diffDays < 7) {
+        return `${diffDays}天前`
+      }
+      // 否则显示日期
+      else {
+        // 格式化日期为 YYYY-MM-DD
+        const year = date.getFullYear()
+        const month = String(date.getMonth() + 1).padStart(2, '0')
+        const day = String(date.getDate()).padStart(2, '0')
+        return `${year}-${month}-${day}`
+      }
     }
   }
 }

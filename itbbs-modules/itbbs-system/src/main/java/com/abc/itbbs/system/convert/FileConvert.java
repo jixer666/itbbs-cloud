@@ -25,7 +25,7 @@ public class FileConvert {
     public static File buildDefaultFileByFileDTO(FileDTO fileDTO) {
         File file = BeanUtil.copyProperties(fileDTO, File.class);
         file.setFileId(IdUtils.getId());
-        file.setCommonParams();
+        file.setInsertParams();
 
         return file;
     }
@@ -46,7 +46,7 @@ public class FileConvert {
         File saveFile = BeanUtil.copyProperties(fileEntity, File.class);
         saveFile.setFileId(IdUtils.getId());
         saveFile.setUserId(SecurityUtils.getUserId());
-        saveFile.setCommonParams();
+        saveFile.setInsertParams();
 
         return saveFile;
     }
@@ -58,7 +58,7 @@ public class FileConvert {
         fileEntity.setTotalSize(req.getFile().getSize());
         fileEntity.setUserId(SecurityUtils.getUserId());
         fileEntity.setFilename(req.getFile().getOriginalFilename());
-        fileEntity.setCommonParams();
+        fileEntity.setInsertParams();
 
         return fileEntity;
     }

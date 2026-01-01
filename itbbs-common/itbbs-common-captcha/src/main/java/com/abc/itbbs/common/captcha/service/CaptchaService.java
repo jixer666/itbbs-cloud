@@ -8,5 +8,5 @@ public interface CaptchaService {
 
     Boolean checkCaptchaImg(String uuid, String code);
 
-    void invalidCaptcha(java.lang.String uuid);
+    void invalidCaptcha(String uuid);
 }

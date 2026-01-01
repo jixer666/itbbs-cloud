@@ -36,7 +36,6 @@ public class TokenServiceImpl implements TokenService {
     @Value("${token.secret}")
     private String secret;
 
-
     @Value("${token.header}")
     private String tokenHeader;
 

@@ -27,15 +27,11 @@ public class FeignTokenFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String feignHeader = request.getHeader(CommonConstants.FEIGN_TOKEN_HEADER);
-        if (StringUtils.isEmpty(feignHeader)) {
+        String feignToken = request.getHeader(CommonConstants.FEIGN_TOKEN_HEADER);
+        if (StringUtils.isEmpty(feignToken) && !whiteToken.equals(feignToken)) {
             filterChain.doFilter(request, response);
             return;
         }
-
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null, null);
-        authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
         request.setAttribute(CommonConstants.FEIGN_REQUEST_FLAG, true);
 

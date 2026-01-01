@@ -8,7 +8,7 @@ import com.abc.itbbs.common.security.util.SecurityUtils;
 import com.abc.itbbs.system.domain.dto.UserDTO;
 import com.abc.itbbs.system.domain.dto.UserResetPwdDTO;
 import com.abc.itbbs.system.domain.vo.UserRoleVO;
-import com.abc.itbbs.system.domain.vo.UserVO;
+import com.abc.itbbs.api.system.domain.vo.UserVO;
 import com.abc.itbbs.system.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -106,7 +106,7 @@ public class UserController {
     }
 
     @ApiOperation("远程批量查询用户")
-    @GetMapping("/feign/list/map")
+    @PostMapping("/feign/list/map")
     public ApiResult<Map<Long, User>> getUserMapByUserIds(@RequestBody List<Long> userIds) {
         Map<Long, User> userMap = userService.getUserMapByUserIds(userIds);
 

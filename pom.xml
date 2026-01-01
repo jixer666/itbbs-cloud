@@ -69,7 +69,6 @@
                 <version>${itbbs.version}</version>
             </dependency>
 
-
             <dependency>
                 <groupId>com.abc</groupId>
                 <artifactId>itbbs-common-redis</artifactId>
@@ -97,6 +96,12 @@
             <dependency>
                 <groupId>com.abc</groupId>
                 <artifactId>itbbs-common-gen</artifactId>
+                <version>${itbbs.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.abc</groupId>
+                <artifactId>itbbs-common-mq</artifactId>
                 <version>${itbbs.version}</version>
             </dependency>
 

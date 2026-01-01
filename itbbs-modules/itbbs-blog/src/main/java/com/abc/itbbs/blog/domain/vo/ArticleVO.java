@@ -1,6 +1,9 @@
 package com.abc.itbbs.blog.domain.vo;
 
 import java.util.Date;
+
+import com.abc.itbbs.api.system.domain.entity.User;
+import com.abc.itbbs.api.system.domain.vo.UserVO;
 import lombok.Data;
 
 /**
@@ -17,6 +20,8 @@ public class ArticleVO {
     private Long userId;
 
     private String title;
+
+    private String summary;
 
     private String content;
 
@@ -36,6 +41,8 @@ public class ArticleVO {
 
     private Integer likeCount;
 
+    private Integer collectCount;
+
     private Date createTime;
 
     private Date updateTime;
@@ -44,7 +51,7 @@ public class ArticleVO {
 
     private Integer ver;
 
-    private String nickname;
+    private UserVO userInfo;
 
-
+    private String htmlFilePath;
 }

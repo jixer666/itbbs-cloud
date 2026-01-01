@@ -1,6 +1,7 @@
 package com.abc.itbbs.blog.domain.dto;
 
 import cn.hutool.core.collection.CollUtil;
+import com.abc.itbbs.blog.domain.enums.ArticleStatusEnum;
 import com.abc.itbbs.common.core.util.AssertUtils;
 import lombok.Data;
 
@@ -40,6 +41,8 @@ public class ArticleDTO {
 
     private Integer likeCount;
 
+    private Integer status;
+
 
     // 用于批量删除
     private List<Long> articleIds;
@@ -47,6 +50,9 @@ public class ArticleDTO {
     public void checkUpdateParams() {
         AssertUtils.isNotEmpty(this, "文章参数不能为空");
         AssertUtils.isNotEmpty(articleId, "文章ID不能为空");
+        AssertUtils.isNotEmpty(status, "文章状态不能为空");
+        AssertUtils.isTrue(ArticleStatusEnum.DRAFT.getStatus().equals(status) || ArticleStatusEnum.PENDING.getStatus().equals(status)
+                || ArticleStatusEnum.DELETE.getStatus().equals(status), "文章状态不可取");
         checkSaveParams();
     }
 
@@ -64,4 +70,14 @@ public class ArticleDTO {
         AssertUtils.isNotEmpty(this, "文章参数不能为空");
         AssertUtils.isTrue(CollUtil.isNotEmpty(articleIds), "文章ID列表不能为空");
     }
+
+
+    public Boolean isDraft() {
+        return ArticleStatusEnum.DRAFT.getStatus().equals(status);
+    }
+
+    public Boolean isPending() {
+        return ArticleStatusEnum.PENDING.getStatus().equals(status);
+    }
+
 }

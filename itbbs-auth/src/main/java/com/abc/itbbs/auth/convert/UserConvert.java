@@ -20,7 +20,7 @@ public class UserConvert {
                 .avatar(CommonConstants.DEFAULT_AVATAR)
                 .build();
         user.setUserId(IdUtils.getId());
-        user.setCommonParams();
+        user.setInsertParams();
 
         return user;
     }

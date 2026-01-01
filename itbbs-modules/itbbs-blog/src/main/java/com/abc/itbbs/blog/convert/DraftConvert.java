@@ -15,7 +15,7 @@ public class DraftConvert {
     public static Draft buildDefaultDraftByDraftDTO(DraftDTO draftDTO) {
         Draft draft = BeanUtil.copyProperties(draftDTO, Draft.class);
         draft.setDraftId(IdUtils.getId());
-        draft.setCommonParams();
+        draft.setInsertParams();
 
         return draft;
     }

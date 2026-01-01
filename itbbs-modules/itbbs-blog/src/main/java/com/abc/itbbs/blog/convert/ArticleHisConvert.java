@@ -15,7 +15,7 @@ public class ArticleHisConvert {
     public static ArticleHis buildDefaultArticleHisByArticleHisDTO(ArticleHisDTO articleHisDTO) {
         ArticleHis articleHis = BeanUtil.copyProperties(articleHisDTO, ArticleHis.class);
         articleHis.setArticleHisId(IdUtils.getId());
-        articleHis.setCommonParams();
+        articleHis.setInsertParams();
 
         return articleHis;
     }

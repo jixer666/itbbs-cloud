@@ -16,7 +16,7 @@ public class RoleConvert {
         Role role = BeanUtil.copyProperties(roleDTO, Role.class);
         role.setRoleId(IdUtils.getId());
         role.setUserId(SecurityUtils.getUserId());
-        role.setCommonParams();
+        role.setInsertParams();
 
         return role;
     }

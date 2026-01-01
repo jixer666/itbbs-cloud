@@ -15,7 +15,7 @@ public class CategoryConvert {
     public static Category buildDefaultCategoryByCategoryDTO(CategoryDTO categoryDTO) {
         Category category = BeanUtil.copyProperties(categoryDTO, Category.class);
         category.setCategoryId(IdUtils.getId());
-        category.setCommonParams();
+        category.setInsertParams();
 
         return category;
     }

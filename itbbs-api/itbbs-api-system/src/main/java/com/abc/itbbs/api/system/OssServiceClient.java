@@ -4,7 +4,7 @@ import com.abc.itbbs.api.system.domain.dto.OssFileUploadDTO;
 import com.abc.itbbs.api.system.domain.vo.FileVO;
 import com.abc.itbbs.common.core.domain.vo.ApiResult;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 
 /**
@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.PostMapping;
  * @date 2025/12/30
  */
 @FeignClient(contextId = "FileServiceClient", value = "itbbs-system")
-public interface FileServiceClient {
+public interface OssServiceClient {
 
-    @PostMapping("/system/file/upload")
-    ApiResult<FileVO> uploadOss(@Validated OssFileUploadDTO req);
+    @PostMapping(value = "/system/oss/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    ApiResult<FileVO> uploadOss(OssFileUploadDTO req);
 
 }

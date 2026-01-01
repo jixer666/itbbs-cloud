@@ -18,7 +18,7 @@ public class GenerateTableConvert {
     public static GenerateTable buildDefaultGenerateTableByGenerateTableDTO(GenerateTableDTO generateTableDTO) {
         GenerateTable generateTable = BeanUtil.copyProperties(generateTableDTO, GenerateTable.class);
         generateTable.setGenTableId(IdUtils.getId());
-        generateTable.setCommonParams();
+        generateTable.setInsertParams();
 
         return generateTable;
     }
@@ -31,7 +31,7 @@ public class GenerateTableConvert {
         generateTable.setBusinessName(GenerateUtils.getBusinessName(generateTable.getClassName()));
         generateTable.setFunctionName(GenerateUtils.getFunctionName(generateTable.getTableComment()));
         generateTable.setUserId(IdUtils.getId());
-        generateTable.setCommonParams();
+        generateTable.setInsertParams();
     }
 
     public static VelocityContext buildVelocityContextByGenerateTable(GenerateTable genTable) {

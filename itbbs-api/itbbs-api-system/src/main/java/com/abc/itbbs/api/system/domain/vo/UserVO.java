@@ -1,4 +1,4 @@
-package com.abc.itbbs.system.domain.vo;
+package com.abc.itbbs.api.system.domain.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

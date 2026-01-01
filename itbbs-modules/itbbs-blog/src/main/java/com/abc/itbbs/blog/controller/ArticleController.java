@@ -1,5 +1,6 @@
 package com.abc.itbbs.blog.controller;
 
+import com.abc.itbbs.blog.domain.vo.ArticleVO;
 import com.abc.itbbs.common.core.domain.vo.ApiResult;
 import com.abc.itbbs.common.core.domain.vo.PageResult;
 import com.abc.itbbs.blog.domain.dto.ArticleDTO;
@@ -39,12 +40,12 @@ public class ArticleController {
         return ApiResult.success();
     }
 
-    @ApiOperation("新增文章")
-    @PostMapping
-    public ApiResult<Void> saveArticle(@RequestBody ArticleDTO articleDTO) {
-        articleService.saveArticle(articleDTO);
+    @ApiOperation("新增文章草稿")
+    @PostMapping("/draft")
+    public ApiResult<ArticleVO> saveArticleDraft() {
+        ArticleVO articleVO = articleService.saveArticleDraft();
 
-        return ApiResult.success();
+        return ApiResult.success(articleVO);
     }
 
     @ApiOperation("删除文章")

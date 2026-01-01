@@ -6,10 +6,11 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum ArticleStatusEnum {
-    PENDING(1, "待审核"),
-    PUBLISHED(2, "上架"),
-    UN_PUBLISHED(3, "下架"),
-    DELETE(4, "删除");
+    DRAFT(1, "草稿"),
+    PENDING(2, "待审核"),
+    PUBLISHED(3, "上架"),
+    UN_PUBLISHED(4, "下架"),
+    DELETE(5, "删除");
 
     private Integer status;
     private String desc;

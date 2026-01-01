@@ -536,7 +536,8 @@ export default {
         type: this.articleSettings.articleType,
         reprintStatement: this.articleSettings.reprintStatement,
         visibleRange: this.articleSettings.visibility,
-        creationStatement: this.articleSettings.creationStatement
+        creationStatement: this.articleSettings.creationStatement,
+        articleId: this.articleSettings.articleId
       }
 
       this.$emit('publish', articleData)
@@ -557,7 +558,8 @@ export default {
         type: this.articleSettings.articleType,
         reprintStatement: this.articleSettings.reprintStatement,
         visibleRange: 'draft',
-        creationStatement: this.articleSettings.creationStatement
+        creationStatement: this.articleSettings.creationStatement,
+        articleId: this.articleSettings.articleId
       }
 
       this.$emit('saveDraft', draftData)
@@ -1438,4 +1440,10 @@ export default {
   border-radius: 4px;
   font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
 }
+
+::v-deep .el-input__inner {
+  box-shadow: none !important;
+  border: none !important;
+}
+
 </style>

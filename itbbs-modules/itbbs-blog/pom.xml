@@ -37,6 +37,10 @@
         </dependency>
         <dependency>
             <groupId>com.abc</groupId>
+            <artifactId>itbbs-common-mq</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.abc</groupId>
             <artifactId>itbbs-api-system</artifactId>
         </dependency>
 

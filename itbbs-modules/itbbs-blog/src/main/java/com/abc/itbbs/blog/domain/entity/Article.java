@@ -62,5 +62,11 @@ public class Article extends BaseEntity {
     @ApiModelProperty("点赞量")
     private Integer likeCount;
 
+    @ApiModelProperty("收藏量")
+    private Integer collectCount;
+
+    @ApiModelProperty("HTML文件路径")
+    private String htmlFilePath;
+
 
 }

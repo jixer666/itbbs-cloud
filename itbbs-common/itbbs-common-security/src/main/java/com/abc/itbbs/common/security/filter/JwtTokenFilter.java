@@ -29,13 +29,14 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
         Boolean isFeignRequest = (Boolean) request.getAttribute(CommonConstants.FEIGN_REQUEST_FLAG);
-        if (Objects.nonNull(isFeignRequest) && isFeignRequest) {
+        String token = tokenService.getToken(request);
+
+        if (Objects.nonNull(isFeignRequest) && isFeignRequest && StringUtils.isEmpty(token)) {
+            // 如果是feign调用并且token为空
             chain.doFilter(request, response);
             return;
         }
 
-        String token = tokenService.getToken(request);
-        ThreadLocalTempVar.setTempTokenVar(token);
         if (StringUtils.isEmpty(token)) {
             chain.doFilter(request, response);
             return;
@@ -47,12 +48,14 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             return;
         }
 
-        tokenService.validateToken(loginUserDTO);
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginUserDTO, null, loginUserDTO.getAuthorities());
-        authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-
         try {
+            ThreadLocalTempVar.setTempTokenVar(token);
+
+            tokenService.validateToken(loginUserDTO);
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginUserDTO, null, loginUserDTO.getAuthorities());
+            authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+
             chain.doFilter(request, response);
         } finally {
             ThreadLocalTempVar.removeTempTokenVar();

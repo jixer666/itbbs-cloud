@@ -15,7 +15,7 @@ public class DictDataConvert {
         DictData dictData = BeanUtil.copyProperties(dictDataDTO, DictData.class);
         dictData.setDictDataId(IdUtils.getId());
         dictData.setUserId(SecurityUtils.getUserId());
-        dictData.setCommonParams();
+        dictData.setInsertParams();
 
         return dictData;
     }

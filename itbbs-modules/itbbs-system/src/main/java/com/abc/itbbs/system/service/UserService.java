@@ -5,7 +5,7 @@ import com.abc.itbbs.common.core.domain.vo.PageResult;
 import com.abc.itbbs.system.domain.dto.UserDTO;
 import com.abc.itbbs.system.domain.dto.UserResetPwdDTO;
 import com.abc.itbbs.system.domain.vo.UserRoleVO;
-import com.abc.itbbs.system.domain.vo.UserVO;
+import com.abc.itbbs.api.system.domain.vo.UserVO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;

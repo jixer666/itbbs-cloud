@@ -1,10 +1,12 @@
 package com.abc.itbbs.blog.service.impl;
 
-import com.abc.itbbs.api.system.FileServiceClient;
+import com.abc.itbbs.api.system.OssServiceClient;
+import com.abc.itbbs.api.system.domain.vo.FileVO;
 import com.abc.itbbs.blog.config.MultipartSupportConfig;
 import com.abc.itbbs.blog.convert.TemplateConvert;
 import com.abc.itbbs.blog.service.TemplateService;
 import com.abc.itbbs.common.core.constant.FileSuffixConstants;
+import com.abc.itbbs.common.core.domain.vo.ApiResult;
 import com.abc.itbbs.common.core.util.AssertUtils;
 import com.abc.itbbs.common.core.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -32,27 +34,27 @@ public class TemplateServiceImpl implements TemplateService {
     private TemplateEngine templateEngine;
 
     @Autowired
-    private FileServiceClient fileServiceClient;
+    private OssServiceClient ossServiceClient;
 
     @Override
-    public void saveStaticToOss(String filename, String templateName, Map<String, Object> contextMap) {
+    public FileVO saveStaticToOss(String filename, String templateName, Map<String, Object> contextMap) {
         AssertUtils.isNotEmpty(templateName, "HTML模板名称不能为空");
         AssertUtils.isNotEmpty(filename, "文件名称不能为空");
 
         File file = generateFile(filename, templateName, contextMap);
 
-        saveToOss(file);
+        return saveToOss(file);
     }
 
-    private void saveToOss(File file) {
+    private FileVO saveToOss(File file) {
         if (Objects.isNull(file)) {
-            return;
+            return null;
         }
 
         // 将File转为MultipartFile
         MultipartFile multipartFile = MultipartSupportConfig.getMultipartFile(file);
 
-        fileServiceClient.uploadOss(TemplateConvert.convertOssFileUploadDTOByMultipartFile(multipartFile));
+        return ApiResult.invokeRemoteMethod(ossServiceClient.uploadOss(TemplateConvert.convertOssFileUploadDTOByMultipartFile(multipartFile)));
     }
 
 

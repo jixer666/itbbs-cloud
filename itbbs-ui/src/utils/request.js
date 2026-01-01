@@ -47,7 +47,7 @@ service.interceptors.response.use(
         duration: 5 * 1000
       })
 
-      console.log(res.code)
+      console.log(res)
       // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
       if (res.code === 401) {
         // to re-login
@@ -61,7 +61,7 @@ service.interceptors.response.use(
         //   })
         // })
         store.dispatch('user/resetToken').then(() => {
-          location.reload()
+          // location.reload()
         })
       }
       return Promise.reject(new Error(res.message || 'Error'))

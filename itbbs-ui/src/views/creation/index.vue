@@ -18,7 +18,7 @@
 
 <script>
 import TencentDocEditor from '@/components/Editor/index.vue'
-import { addArticle } from '@/api/blog/article'
+import { addArticleDraft, updateArticle } from '@/api/blog/article'
 import { getCategoryPage } from '@/api/blog/category'
 
 export default {
@@ -44,7 +44,9 @@ export default {
         articleType: 'original',
         reprintStatement: '',
         visibility: 'public',
-        creationStatement: []
+        creationStatement: [],
+        status: null,
+        articleId: null
       },
 
       // 常用标签
@@ -62,19 +64,36 @@ export default {
   },
 
   mounted() {
-    // 页面挂载后可以初始化一些数据
-    console.log('创作页面已挂载')
-
+    this.loadArticle()
     // 从API加载分类数据
     this.loadCategories()
   },
 
   beforeDestroy() {
-    // 页面销毁前可以执行清理操作
-    console.log('创作页面即将销毁')
+
   },
 
   methods: {
+    loadArticle() {
+      const articleId = this.$route.query.articleId || localStorage.getItem('creation_article_draft_id')
+      if (articleId) {
+        // 调用API获取文章数据
+        this.getArticle(articleId)
+      } else {
+        // 获取文章草稿数据
+        this.getArticleDraft()
+        // 如果没有文章ID，则重置编辑器
+        this.resetEditor()
+      }
+    },
+
+    getArticleDraft() {
+      // 调用API获取文章草稿数据
+      addArticleDraft().then(res => {
+        this.articleSettings.articleId = res.data.articleId
+      })
+    },
+
     /**
      * 加载分类数据
      */
@@ -88,30 +107,29 @@ export default {
             label: category.categoryName
           }
         })
-      }).catch(error => {
-        console.error('获取分类数据异常:', error)
       })
     },
+
     /**
      * 处理发布事件
      */
     handlePublish(articleData) {
-      addArticle(articleData).then(res => {
-        this.$message.success('文章发布成功')
+      articleData.status = 2
+      articleData.articleId = this.articleSettings.articleId
+      updateArticle(articleData).then(res => {
+        this.$message.success('发布成功')
+        localStorage.removeItem('creation_article_draft_id')
       })
-
-      // 发布成功后可以跳转到其他页面
-      // this.$router.push("/");
     },
 
     /**
      * 处理保存草稿事件
      */
     handleSaveDraft(draftData) {
-      console.log('保存草稿:', draftData)
-
-      // 这里可以添加实际的保存草稿逻辑
-      this.$message.success('草稿保存成功')
+      draftData.stauts = 1
+      updateArticle(draftData).then(res => {
+        this.$message.success('保存成功')
+      })
     },
 
     /**
