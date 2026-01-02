@@ -150,7 +150,12 @@ export default {
 
 <style lang="scss" scoped>
 .header-search {
+  width: 300px;
   font-size: 0 !important;
+
+  ::v-deep input {
+    border-radius: 16px;
+  }
 
   .search-icon {
     cursor: pointer;

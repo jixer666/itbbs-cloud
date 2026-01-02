@@ -5,8 +5,9 @@ import com.abc.itbbs.api.system.UserServiceClient;
 import com.abc.itbbs.api.system.domain.entity.User;
 import com.abc.itbbs.api.system.domain.vo.UserVO;
 import com.abc.itbbs.blog.domain.dto.ArticleHisDTO;
+import com.abc.itbbs.blog.domain.vo.ArticleMetaVO;
 import com.abc.itbbs.blog.service.ArticleHisService;
-import com.abc.itbbs.common.core.constant.ServiceConstants;
+import com.abc.itbbs.common.core.constant.ServerConstants;
 import com.abc.itbbs.common.core.domain.service.BaseServiceImpl;
 import com.abc.itbbs.common.core.domain.vo.ApiResult;
 import com.abc.itbbs.common.core.domain.vo.PageResult;
@@ -27,6 +28,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -143,11 +145,19 @@ public class ArticleServiceImpl extends BaseServiceImpl<ArticleMapper, Article> 
 
         // 处理文章地址
         if (!OssTypeEnum.LOCAL.equals(ossType)) {
-            filePath = ServiceConstants.OSS_SERVICE + "/article" + filePath;
+            filePath = ServerConstants.BLOG_SERVICE + "/article/" + filePath;
         }
 
         lambdaUpdate().set(Article::getHtmlFilePath, filePath)
                 .eq(Article::getArticleId, articleId)
                 .update();
     }
+
+    @Override
+    public ArticleMetaVO getArticleMetaInfo(Long articleId) {
+        AssertUtils.isNotEmpty(articleId, "文章ID不能为空");
+
+        return articleMapper.selectArticleMetaInfo(articleId);
+    }
+
 }

@@ -1,5 +1,7 @@
 package com.abc.itbbs.blog.controller;
 
+import com.abc.itbbs.api.system.domain.vo.UserVO;
+import com.abc.itbbs.blog.domain.vo.ArticleMetaVO;
 import com.abc.itbbs.blog.domain.vo.ArticleVO;
 import com.abc.itbbs.common.core.domain.vo.ApiResult;
 import com.abc.itbbs.common.core.domain.vo.PageResult;
@@ -55,5 +57,17 @@ public class ArticleController {
 
         return ApiResult.success();
     }
+
+    @ApiOperation("获取文章元信息")
+    @GetMapping("/info/meta/{articleId}")
+    public ApiResult<ArticleMetaVO> getArticleMetaInfo(@PathVariable("articleId") Long articleId) {
+        ArticleMetaVO articleMetaVO = articleService.getArticleMetaInfo(articleId);
+
+        return ApiResult.success(articleMetaVO);
+    }
+
+
+
+
 
 }

@@ -18,7 +18,7 @@
             <result property="creationStatement"    column="creation_statement"    />
             <result property="viewsCount"    column="views_count"    />
             <result property="likeCount"    column="like_count"    />
-            <result property="htmlFileId"    column="html_file_id"    />
+            <result property="htmlFilePath"    column="html_file_path"    />
             <result property="collectCount"    column="collect_count"    />
             <result property="createTime"    column="create_time"    />
             <result property="updateTime"    column="update_time"    />
@@ -26,12 +26,18 @@
             <result property="ver"    column="ver"    />
     </resultMap>
 
+    <resultMap type="com.abc.itbbs.blog.domain.vo.ArticleMetaVO" id="ArticleMetaResult">
+        <result property="viewsCount"    column="views_count"    />
+        <result property="likeCount"    column="like_count"    />
+        <result property="collectCount"    column="collect_count"    />
+    </resultMap>
+
     <sql id="selectArticleVo">
-        select article_id, user_id, title, content, summary, category_id, tag_details, cover, type, visible_range, html_file_id, creation_statement, views_count, like_count, collect_count, create_time, update_time, status, ver from tb_article
+        select article_id, user_id, title, content, summary, category_id, tag_details, cover, type, visible_range, html_file_path, creation_statement, views_count, like_count, collect_count, create_time, update_time, status, ver from tb_article
     </sql>
 
     <sql id="selectArticleWithoutVo">
-        select article_id, user_id, title, summary, category_id, tag_details, cover, type, visible_range, views_count, like_count, collect_count, create_time, status, ver, html_file_id from tb_article
+        select article_id, user_id, title, summary, category_id, tag_details, cover, type, visible_range, views_count, like_count, collect_count, create_time, status, ver, html_file_path from tb_article
     </sql>
 
     <select id="selectArticleList" resultMap="ArticleResult">
@@ -43,6 +49,11 @@
         <where>
             <if test="status != null and status != ''">and status = #{status}</if>
         </where>
+    </select>
+
+    <select id="selectArticleMetaInfo" resultMap="ArticleMetaResult">
+        select views_count, like_count, collect_count from tb_article
+        where article_id = #{articleId}
     </select>
 
 

@@ -34,4 +34,6 @@ public interface UserService extends IService<User> {
     User getUserByEmail(String email);
 
     Map<Long, User> getUserMapByUserIds(List<Long> userIds);
+
+    UserVO getUserInfo(Long userId);
 }

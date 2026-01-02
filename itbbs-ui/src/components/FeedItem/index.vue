@@ -41,7 +41,7 @@ export default {
   },
   methods: {
     toArticlePage(path) {
-      location.href = path
+      window.open(path, '_blank')
     },
     formatTime(time) {
       const date = new Date(time)
@@ -116,12 +116,22 @@ export default {
   font-weight: 800;
   margin-bottom: 8px;
   line-height: 1.3;
+  cursor: pointer;
+}
+.feed-title:hover {
+  color: #409EFF;
 }
 .feed-desc {
   color: #606266;
   line-height: 1.6;
   font-size: 13px;
   margin-bottom: 12px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-height: calc(1.6em * 3); /* 3行的高度 */
 }
 .feed-actions {
   display: flex;

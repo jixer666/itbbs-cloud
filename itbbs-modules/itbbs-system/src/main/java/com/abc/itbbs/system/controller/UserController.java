@@ -28,7 +28,7 @@ public class UserController {
 
     @Permission(value = "system:user:query")
     @ApiOperation("查询用户信息")
-    @GetMapping("/info")
+    @GetMapping("/current")
     public ApiResult<UserVO> getUserInfo() {
         UserVO userVO = userService.getUserInfoWithUiParam(SecurityUtils.getUserId());
 
@@ -111,6 +111,15 @@ public class UserController {
         Map<Long, User> userMap = userService.getUserMapByUserIds(userIds);
 
         return ApiResult.success(userMap);
+    }
+
+
+    @ApiOperation("根据ID查询用户信息")
+    @GetMapping("/info/{userId}")
+    public ApiResult<UserVO> getUserInfoById(@PathVariable("userId") Long userId) {
+        UserVO userVO = userService.getUserInfo(userId);
+
+        return ApiResult.success(userVO);
     }
 
 

@@ -1,12 +1,16 @@
 package com.abc.itbbs.blog.listener;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.json.JSONUtil;
+import com.abc.itbbs.api.system.UserServiceClient;
+import com.abc.itbbs.api.system.domain.entity.User;
 import com.abc.itbbs.api.system.domain.vo.FileVO;
 import com.abc.itbbs.blog.constant.TemplateConstants;
 import com.abc.itbbs.blog.domain.entity.Article;
 import com.abc.itbbs.blog.service.ArticleService;
 import com.abc.itbbs.blog.service.TemplateService;
 import com.abc.itbbs.common.core.constant.FileSuffixConstants;
+import com.abc.itbbs.common.core.domain.vo.ApiResult;
 import com.abc.itbbs.common.core.module.threadlocal.ThreadLocalTempVar;
 import com.abc.itbbs.common.mq.constant.RabbitMQConstants;
 import com.rabbitmq.client.Channel;
@@ -19,6 +23,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Map;
 
 /**
  * @author LiJunXi
@@ -38,6 +44,9 @@ public class ArticleCreateHtmlEventListener {
     @Autowired
     private ArticleService articleService;
 
+    @Autowired
+    private UserServiceClient userServiceClient;
+
     /**
      * 文章发布页面静态化事件监听
      */
@@ -47,9 +56,11 @@ public class ArticleCreateHtmlEventListener {
         try {
             ThreadLocalTempVar.setTempTokenVar(message.getMessageProperties().getHeader(tokenHeader));
 
+            Map<String, Object> articleContext = buildArticleHtmlContext(article);
+
             FileVO fileVO = templateService.saveStaticToOss(article.getArticleId() + "_" + article.getVer() + FileSuffixConstants.HTML,
                     TemplateConstants.ARTICLE_TEMPLATE,
-                    BeanUtil.beanToMap(article, false, true)
+                    articleContext
             );
 
             articleService.updateHtmlFilePathByArticleId(article.getArticleId(), fileVO.getFilePath());
@@ -62,6 +73,18 @@ public class ArticleCreateHtmlEventListener {
             ThreadLocalTempVar.removeTempTokenVar();
         }
         log.info("===完成消费文章页面静态化===");
+    }
+
+    private Map<String, Object> buildArticleHtmlContext(Article article) {
+        Map<String, Object> articleContext = BeanUtil.beanToMap(article, false, true);
+        articleContext.put("tagDetailsList", JSONUtil.toList(article.getTagDetails(), String.class));
+
+        Map<Long, User> userMap = ApiResult.invokeRemoteMethod(
+                userServiceClient.getUserMapByUserIds(Arrays.asList(article.getUserId()))
+        );
+        articleContext.put("userInfo", userMap.get(article.getUserId()));
+
+        return articleContext;
     }
 
 }

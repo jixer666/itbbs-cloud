@@ -67,6 +67,14 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
     }
 
     @Override
+    public UserVO getUserInfo(Long userId) {
+        AssertUtils.isNotEmpty(userId, "用户ID不能为空");
+        User user = userCache.get(userId);
+
+        return UserConvert.convertToUserVO(user, null);
+    }
+
+    @Override
     public PageResult getUserPageWithUiParam(UserDTO userDTO) {
         startPage();
         List<User> users = userMapper.selectUserList(userDTO);

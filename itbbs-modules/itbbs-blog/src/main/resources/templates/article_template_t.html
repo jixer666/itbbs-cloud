@@ -1,15 +1,13 @@
 <!DOCTYPE html>
-<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="article-id" th:content="${articleId}">
-    <meta name="author-id" th:content="${userId}">
-    <title th:text="${title} ? ${title} + ' - ITBBS' : 'ITBBS文章'"></title>
+    <title>【Vue2版】CSDN文章详情页复刻</title>
+    <!-- 1. 引入 Font Awesome 图标库 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://unpkg.com/element-ui@2.15.14/lib/theme-chalk/index.css">
+    <!-- 2. 引入 Vue 2.x -->
     <script src="https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.js"></script>
-    <script src="https://unpkg.com/element-ui@2.15.14/lib/index.js"></script>
 
     <style>
         /* --- 全局样式 & Reset --- */
@@ -55,51 +53,13 @@
 
     <div class="main-container">
         <!-- 左侧悬浮组件 -->
-        <left-toolbox :stats="articleStats" v-loading="articleMetaLoading"></left-toolbox>
+        <left-toolbox :stats="articleStats"></left-toolbox>
 
         <!-- 中间文章组件 -->
-        <div class="article-area">
-            <div class="article-title-box">
-                <h1 class="title-article" th:text="${title}">文章标题</h1>
-            </div>
-
-            <div class="article-info-box">
-                <div class="article-bar-top">
-                  <span class="article-type-img" th:text="${type == 1 ? '原创' : (type == 2 ? '转载' : '翻译')}">
-                    原创
-                  </span>
-                  <div class="article-copyright">
-                      <span class="author-name" th:text="${userInfo.nickname}">作者名</span>
-                      <span style="margin: 0 10px;">|</span>
-                      <span th:text="${#dates.format(createTime, 'yyyy-MM-dd HH:mm:ss')}">发布时间</span>
-                  </div>
-                </div>
-                <div class="read-count" v-loading="articleMetaLoading">
-                    <i class="fa fa-eye"></i> <span>{{ articleStats.viewsCount }}</span> 阅读
-                    <span style="margin-left:10px;"><i class="fa fa-thumbs-up"></i> <span>{{ articleStats.likeCount }}</span> 点赞</span>
-                    <span style="margin-left:10px;"><i class="fa fa-heart"></i> <span>{{ articleStats.collectCount }}</span> 收藏</span>
-                </div>
-            </div>
-
-            <p class="tags-row">
-                文章标签：
-                <span th:each="tag : ${tagDetailsList}" th:text="'#' + ${tag}" class="tag-item"></span>
-            </p>
-
-            <div id="content_views" th:utext="${content}">
-                <!-- 这里会显示从数据库读取的文章内容 -->
-            </div>
-
-            <br><br>
-            <hr style="border:0; border-top:1px solid #eee;">
-        </div>
+        <article-content :article="articleInfo"></article-content>
 
         <!-- 右侧侧边栏组件 -->
-        <right-sidebar
-                :author-child-loading="authorLoading"
-                :author="authorInfo"
-                :hot-list="hotArticles">
-        </right-sidebar>
+        <right-sidebar :author="authorInfo" :hot-list="hotArticles"></right-sidebar>
     </div>
 </div>
 
@@ -107,12 +67,11 @@
 
 <!-- 1. 顶部导航栏模板 -->
 <script type="text/x-template" id="tpl-nav-bar">
-    <nav class="itbbs-toolbar">
+    <nav class="csdn-toolbar">
         <div class="toolbar-container">
             <div class="left-part">
-                <div class="logo">ITBBS</div>
+                <div class="logo">CSDN</div>
                 <div class="nav-links">
-                    <!-- 使用Vue渲染导航项 -->
                     <a v-for="item in navItems" :key="item">{{ item }}</a>
                 </div>
             </div>
@@ -125,6 +84,7 @@
                 <div class="avatar">
                     <img :src="userAvatar" alt="Me">
                 </div>
+                <a class="bell-icon"><i class="fa fa-bell"></i></a>
             </div>
         </div>
     </nav>
@@ -135,15 +95,15 @@
     <aside class="left-toolbox">
         <div class="tool-item" @click="handleLike">
             <i class="fa fa-thumbs-up" :class="{active: stats.isLiked}"></i>
-            <span>{{ stats.likeCount }}</span>
+            <span>{{ stats.likes }}</span>
         </div>
         <div class="tool-item">
             <i class="fa fa-comment-dots"></i>
-            <span>{{ stats.commentCount }}</span>
+            <span>{{ stats.comments }}</span>
         </div>
-        <div class="tool-item" @click="handleCollect">
-            <i class="fa fa-star" :class="{active: stats.isCollected}"></i>
-            <span>{{ stats.collectCount }}</span>
+        <div class="tool-item">
+            <i class="fa fa-star"></i>
+            <span>{{ stats.collects }}</span>
         </div>
         <div class="tool-item">
             <i class="fa fa-share-alt"></i>
@@ -152,30 +112,64 @@
     </aside>
 </script>
 
-<!-- 3. 右侧侧边栏模板 -->
+<!-- 3. 文章内容模板 -->
+<script type="text/x-template" id="tpl-article-content">
+    <main class="article-area">
+        <div class="article-title-box">
+            <h1 class="title-article">{{ article.title }}</h1>
+        </div>
+
+        <div class="article-info-box">
+            <div class="article-bar-top">
+                <span class="article-type-img">原创</span>
+                <div class="article-copyright">
+                    <span class="author-name">{{ article.authorName }}</span>
+                    <span style="margin: 0 10px;">|</span>
+                    <span>{{ article.publishTime }}</span>
+                </div>
+            </div>
+            <div class="read-count">
+                <i class="fa fa-eye"></i> {{ article.views }} 阅读
+                <span style="margin-left:10px;"><i class="fa fa-heart"></i> {{ article.favorites }} 收藏</span>
+            </div>
+        </div>
+
+        <!-- 模拟文章正文 (v-html渲染) -->
+        <div id="content_views" v-html="article.contentHtml"></div>
+
+        <br><br>
+        <hr style="border:0; border-top:1px solid #eee;">
+        <p class="tags-row">
+            文章分类：
+            <span v-for="tag in article.tags" :key="tag" class="tag-item">{{ tag }}</span>
+        </p>
+    </main>
+</script>
+
+<!-- 4. 右侧侧边栏模板 -->
 <script type="text/x-template" id="tpl-right-sidebar">
     <aside class="right-sidebar">
         <!-- 作者卡片 -->
-        <div class="profile-card" v-loading="authorChildLoading">
+        <div class="profile-card">
             <div class="profile-header">
                 <img :src="author.avatar" alt="Author">
                 <div class="profile-info">
-                    <div class="name">{{ author.nickname }}</div>
-                    <div class="level">{{ author.description }}</div>
+                    <div class="name">{{ author.name }}</div>
+                    <div class="level">码龄 {{ author.years }}年 | {{ author.location }}</div>
                 </div>
             </div>
             <div class="data-info">
                 <div class="data-item">
-                    <span class="count">{{ author.originalCount }}</span><span class="label">文章</span>
+                    <span class="count">{{ author.originalCount }}</span><span class="label">原创</span>
                 </div>
                 <div class="data-item">
                     <span class="count">{{ author.fans }}</span><span class="label">粉丝</span>
                 </div>
                 <div class="data-item">
-                    <span class="count">{{ author.likeCount }}</span><span class="label">获赞</span>
+                    <span class="count">{{ author.likes }}</span><span class="label">获赞</span>
                 </div>
                 <div class="data-item">
-                    <span class="count">{{ author.commentCount }}</span><span class="label">评论</span>
+                    <span class="count">{{ author.comments }}</span><span class="label">评论</span>
                 </div>
             </div>
             <div class="opt-btn-box">
@@ -186,7 +180,7 @@
             </div>
         </div>
 
-        <!-- 热门文章列表 -->
+        <!-- 热门文章列表 (v-for) -->
         <div class="recommend-box">
             <div class="sidebar-title">热门文章</div>
             <ul class="rec-list">
@@ -197,7 +191,7 @@
             </ul>
         </div>
 
-        <!-- 目录-->
+        <!-- 目录 (静态模拟) -->
         <div class="toc-box">
             <div class="sidebar-title">目录</div>
             <ul class="toc-list">
@@ -213,20 +207,21 @@
 <!-- ================= Vue 逻辑代码 ================= -->
 <script>
     // --- 组件 CSS 样式 (注入到 Head 中以保持单文件整洁) ---
+    // 实际开发中这些应该写在 .vue 文件的 <style scoped> 中
     const styles = `
             /* Navbar Styles */
-            .itbbs-toolbar { height: 50px; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); position: fixed; top: 0; width: 100%; z-index: 1000; display: flex; justify-content: center; }
+            .csdn-toolbar { height: 48px; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); position: fixed; top: 0; width: 100%; z-index: 1000; display: flex; justify-content: center; }
             .toolbar-container { width: 1380px; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; }
             .left-part { display: flex; align-items: center; }
-            .logo { font-size: 22px; font-weight: 900; color: #409EFF; margin-right: 20px; }
+            .logo { font-size: 22px; font-weight: 900; color: #fc5531; margin-right: 20px; font-family: serif; }
             .nav-links a { padding: 0 10px; color: #555; font-weight: 500; cursor: pointer; }
             .nav-links a:hover { color: #222; }
             .search-box { flex: 1; max-width: 400px; margin: 0 20px; position: relative; }
             .search-box input { width: 100%; height: 32px; border: 1px solid #ccc; border-radius: 16px; padding: 0 15px; background: #f5f6f7; outline: none; transition: 0.3s; }
-            .search-box input:focus { border-color: #409EFF; background: #fff; }
+            .search-box input:focus { border-color: #fc5531; background: #fff; }
             .search-btn { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: #888; cursor: pointer; }
             .user-actions { display: flex; align-items: center; gap: 20px; }
-            .btn-write { background: #409EFF; color: #fff; padding: 5px 16px; border-radius: 16px; font-size: 14px; display: flex; align-items: center; gap: 5px; cursor: pointer;}
+            .btn-write { background: #fc5531; color: #fff; padding: 5px 16px; border-radius: 16px; font-size: 14px; display: flex; align-items: center; gap: 5px; cursor: pointer;}
             .avatar { width: 32px; height: 32px; border-radius: 50%; overflow: hidden; background: #eee; }
             .avatar img { width: 100%; height: 100%; object-fit: cover; }
             .bell-icon { color: #999; }
@@ -234,8 +229,8 @@
             /* Left Toolbox */
             .left-toolbox { width: 48px; position: fixed; margin-left: -60px; top: 140px; display: flex; flex-direction: column; gap: 15px; z-index: 99; }
             .tool-item { width: 48px; height: 48px; background: #fff; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; color: #999; transition: 0.2s; }
-            .tool-item:hover { color: #409EFF; }
-            .tool-item i.active { color: #409EFF; }
+            .tool-item:hover { color: #fc5531; }
+            .tool-item i.active { color: #fc5531; }
             .tool-item span { font-size: 10px; }
 
             /* Article Area */
@@ -243,9 +238,9 @@
             .title-article { font-size: 28px; font-weight: 700; color: #222; margin-bottom: 15px; word-break: break-all; }
             .article-info-box { background: #f8f8f8; padding: 10px; border-radius: 4px; display: flex; justify-content: space-between; color: #999abc; margin-bottom: 20px; }
             .article-bar-top { display: flex; align-items: center; gap: 15px; }
-            .article-type-img { height: 20px; background: #409EFF; color: #fff; padding: 0 6px; border-radius: 2px; font-size: 12px; line-height: 20px; margin-right: 5px; }
+            .article-type-img { height: 20px; background: #fc5531; color: #fff; padding: 0 6px; border-radius: 2px; font-size: 12px; line-height: 20px; margin-right: 5px; }
             .author-name { color: #555; font-weight: 500; }
-            .tags-row { color: #999; font-size: 12px; margin-top: 20px; margin-bottom: 30px;}
+            .tags-row { color: #999; font-size: 12px; margin-top: 20px; }
             .tag-item { background: #f0f0f5; padding: 2px 8px; border-radius: 4px; color: #555; margin-right: 5px; }
 
             /* Content Styles */
@@ -268,14 +263,14 @@
             .data-item .count { display: block; font-weight: bold; font-size: 16px; }
             .data-item .label { font-size: 12px; color: #999; }
             .opt-btn-box { display: flex; gap: 10px; }
-            .btn-follow { flex: 1; height: 32px; border: 1px solid #409EFF; color: #409EFF; background: #fff; border-radius: 4px; cursor: pointer; }
+            .btn-follow { flex: 1; height: 32px; border: 1px solid #fc5531; color: #fc5531; background: #fff; border-radius: 4px; cursor: pointer; }
             .btn-follow:hover { background: #fff5f2; }
             .btn-pm { flex: 1; height: 32px; border: 1px solid #ccccd8; color: #555; background: #fff; border-radius: 4px; cursor: pointer; }
 
-            .sidebar-title { font-size: 16px; font-weight: 600; margin-bottom: 10px; border-left: 4px solid #409EFF; padding-left: 10px; line-height: 18px; }
+            .sidebar-title { font-size: 16px; font-weight: 600; margin-bottom: 10px; border-left: 4px solid #fc5531; padding-left: 10px; line-height: 18px; }
             .rec-list li { margin-bottom: 12px; }
             .rec-list a { font-size: 14px; color: #555; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-            .rec-list a:hover { color: #409EFF; }
+            .rec-list a:hover { color: #fc5531; }
             .rec-info { font-size: 12px; color: #999; margin-top: 4px; }
             .toc-list { padding-left: 10px; font-size: 13px; color: #555; }
             .toc-list li { margin-bottom: 8px; }
@@ -298,13 +293,6 @@
                 navItems: ['博客', '下载', '学习', '社区', '云服务']
             }
         },
-        mounted() {
-            // 从Thymeleaf传递的数据中获取导航项
-            const navItemsAttr = this.$el.getAttribute('data-nav-items');
-            if (navItemsAttr) {
-                this.navItems = JSON.parse(navItemsAttr);
-            }
-        },
         methods: {
             handleSearch() {
                 if(!this.searchText) return;
@@ -317,40 +305,34 @@
     const LeftToolbox = {
         template: '#tpl-left-toolbox',
         props: ['stats'],
-        mounted() {
-        },
         methods: {
             handleLike() {
+                // 模拟点赞逻辑
                 if (this.stats.isLiked) {
-                    this.stats.likeCount--;
+                    this.stats.likes--;
                     this.stats.isLiked = false;
                 } else {
-                    this.stats.likeCount++;
+                    this.stats.likes++;
                     this.stats.isLiked = true;
-                }
-            },
-            handleCollect() {
-                if (this.stats.isCollected) {
-                    this.stats.collectCount--;
-                    this.stats.isCollected = false;
-                } else {
-                    this.stats.collectCount++;
-                    this.stats.isCollected = true;
                 }
             }
         }
     };
 
-    // 3. RightSidebar 组件
+    // 3. ArticleContent 组件
+    const ArticleContent = {
+        template: '#tpl-article-content',
+        props: ['article']
+    };
+
+    // 4. RightSidebar 组件
     const RightSidebar = {
         template: '#tpl-right-sidebar',
-        props: ['author', 'hotList', 'authorChildLoading'],
+        props: ['author', 'hotList'],
         data() {
             return {
                 isFollowing: false
             }
-        },
-        mounted() {
         },
         methods: {
             toggleFollow() {
@@ -359,112 +341,129 @@
         }
     };
 
-    Vue.use(window.ELEMENT);
-
     // ----------------- Vue 根实例 -----------------
     new Vue({
         el: '#app',
         components: {
             'nav-bar': NavBar,
             'left-toolbox': LeftToolbox,
+            'article-content': ArticleContent,
             'right-sidebar': RightSidebar
         },
         data() {
             return {
-                // 当前登录用户数据 - 可以用Thymeleaf传值
+                // 当前登录用户数据
                 currentUser: {
-                    avatar: 'https://profile.itbbsimg.cn/8/7/7/2_qq_35400000'
+                    avatar: 'https://profile.csdnimg.cn/8/7/7/2_qq_35400000'
                 },
 
-                // 文章数据
+                // 文章数据 (模拟后端返回)
+                articleInfo: {
+                    title: 'Vue2 核心原理与组件化实战【CSDN复刻版】',
+                    authorName: '前端架构师_Jack',
+                    publishTime: '2024-06-01 10:24:32',
+                    views: '12,580',
+                    favorites: 368,
+                    tags: ['Vue.js', '前端开发', 'JavaScript'],
+                    // 模拟 HTML 字符串内容
+                    contentHtml: `
+                            <p>在前端开发中，<strong>Vue.js</strong> 是目前最流行的框架之一。本文将带你深入理解 Vue2 的 Options API 风格。</p>
+                            <h2>1. 数据驱动视图</h2>
+                            <p>Vue 的核心思想是数据驱动。我们不再手动操作 DOM，而是修改数据。</p>
+                            <pre>
+data() {
+    return {
+        message: 'Hello CSDN'
+    }
+}</pre>
+                            <h2>2. 组件化开发</h2>
+                            <p>通过 props 和 events，我们可以构建出复杂的组件树。</p>
+        <p>在前端开发中，<strong>Vue.js</strong> 是目前最流行的框架之一。本文将带你深入理解 Vue2 的 Options API 风格。</p>
+                            <h2>1. 数据驱动视图</h2>
+                            <p>Vue 的核心思想是数据驱动。我们不再手动操作 DOM，而是修改数据。</p>
+                            <pre>
+data() {
+    return {
+        message: 'Hello CSDN'
+    }
+}</pre>
+                            <h2>2. 组件化开发</h2>
+                            <p>通过 props 和 events，我们可以构建出复杂的组件树。</p>
+        <p>在前端开发中，<strong>Vue.js</strong> 是目前最流行的框架之一。本文将带你深入理解 Vue2 的 Options API 风格。</p>
+                            <h2>1. 数据驱动视图</h2>
+                            <p>Vue 的核心思想是数据驱动。我们不再手动操作 DOM，而是修改数据。</p>
+                            <pre>
+data() {
+    return {
+        message: 'Hello CSDN'
+    }
+}</pre>
+                            <h2>2. 组件化开发</h2>
+                            <p>通过 props 和 events，我们可以构建出复杂的组件树。</p>
+        <p>在前端开发中，<strong>Vue.js</strong> 是目前最流行的框架之一。本文将带你深入理解 Vue2 的 Options API 风格。</p>
+                            <h2>1. 数据驱动视图</h2>
+                            <p>Vue 的核心思想是数据驱动。我们不再手动操作 DOM，而是修改数据。</p>
+                            <pre>
+data() {
+    return {
+        message: 'Hello CSDN'
+    }
+}</pre>
+                            <h2>2. 组件化开发</h2>
+                            <p>通过 props 和 events，我们可以构建出复杂的组件树。</p>
+        <p>在前端开发中，<strong>Vue.js</strong> 是目前最流行的框架之一。本文将带你深入理解 Vue2 的 Options API 风格。</p>
+                            <h2>1. 数据驱动视图</h2>
+                            <p>Vue 的核心思想是数据驱动。我们不再手动操作 DOM，而是修改数据。</p>
+                            <pre>
+data() {
+    return {
+        message: 'Hello CSDN'
+    }
+}</pre>
+                            <h2>2. 组件化开发</h2>
+                            <p>通过 props 和 events，我们可以构建出复杂的组件树。</p>
+        <p>在前端开发中，<strong>Vue.js</strong> 是目前最流行的框架之一。本文将带你深入理解 Vue2 的 Options API 风格。</p>
+                            <h2>1. 数据驱动视图</h2>
+                            <p>Vue 的核心思想是数据驱动。我们不再手动操作 DOM，而是修改数据。</p>
+                            <pre>
+data() {
+    return {
+        message: 'Hello CSDN'
+    }
+}</pre>
+                            <h2>2. 组件化开发</h2>
+                            <p>通过 props 和 events，我们可以构建出复杂的组件树。</p>
+                        `
+                },
+
+                // 侧边栏点赞数据
                 articleStats: {
-                    viewsCount: 0,
-                    likeCount: 0,      
-                    commentCount: 0,   
-                    collectCount: 0,   
-                    isLiked: false,
+                    likes: 128,
+                    comments: 24,
+                    collects: 66,
+                    isLiked: false
                 },
 
                 // 作者信息
                 authorInfo: {
-                    nickname: '',
-                    avatar: '',
-                    description: '',
-                    originalCount: 0,
-                    fans: 0,
-                    likeCount: 0,
-                    commentCount: 0
+                    name: '前端架构师_Jack',
+                    avatar: 'https://profile.csdnimg.cn/8/7/7/2_qq_35400000',
+                    years: 8,
+                    location: '北京',
+                    originalCount: 482,
+                    fans: '10万+',
+                    likes: 2560,
+                    comments: 320
                 },
 
                 // 热门文章列表
-                hotArticles: [],
-
-                articleMetaLoading: false,
-                authorLoading: false
+                hotArticles: [
+                    { title: '2024年前端面试题汇总（附答案解析）', views: '5.2w' },
+                    { title: 'Vue3.0 响应式原理深度解析', views: '2.1w' },
+                    { title: '这可能是最全的 Webpack 性能优化指南', views: '1.8w' },
+                    { title: 'JavaScript 闭包与作用域链详解', views: '9000+' }
+                ]
             }
-        },
-        mounted() {
-            const metaArticleId = document.querySelector('meta[name="article-id"]');
-            this.articleId = metaArticleId.getAttribute('content');
-            const authorId = document.querySelector('meta[name="author-id"]');
-            this.authorId = authorId.getAttribute('content');
-
-            this.loadArticleMeta();
-            this.loadAuthorInfo();
-        },
-        methods: {
-            async loadArticleMeta() {
-                if (!this.articleId || this.articleMetaLoading) return;
-
-                try {
-                    this.articleMetaLoading = true;
-                    const response = await fetch(`http://blog.itbbs.com/blog/article/info/meta/${this.articleId}`);
-                    const responseBody = await response.json();
-
-                    if (responseBody.code != 200) {
-                        this.$message.error(response.msg)
-                    }
-
-                    const data = responseBody.data;
-
-                    // 更新统计数据
-                    if (data.viewsCount !== undefined) {
-                        this.articleStats.viewsCount = data.viewsCount;
-                    }
-                    if (data.likeCount !== undefined) {
-                        this.articleStats.likeCount = data.likeCount;
-                    }
-                    if (data.collectCount !== undefined) {
-                        this.articleStats.collectCount = data.collectCount;
-                    }
-
-                } catch (error) {
-                    console.error('加载文章元数据失败:', error);
-                } finally {
-                    this.articleMetaLoading = false;
-                }
-            },
-            async loadAuthorInfo() {
-                if (!this.authorId || this.authorLoading) return;
-
-                try {
-                    this.authorLoading = true;
-                    const response = await fetch(`http://system.itbbs.com/system/user/info/${this.authorId}`);
-                    const responseBody = await response.json();
-
-                    if (responseBody.code != 200) {
-                        this.$message.error(response.msg)
-                    }
-
-                    const data = responseBody.data;
-                    this.authorInfo = data;
-
-                } catch (error) {
-                    console.error('加载文章作者信息失败:', error);
-                } finally {
-                    this.authorLoading = false;
-                }
-            },
         }
     });
 </script>

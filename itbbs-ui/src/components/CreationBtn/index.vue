@@ -1,6 +1,6 @@
 <template>
   <div class="creation-btn">
-    <el-button type="primary" round @click="toCreation">创作</el-button>
+    <el-button type="primary" round @click="toCreation" size="medium">创作</el-button>
   </div>
 </template>
 

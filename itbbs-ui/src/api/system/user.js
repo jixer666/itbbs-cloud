@@ -8,9 +8,9 @@ export function login(data) {
   })
 }
 
-export function getInfo() {
+export function getCurrentInfo() {
   return request({
-    url: process.env.VUE_APP_SYSTEM_BASE_API + '/system/user/info',
+    url: process.env.VUE_APP_SYSTEM_BASE_API + '/system/user/current',
     method: 'get'
   })
 }

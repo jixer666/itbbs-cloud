@@ -20,6 +20,8 @@ public class UserVO {
 
     private String nickname;
 
+    private String description;
+
     private List<String> roles;
 
     private Date createTime;

@@ -29,9 +29,15 @@ public class FeignTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String feignToken = request.getHeader(CommonConstants.FEIGN_TOKEN_HEADER);
         if (StringUtils.isEmpty(feignToken) && !whiteToken.equals(feignToken)) {
+            // 校验是否是 openfeign 调用，如果不是就直接返回
             filterChain.doFilter(request, response);
             return;
         }
+
+        // 匿名用户
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null, null);
+        authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
         request.setAttribute(CommonConstants.FEIGN_REQUEST_FLAG, true);
 

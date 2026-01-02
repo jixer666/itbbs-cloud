@@ -10,6 +10,7 @@
         <result property="password"    column="password"    />
         <result property="avatar"    column="avatar"    />
         <result property="nickname"    column="nickname"    />
+        <result property="description"    column="description"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateTime"    column="update_time"    />
         <result property="status"    column="status"    />
@@ -17,7 +18,7 @@
     </resultMap>
 
     <sql id="selectUserVo">
-        select user_id, username, password, avatar, nickname, create_time, update_time, status, ver from tb_user
+        select user_id, username, password, avatar, nickname, description, create_time, update_time, status, ver from tb_user
     </sql>
     <select id="selectUserList" resultMap="UserResult">
         <include refid="selectUserVo" />
@@ -27,7 +28,7 @@
         </where>
     </select>
     <select id="selectByIds" resultMap="UserResult">
-        select user_id, username, avatar, nickname from tb_user
+        select user_id, username, avatar, nickname, description from tb_user
         where user_id in
         <foreach collection="list" item="id" open="(" separator=", " close=")">
             #{id}
