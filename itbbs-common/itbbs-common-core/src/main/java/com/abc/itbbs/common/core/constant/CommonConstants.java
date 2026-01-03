@@ -211,4 +211,5 @@ public class CommonConstants {
      */
     public static final String MQ_USER_INFO = "mq-user-info";
 
+    public static final String RATE_LIMIT_KEY = "rate_limit:";
 }
