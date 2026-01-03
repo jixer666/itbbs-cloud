@@ -107,6 +107,12 @@
 
             <dependency>
                 <groupId>com.abc</groupId>
+                <artifactId>itbbs-common-job</artifactId>
+                <version>${itbbs.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.abc</groupId>
                 <artifactId>itbbs-api</artifactId>
                 <version>${itbbs.version}</version>
             </dependency>

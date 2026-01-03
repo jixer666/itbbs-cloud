@@ -38,5 +38,4 @@ public class JobLog extends BaseEntity {
     @ApiModelProperty("异常信息")
     private String exceptionInfo;
 
-
 }

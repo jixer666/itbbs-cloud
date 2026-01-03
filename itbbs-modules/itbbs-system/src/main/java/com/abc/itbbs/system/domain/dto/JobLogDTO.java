@@ -45,6 +45,9 @@ public class JobLogDTO {
 
     public void checkSaveParams() {
         AssertUtils.isNotEmpty(this, "定时任务日志参数不能为空");
+        AssertUtils.isNotEmpty(jobName, "日志名称不能为空");
+        AssertUtils.isNotEmpty(invokeTarget, "调用目标字符串不能为空");
+        AssertUtils.isNotEmpty(jobMessage, "日志信息不能为空");
     }
 
     public void checkDeleteParams() {

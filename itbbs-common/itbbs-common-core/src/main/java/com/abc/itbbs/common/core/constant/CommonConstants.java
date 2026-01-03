@@ -42,12 +42,12 @@ public class CommonConstants {
     /**
      * 通用成功标识
      */
-    public static final String SUCCESS = "0";
+    public static final Integer SUCCESS = 1;
 
     /**
      * 通用失败标识
      */
-    public static final String FAIL = "1";
+    public static final Integer FAIL = 2;
 
     /**
      * 登录成功

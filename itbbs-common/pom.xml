@@ -20,6 +20,7 @@
         <module>itbbs-common-captcha</module>
         <module>itbbs-common-oss</module>
         <module>itbbs-common-mq</module>
+        <module>itbbs-common-job</module>
     </modules>
 
 

@@ -19,4 +19,17 @@ public class JobLogConvert {
 
         return jobLog;
     }
+
+    public static JobLog buildDefaultJobLogByTask(String taskName, String invokeTarget, Integer status, String errorMsg) {
+        JobLog jobLog = new JobLog();
+        jobLog.setJobLogId(IdUtils.getId());
+        jobLog.setInsertParams();
+
+        jobLog.setJobMessage(taskName);
+        jobLog.setStatus(status);
+        jobLog.setInvokeTarget(invokeTarget);
+        jobLog.setExceptionInfo(errorMsg);
+
+        return jobLog;
+    }
 }
