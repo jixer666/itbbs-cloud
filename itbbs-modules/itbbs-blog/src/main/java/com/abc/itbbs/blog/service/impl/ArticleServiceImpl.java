@@ -5,8 +5,11 @@ import com.abc.itbbs.api.system.UserServiceClient;
 import com.abc.itbbs.api.system.domain.entity.User;
 import com.abc.itbbs.api.system.domain.vo.UserVO;
 import com.abc.itbbs.blog.domain.dto.ArticleHisDTO;
+import com.abc.itbbs.blog.domain.dto.ArticleUpdateCountDTO;
+import com.abc.itbbs.blog.domain.enums.ArticleStatusEnum;
 import com.abc.itbbs.blog.domain.vo.ArticleMetaVO;
 import com.abc.itbbs.blog.service.ArticleHisService;
+import com.abc.itbbs.common.core.constant.CommonConstants;
 import com.abc.itbbs.common.core.constant.ServerConstants;
 import com.abc.itbbs.common.core.domain.service.BaseServiceImpl;
 import com.abc.itbbs.common.core.domain.vo.ApiResult;
@@ -18,10 +21,15 @@ import com.abc.itbbs.blog.domain.entity.Article;
 import com.abc.itbbs.blog.domain.vo.ArticleVO;
 import com.abc.itbbs.blog.mapper.ArticleMapper;
 import com.abc.itbbs.blog.service.ArticleService;
+import com.abc.itbbs.common.core.util.StringUtils;
 import com.abc.itbbs.common.mq.constant.RabbitMQConstants;
 import com.abc.itbbs.common.mq.producer.RabbitMQProducer;
 import com.abc.itbbs.common.oss.domain.enums.OssTypeEnum;
+import com.abc.itbbs.common.redis.constant.CacheConstants;
+import com.abc.itbbs.common.redis.util.RedisUtils;
 import com.abc.itbbs.common.security.util.SecurityUtils;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,6 +40,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -157,7 +166,63 @@ public class ArticleServiceImpl extends BaseServiceImpl<ArticleMapper, Article> 
     public ArticleMetaVO getArticleMetaInfo(Long articleId) {
         AssertUtils.isNotEmpty(articleId, "文章ID不能为空");
 
-        return articleMapper.selectArticleMetaInfo(articleId);
+        ArticleMetaVO articleMetaVO = new ArticleMetaVO();
+        articleMetaVO.setViewsCount(getArticleViewsCount(articleId));
+        articleMetaVO.setLikeCount(CommonConstants.ZERO);
+        articleMetaVO.setCollectCount(CommonConstants.ZERO);
+
+        return articleMetaVO;
     }
 
+    @Override
+    public Integer getArticleViewsCount(Long articleId) {
+        AssertUtils.isNotEmpty(articleId, "文章ID不能为空");
+
+        String viewsCountKey = CacheConstants.getFinalKey(CacheConstants.ARTICLE_VIEWS_COUNT, articleId);
+        String viewsCountStr = RedisUtils.get(viewsCountKey);
+        if (StringUtils.isEmpty(viewsCountStr)) {
+            // 缓存过期，重新设置缓存
+            Integer count = articleMapper.selectArticleViewsCount(articleId);
+            RedisUtils.set(viewsCountKey, count, 7 * 24, TimeUnit.HOURS);
+
+            return count;
+        }
+
+        return Integer.valueOf(viewsCountStr);
+    }
+
+    @Override
+    public void increaseArticleViewsCount(Long articleId) {
+        AssertUtils.isNotEmpty(articleId, "文章ID不能为空");
+        AssertUtils.isTrue(checkArticleExist(articleId), "文章不存在");
+
+        // 目的是为了检查缓存是否过期
+        getArticleViewsCount(articleId);
+
+        RedisUtils.inc(CacheConstants.getFinalKey(CacheConstants.ARTICLE_VIEWS_COUNT, articleId), 7 * 24, TimeUnit.HOURS);
+
+        // 加入到待同步集合
+        RedisUtils.sSet(CacheConstants.ARTICLE_WAIT_DO_TASK, articleId);
+    }
+
+    private Boolean checkArticleExist(Long articleId) {
+        AssertUtils.isNotEmpty(articleId, "文章ID不能为空");
+
+        Integer count = articleMapper.selectCount(
+                new LambdaQueryWrapper<Article>()
+                        .eq(Article::getArticleId, articleId)
+                        .eq(Article::getStatus, ArticleStatusEnum.PUBLISHED.getStatus())
+        );
+
+        return count > 0;
+    }
+
+    @Override
+    public void updateArticleCountBath(List<ArticleUpdateCountDTO> articleUpdateCountDTOList) {
+        if (CollectionUtils.isEmpty(articleUpdateCountDTOList)) {
+            return;
+        }
+
+        articleMapper.updateArticleCountBath(articleUpdateCountDTOList);
+    }
 }

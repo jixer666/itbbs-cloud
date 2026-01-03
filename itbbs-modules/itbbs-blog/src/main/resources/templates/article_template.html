@@ -411,8 +411,30 @@
 
             this.loadArticleMeta();
             this.loadAuthorInfo();
+            this.increaseArticleViewsCount();
         },
         methods: {
+            async increaseArticleViewsCount() {
+                if (!this.articleId) return;
+
+                try {
+                    const response = await fetch(`http://blog.itbbs.com/blog/article/viewsCount/${this.articleId}`,
+                        {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({})
+                        });
+                    const responseBody = await response.json();
+
+                    if (responseBody.code != 200) {
+                        this.$message.error(responseBody.msg)
+                    }
+                } catch (error) {
+                    console.error('新增文章浏览量出错:', error);
+                }
+            },
             async loadArticleMeta() {
                 if (!this.articleId || this.articleMetaLoading) return;
 
@@ -422,7 +444,7 @@
                     const responseBody = await response.json();
 
                     if (responseBody.code != 200) {
-                        this.$message.error(response.msg)
+                        this.$message.error(responseBody.msg)
                     }
 
                     const data = responseBody.data;
@@ -453,7 +475,7 @@
                     const responseBody = await response.json();
 
                     if (responseBody.code != 200) {
-                        this.$message.error(response.msg)
+                        this.$message.error(responseBody.msg)
                     }
 
                     const data = responseBody.data;

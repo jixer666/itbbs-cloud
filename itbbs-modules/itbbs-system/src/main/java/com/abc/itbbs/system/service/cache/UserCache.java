@@ -24,7 +24,7 @@ public class UserCache extends AbstractRedisStringCache<Long, User> {
 
     @Override
     protected String getKey(Long id) {
-        return CacheConstants.getFinalKey(CacheConstants.USER_UID, id);
+        return CacheConstants.getFinalKey(CacheConstants.USER_INFO, id);
     }
 
     @Override
@@ -35,6 +35,6 @@ public class UserCache extends AbstractRedisStringCache<Long, User> {
 
     @Override
     protected Long getExpireSeconds() {
-        return CacheConstants.USER_UID_EXPIRE_TIME;
+        return CacheConstants.USER_INFO_EXPIRE_TIME;
     }
 }

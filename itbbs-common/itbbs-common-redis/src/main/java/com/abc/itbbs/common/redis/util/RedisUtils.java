@@ -493,6 +493,21 @@ public class RedisUtils {
     }
 
     /**
+     * 根据key获取Set中的随机length个值
+     *
+     * @param key 键
+     * @return
+     */
+    public static List<String> sPop(String key, Integer length) {
+        try {
+            return stringRedisTemplate.opsForSet().pop(key, length);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return null;
+        }
+    }
+
+    /**
      * 根据value从一个set中查询,是否存在
      *
      * @param key   键

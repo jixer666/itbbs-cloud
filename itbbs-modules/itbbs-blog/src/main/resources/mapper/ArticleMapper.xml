@@ -56,5 +56,28 @@
         where article_id = #{articleId}
     </select>
 
+    <select id="selectByIds" resultMap="ArticleMetaResult">
+        select article_id, user_id, title, content, summary, category_id, tag_details, cover, type from tb_article
+        where article_id in
+        <foreach collection="list" item="id" open="(" separator=", " close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="selectArticleViewsCount" resultType="java.lang.Integer">
+        select views_count from tb_article
+    </select>
+
+    <update id="updateArticleCountBath">
+        <foreach collection="list" item="item" separator=";">
+            UPDATE tb_article
+            SET
+            views_count = #{item.viewsCount},
+            like_count = #{item.likeCount},
+            collect_count = #{item.collectCount}
+            WHERE article_id = #{item.articleId}
+        </foreach>
+    </update>
+
 
 </mapper>

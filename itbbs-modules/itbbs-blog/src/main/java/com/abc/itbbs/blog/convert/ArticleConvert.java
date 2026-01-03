@@ -2,6 +2,7 @@ package com.abc.itbbs.blog.convert;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.json.JSONUtil;
+import com.abc.itbbs.blog.domain.dto.ArticleUpdateCountDTO;
 import com.abc.itbbs.blog.domain.enums.ArticleStatusEnum;
 import com.abc.itbbs.common.core.constant.CommonConstants;
 import com.abc.itbbs.common.core.util.IdUtils;
@@ -58,5 +59,16 @@ public class ArticleConvert {
             article.setSummary(summary);
         }
         article.setUpdateParams();
+    }
+
+    public static ArticleUpdateCountDTO buildArticleUpdateCountDTO(Long articleId, Integer articleViewsCount,
+                                                                   Integer likeCount, Integer collectCount) {
+        ArticleUpdateCountDTO articleUpdateCountDTO = new ArticleUpdateCountDTO();
+        articleUpdateCountDTO.setArticleId(articleId);
+        articleUpdateCountDTO.setViewsCount(articleViewsCount);
+        articleUpdateCountDTO.setLikeCount(likeCount);
+        articleUpdateCountDTO.setCollectCount(collectCount);
+
+        return articleUpdateCountDTO;
     }
 }

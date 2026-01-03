@@ -1,12 +1,14 @@
 package com.abc.itbbs.blog.service;
 
-import com.abc.itbbs.api.system.domain.vo.UserVO;
 import com.abc.itbbs.blog.domain.dto.ArticleDTO;
+import com.abc.itbbs.blog.domain.dto.ArticleUpdateCountDTO;
 import com.abc.itbbs.blog.domain.entity.Article;
 import com.abc.itbbs.blog.domain.vo.ArticleMetaVO;
 import com.abc.itbbs.blog.domain.vo.ArticleVO;
 import com.abc.itbbs.common.core.domain.vo.PageResult;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 /**
  * 文章接口
@@ -30,4 +32,9 @@ public interface ArticleService extends IService<Article> {
 
     ArticleMetaVO getArticleMetaInfo(Long articleId);
 
+    Integer getArticleViewsCount(Long articleId);
+
+    void increaseArticleViewsCount(Long articleId);
+
+    void updateArticleCountBath(List<ArticleUpdateCountDTO> articleUpdateCountDTOList);
 }
