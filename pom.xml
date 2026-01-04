@@ -46,6 +46,7 @@
         <okhttp.version>4.8.1</okhttp.version>
         <simplemagic.version>1.17</simplemagic.version>
         <jsoup.version>1.15.4</jsoup.version>
+        <redisson-spring-boot-starter.version>3.17.1</redisson-spring-boot-starter.version>
 
     </properties>
 
@@ -272,6 +273,12 @@
                 <groupId>org.jsoup</groupId>
                 <artifactId>jsoup</artifactId>
                 <version>${jsoup.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.redisson</groupId>
+                <artifactId>redisson-spring-boot-starter</artifactId>
+                <version>${redisson-spring-boot-starter.version}</version>
             </dependency>
 
         </dependencies>

@@ -23,6 +23,9 @@ public class CacheConstants {
     public static final String INCREASE_ARTICLE_VIEWS_COUNT = "increaseArticleViewsCount:";
     public static final String ARTICLE_VIEWS_COUNT = "articleViewsCount:%d";
 
+    public static final String ARTICLE_LIKE_COUNT = "articleLikeCount:%d";
+    public static final String USER_LIKE_SET = "userLikeSet:%s:%s";
+
 
     public static String getFinalKey(String key, Object...values) {
         return String.format(SYSTEM_NAME + key, values);

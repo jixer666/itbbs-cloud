@@ -7,8 +7,10 @@ import com.abc.itbbs.api.system.domain.vo.UserVO;
 import com.abc.itbbs.blog.domain.dto.ArticleHisDTO;
 import com.abc.itbbs.blog.domain.dto.ArticleUpdateCountDTO;
 import com.abc.itbbs.blog.domain.enums.ArticleStatusEnum;
+import com.abc.itbbs.blog.domain.enums.LikeTypeEnum;
 import com.abc.itbbs.blog.domain.vo.ArticleMetaVO;
 import com.abc.itbbs.blog.service.ArticleHisService;
+import com.abc.itbbs.blog.util.BlogRedisUtils;
 import com.abc.itbbs.common.core.constant.CommonConstants;
 import com.abc.itbbs.common.core.constant.ServerConstants;
 import com.abc.itbbs.common.core.domain.service.BaseServiceImpl;
@@ -30,6 +32,7 @@ import com.abc.itbbs.common.redis.util.RedisUtils;
 import com.abc.itbbs.common.security.util.SecurityUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -69,6 +72,9 @@ public class ArticleServiceImpl extends BaseServiceImpl<ArticleMapper, Article> 
 
     @Autowired
     private RabbitMQProducer rabbitMQProducer;
+
+    @Autowired
+    private RedissonClient redissonClient;
 
     @Override
     public PageResult getArticlePageWithUiParam(ArticleDTO articleDTO) {
@@ -199,7 +205,7 @@ public class ArticleServiceImpl extends BaseServiceImpl<ArticleMapper, Article> 
         // 目的是为了检查缓存是否过期
         getArticleViewsCount(articleId);
 
-        RedisUtils.inc(CacheConstants.getFinalKey(CacheConstants.ARTICLE_VIEWS_COUNT, articleId), 7 * 24, TimeUnit.HOURS);
+        RedisUtils.inc(CacheConstants.getFinalKey(CacheConstants.ARTICLE_VIEWS_COUNT, articleId), 24, TimeUnit.HOURS);
 
         // 加入到待同步集合
         RedisUtils.sSet(CacheConstants.ARTICLE_WAIT_DO_TASK, articleId);
@@ -224,5 +230,46 @@ public class ArticleServiceImpl extends BaseServiceImpl<ArticleMapper, Article> 
         }
 
         articleMapper.updateArticleCountBath(articleUpdateCountDTOList);
+    }
+
+    @Override
+    public void increaseArticleLikeCount(Long articleId) {
+        AssertUtils.isNotEmpty(articleId, "文章ID不能为空");
+
+        String articleLikeViewCountKey = CacheConstants.getFinalKey(CacheConstants.ARTICLE_LIKE_COUNT, articleId);
+        String userLikeSetKey = CacheConstants.getFinalKey(CacheConstants.USER_LIKE_SET, SecurityUtils.getUserId(), LikeTypeEnum.ARTICLE.getType());
+        Long isExist = BlogRedisUtils.checkArticleLikeCountKeyExist(articleLikeViewCountKey, userLikeSetKey);
+        if (isExist == -1) {
+            // 需要重建缓存
+
+
+
+        } else {
+            // 缓存点赞数量
+            RedisUtils.inc(articleLikeViewCountKey, 24, TimeUnit.HOURS);
+
+            // 缓存用户点赞列表
+            RedisUtils.sSetAndTime(userLikeSetKey, 7 * 24 * 3600, articleId);
+        }
+
+        // 加入到待同步集合
+        RedisUtils.sSet(CacheConstants.ARTICLE_WAIT_DO_TASK, articleId);
+    }
+
+    @Override
+    public Integer getArticleLikeCount(Long articleId) {
+        AssertUtils.isNotEmpty(articleId, "文章ID不能为空");
+
+        String likeCountKey = CacheConstants.getFinalKey(CacheConstants.ARTICLE_LIKE_COUNT, articleId);
+        String likeCountStr = RedisUtils.get(likeCountKey);
+        if (StringUtils.isEmpty(likeCountStr)) {
+            // 缓存过期，重新设置缓存
+            Integer count = articleMapper.selectArticleLikeCount(articleId);
+            RedisUtils.set(likeCountKey, count, 7 * 24, TimeUnit.HOURS);
+
+            return count;
+        }
+
+        return Integer.valueOf(likeCountStr);
     }
 }

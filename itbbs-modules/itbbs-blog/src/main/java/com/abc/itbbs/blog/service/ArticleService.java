@@ -37,4 +37,8 @@ public interface ArticleService extends IService<Article> {
     void increaseArticleViewsCount(Long articleId);
 
     void updateArticleCountBath(List<ArticleUpdateCountDTO> articleUpdateCountDTOList);
+
+    void increaseArticleLikeCount(Long articleId);
+
+    Integer getArticleLikeCount(Long articleId);
 }

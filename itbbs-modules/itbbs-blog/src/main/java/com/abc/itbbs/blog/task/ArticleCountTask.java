@@ -35,7 +35,7 @@ public class ArticleCountTask {
     @Autowired
     private TaskHelper taskHelper;
 
-    @Scheduled(fixedRate = 60 * 60 * 1000)
+    @Scheduled(fixedRate = 10 * 1000)
     public void run() {
         Map<String, List<String>> taskContext = new HashMap<>();
 
@@ -62,6 +62,7 @@ public class ArticleCountTask {
             return null;
         }, task -> {
             // 重新放入集合
+            // TODO 重试次数限制
             List<String> articleIdSet = taskContext.get("articleIdSet");
             RedisUtils.sSet(CacheConstants.ARTICLE_WAIT_DO_TASK, articleIdSet.toArray());
 

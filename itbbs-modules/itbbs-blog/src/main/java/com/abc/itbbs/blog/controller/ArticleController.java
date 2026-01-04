@@ -84,4 +84,18 @@ public class ArticleController {
         return ApiResult.success();
     }
 
+    @ApiOperation("文章点赞")
+    @RateLimiter(
+            key = "'itbbs:increaseArticleLikeCount:' + #articleId",
+            time = 1,
+            count = 2,
+            limitType = LimitType.IP
+    )
+    @PostMapping("/likeCount/{articleId}")
+    public ApiResult<Void> increaseArticleLikeCount(@PathVariable("articleId") Long articleId) {
+        articleService.increaseArticleLikeCount(articleId);
+
+        return ApiResult.success();
+    }
+
 }
