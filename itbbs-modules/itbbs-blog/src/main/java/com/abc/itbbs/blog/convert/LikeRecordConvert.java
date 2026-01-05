@@ -21,4 +21,13 @@ public class LikeRecordConvert {
 
         return likeRecord;
     }
+
+    public static LikeRecordDTO buildDefaultLikeRecordDTO(Long targetId, Integer type) {
+        LikeRecordDTO likeRecordDTO = new LikeRecordDTO();
+        likeRecordDTO.setTargetId(targetId);
+        likeRecordDTO.setType(type);
+        likeRecordDTO.setUserId(SecurityUtils.getUserId());
+
+        return likeRecordDTO;
+    }
 }

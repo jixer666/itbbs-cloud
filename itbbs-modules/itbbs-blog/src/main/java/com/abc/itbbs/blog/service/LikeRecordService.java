@@ -5,6 +5,8 @@ import com.abc.itbbs.blog.domain.dto.LikeRecordDTO;
 import com.abc.itbbs.blog.domain.entity.LikeRecord;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 /**
  * 点赞记录接口
  *
@@ -20,4 +22,7 @@ public interface LikeRecordService extends IService<LikeRecord> {
     void saveLikeRecord(LikeRecordDTO likeRecordDTO);
 
     void deleteLikeRecord(LikeRecordDTO likeRecordDTO);
+
+    List<LikeRecord> selectLikeTargetIdsByUserId(Long userId, Boolean isLimit);
+
 }

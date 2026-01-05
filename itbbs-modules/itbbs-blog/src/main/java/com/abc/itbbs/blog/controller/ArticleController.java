@@ -1,6 +1,5 @@
 package com.abc.itbbs.blog.controller;
 
-import com.abc.itbbs.api.system.domain.vo.UserVO;
 import com.abc.itbbs.blog.domain.vo.ArticleMetaVO;
 import com.abc.itbbs.blog.domain.vo.ArticleVO;
 import com.abc.itbbs.common.core.annotation.RateLimiter;
@@ -9,7 +8,6 @@ import com.abc.itbbs.common.core.domain.vo.ApiResult;
 import com.abc.itbbs.common.core.domain.vo.PageResult;
 import com.abc.itbbs.blog.domain.dto.ArticleDTO;
 import com.abc.itbbs.blog.service.ArticleService;
-import com.abc.itbbs.common.redis.constant.CacheConstants;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,7 +66,6 @@ public class ArticleController {
 
         return ApiResult.success(articleMetaVO);
     }
-
 
     @ApiOperation("增加文章浏览量")
     @RateLimiter(

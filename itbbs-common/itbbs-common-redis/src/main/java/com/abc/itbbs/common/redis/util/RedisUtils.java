@@ -814,7 +814,7 @@ public class RedisUtils {
      * @param values
      * @return
      */
-    public Long zAdd(String key, Set<ZSetOperations.TypedTuple<String>> values) {
+    public static Long zAdd(String key, Set<ZSetOperations.TypedTuple<String>> values) {
         return stringRedisTemplate.opsForZSet().add(key, values);
     }
 

@@ -23,5 +23,13 @@
         <include refid="selectLikeRecordVo" />
     </select>
 
+    <select id="selectLikeTargetIdsByUserId" resultMap="LikeRecordResult">
+        select targetId, create_time from tb_like_record
+        where user_id = #{userId}
+        <if test="isLimit">
+            limit 0, 9999
+        </if>
+    </select>
+
 
 </mapper>

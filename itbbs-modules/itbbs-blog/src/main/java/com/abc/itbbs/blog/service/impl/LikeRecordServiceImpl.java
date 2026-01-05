@@ -1,6 +1,7 @@
 package com.abc.itbbs.blog.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.abc.itbbs.common.core.domain.enums.BizCodeEnum;
 import com.abc.itbbs.common.core.domain.service.BaseServiceImpl;
 import com.abc.itbbs.common.core.domain.vo.PageResult;
 import com.abc.itbbs.blog.convert.LikeRecordConvert;
@@ -9,6 +10,7 @@ import com.abc.itbbs.blog.domain.entity.LikeRecord;
 import com.abc.itbbs.blog.domain.vo.LikeRecordVO;
 import com.abc.itbbs.blog.mapper.LikeRecordMapper;
 import com.abc.itbbs.blog.service.LikeRecordService;
+import com.abc.itbbs.common.core.exception.GlobalException;
 import com.abc.itbbs.common.core.util.AssertUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +54,12 @@ public class LikeRecordServiceImpl extends BaseServiceImpl<LikeRecordMapper, Lik
     public void saveLikeRecord(LikeRecordDTO likeRecordDTO) {
         likeRecordDTO.checkSaveParams();
         LikeRecord likeRecord = LikeRecordConvert.buildDefaultLikeRecordByLikeRecordDTO(likeRecordDTO);
-        likeRecordMapper.insert(likeRecord);
+        try {
+            // TODO 建立唯一索引
+            likeRecordMapper.insert(likeRecord);
+        } catch (Exception e) {
+            throw new GlobalException(BizCodeEnum.BIZ_ERROR.getCode(), "请勿重复点赞");
+        }
     }
 
     @Override
@@ -61,6 +68,12 @@ public class LikeRecordServiceImpl extends BaseServiceImpl<LikeRecordMapper, Lik
 
         likeRecordMapper.deleteBatchIds(likeRecordDTO.getLikeRecordIds());
     }
-    
+
+    @Override
+    public List<LikeRecord> selectLikeTargetIdsByUserId(Long userId, Boolean isLimit) {
+        AssertUtils.isNotEmpty(userId, "用户ID不存在");
+
+        return likeRecordMapper.selectLikeTargetIdsByUserId(userId, isLimit);
+    }
 
 }

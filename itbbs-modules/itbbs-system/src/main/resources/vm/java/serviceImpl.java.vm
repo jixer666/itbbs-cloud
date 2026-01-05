@@ -3,7 +3,7 @@ package ${packageName}.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import com.abc.common.core.service.BaseServiceImpl;
 import com.abc.common.domain.vo.PageResult;
-import com.abc.common.util.AssertUtils;
+import com.abc.itbbs.common.core.util.AssertUtils;
 import ${packageName}.convert.${ClassName}Convert;
 import ${packageName}.domain.dto.${ClassName}DTO;
 import ${packageName}.domain.entity.${ClassName};

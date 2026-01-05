@@ -23,6 +23,14 @@ public class RabbitMQConstants {
     public static final String BLOG_ARTICLE_VECTOR_QUEUE = "blog.article.vector.queue";
     public static final String BLOG_ARTICLE_VECTOR_KEY = "blog.article.vector";
 
+    public static final String BLOG_ARTICLE_COUNT_QUEUE = "blog.article.count.queue";
+    public static final String BLOG_ARTICLE_COUNT_KEY = "blog.article.count";
 
+    /**
+     * 点赞
+     */
+    public static final String BLOG_LIKE_EXCHANGE = "blog.like.exchange";
+    public static final String BLOG_LIKE_CREATE_QUEUE = "blog.like.create.queue";
+    public static final String BLOG_LIKE_CREATE_BATCH_KEY = "blog.like.create.batch";
 
 }

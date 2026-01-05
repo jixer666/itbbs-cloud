@@ -104,7 +104,6 @@ public class RabbitMQConfig {
         return new Queue(RabbitMQConstants.BLOG_ARTICLE_HTML_QUEUE, true, false, false, null);
     }
 
-
     @Bean
     public Queue articleCreateVectorQueue() {
         // String name, boolean durable, boolean exclusive, boolean autoDelete, Map<String, Object> arguments
@@ -116,6 +115,19 @@ public class RabbitMQConfig {
         // String name, boolean durable, boolean exclusive, boolean autoDelete, Map<String, Object> arguments
         return new Queue(RabbitMQConstants.BLOG_ARTICLE_ES_QUEUE, true, false, false, null);
     }
+
+    @Bean
+    public Queue likeCreateEsQueue() {
+        // String name, boolean durable, boolean exclusive, boolean autoDelete, Map<String, Object> arguments
+        return new Queue(RabbitMQConstants.BLOG_LIKE_CREATE_QUEUE, true, false, false, null);
+    }
+
+    @Bean
+    public Queue articleViewQueue() {
+        // String name, boolean durable, boolean exclusive, boolean autoDelete, Map<String, Object> arguments
+        return new Queue(RabbitMQConstants.BLOG_ARTICLE_COUNT_QUEUE, true, false, false, null);
+    }
+
 
 
 //    /**
@@ -149,6 +161,13 @@ public class RabbitMQConfig {
         // String name, boolean durable, boolean autoDelete
         return new TopicExchange(RabbitMQConstants.BLOG_ARTICLE_EXCHANGE, true, false);
     }
+
+    @Bean
+    public Exchange likeEventExchange() {
+        // String name, boolean durable, boolean autoDelete
+        return new TopicExchange(RabbitMQConstants.BLOG_LIKE_EXCHANGE, true, false);
+    }
+
 
 //    /**
 //     * 绑定死信队列和交换机的关系
@@ -211,8 +230,23 @@ public class RabbitMQConfig {
                 null);
     }
 
+    @Bean
+    public Binding likeCreateBinding() {
+        return new Binding(RabbitMQConstants.BLOG_LIKE_CREATE_QUEUE,
+                Binding.DestinationType.QUEUE,
+                RabbitMQConstants.BLOG_LIKE_EXCHANGE,
+                RabbitMQConstants.BLOG_LIKE_CREATE_BATCH_KEY,
+                null);
+    }
 
-
+    @Bean
+    public Binding articleCountBinding() {
+        return new Binding(RabbitMQConstants.BLOG_ARTICLE_COUNT_QUEUE,
+                Binding.DestinationType.QUEUE,
+                RabbitMQConstants.BLOG_ARTICLE_EXCHANGE,
+                RabbitMQConstants.BLOG_ARTICLE_COUNT_KEY,
+                null);
+    }
 
 
 
