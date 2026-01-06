@@ -55,7 +55,7 @@
 
     <div class="main-container">
         <!-- 左侧悬浮组件 -->
-        <left-toolbox :stats="articleStats" v-loading="articleMetaLoading"></left-toolbox>
+        <left-toolbox :stats="articleStats" :id="articleId" v-loading="articleMetaLoading"></left-toolbox>
 
         <!-- 中间文章组件 -->
         <div class="article-area">
@@ -316,7 +316,7 @@
     // 2. LeftToolbox 组件
     const LeftToolbox = {
         template: '#tpl-left-toolbox',
-        props: ['stats'],
+        props: ['stats', 'id'],
         mounted() {
         },
         methods: {
@@ -327,6 +327,27 @@
                 } else {
                     this.stats.likeCount++;
                     this.stats.isLiked = true;
+                }
+                this.saveLikeRecord();
+            },
+            async saveLikeRecord() {
+                if (!this.id) return;
+                try {
+                    const response = await fetch(`http://blog.itbbs.com/blog/article/likeCount/${this.id}`,
+                        {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({})
+                        });
+                    const responseBody = await response.json();
+
+                    if (responseBody.code != 200) {
+                        this.$message.error(responseBody.msg)
+                    }
+                } catch (error) {
+                    console.error('新增文章浏览量出错:', error);
                 }
             },
             handleCollect() {
@@ -400,7 +421,9 @@
                 hotArticles: [],
 
                 articleMetaLoading: false,
-                authorLoading: false
+                authorLoading: false,
+
+                token: null
             }
         },
         mounted() {
@@ -408,12 +431,36 @@
             this.articleId = metaArticleId.getAttribute('content');
             const authorId = document.querySelector('meta[name="author-id"]');
             this.authorId = authorId.getAttribute('content');
+            this.isLogin = document.cookie.split('; ').find(row => row.startsWith('Is-Login='))?.split('=')[1];
+            if (this.isLogin) {
+                this.getUserInfo();
+            }
 
             this.loadArticleMeta();
             this.loadAuthorInfo();
             this.increaseArticleViewsCount();
         },
         methods: {
+            async getUserInfo() {
+                if (!this.isLogin) return;
+
+                try {
+                    const response = await fetch(`http://system.itbbs.com/system/user/current`,
+                        {
+                            method: 'GET',
+                            credentials: 'include'
+                        });
+                    const responseBody = await response.json();
+
+                    if (responseBody.code != 200) {
+                        this.$message.error(responseBody.msg)
+                    }
+
+                    this.currentUser = responseBody.data;
+                } catch (error) {
+                    console.error('获取用户信息出错:', error);
+                }
+            },
             async increaseArticleViewsCount() {
                 if (!this.articleId) return;
 
@@ -458,6 +505,12 @@
                     }
                     if (data.collectCount !== undefined) {
                         this.articleStats.collectCount = data.collectCount;
+                    }
+                    if (data.isLiked !== undefined) {
+                        this.articleStats.isLiked = data.isLiked;
+                    }
+                    if (data.isCollected !== undefined) {
+                        this.articleStats.isCollected = data.isCollected;
                     }
 
                 } catch (error) {
