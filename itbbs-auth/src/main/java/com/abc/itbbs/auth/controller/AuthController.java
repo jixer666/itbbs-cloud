@@ -13,6 +13,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @RestController
@@ -24,10 +25,32 @@ public class AuthController {
 
     @ApiOperation("登录")
     @PostMapping("/login")
-    public ApiResult<String> login(@RequestBody LoginDTO loginDTO) {
+    public ApiResult<String> login(@RequestBody LoginDTO loginDTO,
+                                   HttpServletResponse response) {
         String token = authService.login(loginDTO);
 
+        setLoginCookie(response, token);
+
         return ApiResult.success(token);
+    }
+
+    private void setLoginCookie(HttpServletResponse response, String token) {
+        String tokenCookie = String.format(
+                "Authorization=%s; Domain=.itbbs.com; Path=/; Max-Age=%d; HttpOnly; %s SameSite=%s",
+                token,
+                7 * 24 * 60 * 60, // 7天
+                "", // 生产环境加Secure
+                "Lax"
+        );
+        String isLoginCookie = String.format(
+                "Is-Login=%s; Domain=.itbbs.com; Path=/; Max-Age=%d; %s SameSite=%s",
+                1,
+                7 * 24 * 60 * 60, // 7天
+                "", // 生产环境加Secure
+                "Lax"
+        );
+        response.addHeader("Set-Cookie", tokenCookie);
+        response.addHeader("Set-Cookie", isLoginCookie);
     }
 
     @ApiOperation("注册")
