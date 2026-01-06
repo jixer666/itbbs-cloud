@@ -1,21 +1,19 @@
 package com.abc.itbbs.blog.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.json.JSONUtil;
 import com.abc.itbbs.api.system.UserServiceClient;
 import com.abc.itbbs.api.system.domain.entity.User;
 import com.abc.itbbs.api.system.domain.vo.UserVO;
-import com.abc.itbbs.blog.convert.LikeRecordConvert;
 import com.abc.itbbs.blog.domain.dto.ArticleHisDTO;
 import com.abc.itbbs.blog.domain.dto.ArticleUpdateCountDTO;
-import com.abc.itbbs.blog.domain.dto.LikeRecordDTO;
-import com.abc.itbbs.blog.domain.entity.LikeRecord;
 import com.abc.itbbs.blog.domain.enums.ArticleStatusEnum;
-import com.abc.itbbs.blog.domain.enums.LikeTypeEnum;
+import com.abc.itbbs.blog.domain.enums.LikeBizEnum;
 import com.abc.itbbs.blog.domain.vo.ArticleMetaVO;
+import com.abc.itbbs.blog.factory.LikeRecordStrategyFactory;
 import com.abc.itbbs.blog.service.ArticleHisService;
+import com.abc.itbbs.blog.service.CollectRecordService;
 import com.abc.itbbs.blog.service.LikeRecordService;
-import com.abc.itbbs.blog.util.BlogRedisUtils;
+import com.abc.itbbs.blog.strategy.likerecord.LikeRecordStrategy;
 import com.abc.itbbs.common.core.constant.CommonConstants;
 import com.abc.itbbs.common.core.constant.ServerConstants;
 import com.abc.itbbs.common.core.domain.service.BaseServiceImpl;
@@ -42,8 +40,6 @@ import org.redisson.api.RedissonClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.DefaultTypedTuple;
-import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -85,8 +81,12 @@ public class ArticleServiceImpl extends BaseServiceImpl<ArticleMapper, Article> 
     @Autowired
     private LikeRecordService likeRecordService;
 
+    @Autowired
+    private CollectRecordService collectRecordService;
+
     @Override
     public PageResult getArticlePageWithUiParam(ArticleDTO articleDTO) {
+        // TODO 优化文章分页
         startPage();
         List<Article> articles = articleMapper.selectArticleListWithoutContent(articleDTO);
 
@@ -186,8 +186,27 @@ public class ArticleServiceImpl extends BaseServiceImpl<ArticleMapper, Article> 
         articleMetaVO.setLikeCount(getArticleLikeCount(articleId));
         articleMetaVO.setCollectCount(CommonConstants.ZERO);
 
+        try {
+            Long userId = SecurityUtils.getUserId();
+
+            articleMetaVO.setIsLiked(isUserLikeArticle(userId, articleId));
+
+        } catch (Exception e) {
+            articleMetaVO.setIsLiked(false);
+            articleMetaVO.setIsCollected(false);
+        }
         return articleMetaVO;
     }
+
+    private Boolean isUserLikeArticle(Long userId, Long articleId) {
+        AssertUtils.isNotEmpty(articleId, "文章ID不能为空");
+        AssertUtils.isNotEmpty(userId, "用户ID不能为空");
+
+        String articleIdSetCacheKey = CacheConstants.getFinalKey(CacheConstants.USER_LIKE_SET, userId, LikeBizEnum.ARTICLE.getBiz());
+        Set<String> articleIdSet = RedisUtils.zRange(articleIdSetCacheKey, 0, -1);
+        return articleIdSet.contains(articleId.toString());
+    }
+
 
     @Override
     public Integer getArticleViewsCount(Long articleId) {
@@ -210,7 +229,7 @@ public class ArticleServiceImpl extends BaseServiceImpl<ArticleMapper, Article> 
             return;
         }
 
-        RLock lock = redissonClient.getLock(CacheConstants.getFinalKey(CacheConstants.ARTICLE_VIEW_LOCK, articleId));
+        RLock lock = redissonClient.getLock(CacheConstants.getFinalKey(CacheConstants.ARTICLE_VIEW_COUNT_LOCK, articleId));
         try {
             // 等待5s，锁持有10s
             boolean isLock = lock.tryLock(5, 10, TimeUnit.SECONDS);
@@ -224,7 +243,7 @@ public class ArticleServiceImpl extends BaseServiceImpl<ArticleMapper, Article> 
             }
 
             Integer count = articleMapper.selectArticleViewsCount(articleId);
-            RedisUtils.set(CacheConstants.ARTICLE_VIEWS_COUNT, count, 24, TimeUnit.HOURS);
+            RedisUtils.set(viewsCountKey, count, 24, TimeUnit.HOURS);
 
         } catch (Exception e) {
             log.error("浏览量重建加锁失败：{}", e.getMessage(), e);
@@ -275,123 +294,41 @@ public class ArticleServiceImpl extends BaseServiceImpl<ArticleMapper, Article> 
         AssertUtils.isNotEmpty(articleId, "文章ID不能为空");
         AssertUtils.isTrue(checkArticleExist(articleId), "文章不存在");
 
-        checkAndRebuildArticleLikeCountCache(articleId);
-
-        String articleLikeCountKey = CacheConstants.getFinalKey(CacheConstants.ARTICLE_LIKE_COUNT, articleId);
-        String userLikeSetKey = CacheConstants.getFinalKey(CacheConstants.USER_LIKE_SET, SecurityUtils.getUserId(), LikeTypeEnum.ARTICLE.getType());
-
-        // 缓存点赞数量
-        RedisUtils.inc(articleLikeCountKey, 24, TimeUnit.HOURS);
-
-        // 缓存用户点赞列表
-        Long size = RedisUtils.sGetSetSize(userLikeSetKey);
-        if (size > CacheConstants.USER_LIKE_SET_LENGTH) {
-            // 超过了最大点赞长度，抛弃第一个
-            RedisUtils.zRemoveRange(userLikeSetKey, 0, 0);
-        }
-        RedisUtils.zAdd(userLikeSetKey, articleId, new Date().getTime());
-
-        // 点赞数加入到待同步集合
-        RedisUtils.zAdd(CacheConstants.getFinalKey(CacheConstants.ARTICLE_WAIT_DO_TASK), articleId, new Date().getTime());
-
-        // 点赞记录加入到待同步集合
-        LikeRecordDTO likeRecordDTO = LikeRecordConvert.buildDefaultLikeRecordDTO(articleId, LikeTypeEnum.ARTICLE.getType());
-        RedisUtils.zAdd(CacheConstants.getFinalKey(CacheConstants.LIKE_RECORD_WAIT_DO_TASK), JSONUtil.toJsonStr(likeRecordDTO), new Date().getTime());
-    }
-
-    private void checkAndRebuildArticleLikeCountCache(Long articleId) {
-        String articleLikeCountKey = CacheConstants.getFinalKey(CacheConstants.ARTICLE_LIKE_COUNT, articleId);
-        String userLikeSetKey = CacheConstants.getFinalKey(CacheConstants.USER_LIKE_SET, SecurityUtils.getUserId(), LikeTypeEnum.ARTICLE.getType());
-
-        Long isExist = BlogRedisUtils.checkArticleLikeCountKeyExist(articleLikeCountKey, userLikeSetKey);
-        if (isExist != -1) {
-          return;
-        }
-
-        // 需要重建缓存
-        rebuildLikeCountCache(articleId);
-        rebuildUserLikeSetCache(articleId);
-    }
-
-    private void rebuildUserLikeSetCache(Long articleId) {
-        AssertUtils.isNotEmpty(articleId, "文章ID不能为空");
-        String userLikeSetKey = CacheConstants.getFinalKey(CacheConstants.USER_LIKE_SET, SecurityUtils.getUserId(), LikeTypeEnum.ARTICLE.getType());
-
-        // 第一层检查
-        if (RedisUtils.hasKey(userLikeSetKey)) {
-            return;
-        }
-
-        RLock lock = redissonClient.getLock(CacheConstants.getFinalKey(CacheConstants.USER_LIKE_SET_LOCK, articleId));
-        try {
-            // 等待5s，锁持有10s
-            boolean isLock = lock.tryLock(5, 10, TimeUnit.SECONDS);
-            if (!isLock) {
-                return;
-            }
-
-            // 第二层检查
-            if (RedisUtils.hasKey(userLikeSetKey)) {
-                return;
-            }
-
-            List<LikeRecord> likeRecords = likeRecordService.selectLikeTargetIdsByUserId(SecurityUtils.getUserId(), true);
-            Set<ZSetOperations.TypedTuple<String>> tuples = new HashSet<>();
-            for (LikeRecord likeRecord : likeRecords) {
-                tuples.add(new DefaultTypedTuple<>(likeRecord.getTargetId().toString(), likeRecord.getCreateTime().getTime() * 1.0));
-            }
-            // 防止缓存穿透
-            tuples.add(new DefaultTypedTuple<>(CommonConstants.ZERO.toString(), Double.MAX_VALUE));
-            RedisUtils.zAdd(userLikeSetKey, tuples);
-
-        } catch (Exception e) {
-            log.error("用户点赞集合重建加锁失败：{}", e.getMessage(), e);
-        } finally {
-            lock.unlock();
-        }
-    }
-
-    private void rebuildLikeCountCache(Long articleId) {
-        AssertUtils.isNotEmpty(articleId, "文章ID不能为空");
-        String articleLikeCountKey = CacheConstants.getFinalKey(CacheConstants.ARTICLE_LIKE_COUNT, articleId);
-
-        // 第一层检查
-        if (RedisUtils.hasKey(articleLikeCountKey)) {
-            return;
-        }
-
-        RLock lock = redissonClient.getLock(CacheConstants.getFinalKey(CacheConstants.ARTICLE_LIKE_LOCK, articleId));
-        try {
-            // 等待5s，锁持有10s
-            boolean isLock = lock.tryLock(5, 10, TimeUnit.SECONDS);
-            if (!isLock) {
-                return;
-            }
-
-            // 第二层检查
-            if (RedisUtils.hasKey(articleLikeCountKey)) {
-                return;
-            }
-
-            Integer count = articleMapper.selectArticleLikeCount(articleId);
-            RedisUtils.set(articleLikeCountKey, count, 24, TimeUnit.HOURS);
-
-        } catch (Exception e) {
-            log.error("点赞重建加锁失败：{}", e.getMessage(), e);
-        } finally {
-            lock.unlock();
-        }
+        likeRecordService.increaseLikeRecord(articleId, LikeBizEnum.ARTICLE.getBiz());
     }
 
     @Override
     public Integer getArticleLikeCount(Long articleId) {
         AssertUtils.isNotEmpty(articleId, "文章ID不能为空");
 
-        rebuildLikeCountCache(articleId);
+        LikeRecordStrategy likeRecordStrategy = LikeRecordStrategyFactory.getLikeRecordStrategy(LikeBizEnum.ARTICLE.getBiz());
+        likeRecordService.rebuildLikeCountCache(articleId, likeRecordStrategy);
 
-        String likeCountKey = CacheConstants.getFinalKey(CacheConstants.ARTICLE_LIKE_COUNT, articleId);
+        String likeCountKey = likeRecordStrategy.getCountCacheKey(articleId);
         String likeCountStr = RedisUtils.get(likeCountKey);
 
         return Integer.valueOf(likeCountStr);
+    }
+
+    @Override
+    public Integer selectArticleLikeCount(Long articleId) {
+        AssertUtils.isNotEmpty(articleId, "文章ID不能为空");
+
+        return articleMapper.selectArticleLikeCount(articleId);
+    }
+
+    @Override
+    public void increaseArticleCollectCount(Long articleId) {
+        AssertUtils.isNotEmpty(articleId, "文章ID不能为空");
+        AssertUtils.isTrue(checkArticleExist(articleId), "文章不存在");
+
+        collectRecordService.increaseRecordRecord(articleId, LikeBizEnum.ARTICLE.getBiz());
+    }
+
+    @Override
+    public Integer selectArticleCollectCount(Long articleId) {
+        AssertUtils.isNotEmpty(articleId, "文章ID不能为空");
+
+        return articleMapper.selectArticleCollectCount(articleId);
     }
 }

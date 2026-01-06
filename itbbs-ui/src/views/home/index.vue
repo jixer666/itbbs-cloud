@@ -138,7 +138,7 @@ export default {
       this.loading = true
 
       getArticlePage({
-        currentPage: this.pagination.current,
+        pageNum: this.pagination.current,
         pageSize: this.pagination.size,
         status: 3
       }).then(res => {

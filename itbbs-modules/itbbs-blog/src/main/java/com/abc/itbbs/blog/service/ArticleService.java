@@ -41,4 +41,10 @@ public interface ArticleService extends IService<Article> {
     void increaseArticleLikeCount(Long articleId);
 
     Integer getArticleLikeCount(Long articleId);
+
+    Integer selectArticleLikeCount(Long articleId);
+
+    void increaseArticleCollectCount(Long articleId);
+
+    Integer selectArticleCollectCount(Long articleId);
 }

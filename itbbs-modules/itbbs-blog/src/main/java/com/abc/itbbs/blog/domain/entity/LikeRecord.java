@@ -26,6 +26,9 @@ public class LikeRecord extends BaseEntity {
     @ApiModelProperty("点赞记录ID")
     private Long likeRecordId;
 
+    @ApiModelProperty("业务类型")
+    private Integer biz;
+
     @ApiModelProperty("类型")
     private Integer type;
 

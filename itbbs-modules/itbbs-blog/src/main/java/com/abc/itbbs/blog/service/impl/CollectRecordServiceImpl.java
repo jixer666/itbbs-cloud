@@ -62,6 +62,9 @@ public class CollectRecordServiceImpl extends BaseServiceImpl<CollectRecordMappe
 
         collectRecordMapper.deleteBatchIds(collectRecordDTO.getCollectRecordIds());
     }
-    
 
+    @Override
+    public void increaseRecordRecord(Long targetId, Integer biz) {
+
+    }
 }

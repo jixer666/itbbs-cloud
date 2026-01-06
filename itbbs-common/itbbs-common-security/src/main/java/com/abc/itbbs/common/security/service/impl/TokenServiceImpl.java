@@ -18,9 +18,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -84,11 +86,34 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     public String getToken(HttpServletRequest request) {
+        // 从请求头中获取token
         String token = request.getHeader(tokenHeader);
         if (StringUtils.isEmpty(token)) {
-            return null;
+            // 从cookie中获取token
+            token = getTokenByCookies(request.getCookies());
+            if (StringUtils.isEmpty(token)) {
+                return null;
+            }
         }
         return token.replace(CommonConstants.TOKEN_PREFIX, "");
+    }
+
+    private String getTokenByCookies(Cookie[] cookies) {
+        if (Objects.isNull(cookies)) {
+            return null;
+        }
+
+        for (Cookie cookie : cookies) {
+            if (tokenHeader.equals(cookie.getName())) {
+                String value = cookie.getValue();
+                // 过滤空值和无效值
+                if (StringUtils.isNotEmpty(value) && !"null".equals(value) && !"undefined".equals(value)) {
+                    return value;
+                }
+            }
+        }
+
+        return null;
     }
 
     @Override

@@ -18,6 +18,8 @@ public class LikeRecordDTO {
 
     private Long likeRecordId;
 
+    private Integer biz;
+
     private Integer type;
 
     private Long targetId;

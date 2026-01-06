@@ -95,4 +95,19 @@ public class ArticleController {
         return ApiResult.success();
     }
 
+    @ApiOperation("文章收藏")
+    @RateLimiter(
+            key = "'itbbs:increaseArticleCollectCount:' + #articleId",
+            time = 1,
+            count = 2,
+            limitType = LimitType.IP
+    )
+    @PostMapping("/collectCount/{articleId}")
+    public ApiResult<Void> increaseArticleCollectCount(@PathVariable("articleId") Long articleId) {
+        articleService.increaseArticleCollectCount(articleId);
+
+        return ApiResult.success();
+    }
+
+
 }

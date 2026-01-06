@@ -38,6 +38,7 @@ module.exports = {
       warnings: false,
       errors: true
     },
+    allowedHosts: ['itbbs.com'],
     // before: require('./mock/mock-server.js'),
     proxy: {
       // https://cn.vitejs.dev/config/#server-proxy

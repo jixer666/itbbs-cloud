@@ -65,11 +65,15 @@
     </select>
 
     <select id="selectArticleViewsCount" resultType="java.lang.Integer">
-        select views_count from tb_article where article_id = #{articleId
+        select views_count from tb_article where article_id = #{articleId}
     </select>
 
     <select id="selectArticleLikeCount" resultType="java.lang.Integer">
         select like_count from tb_article where article_id = #{articleId}
+    </select>
+
+    <select id="selectArticleCollectCount" resultType="java.lang.Integer">
+        select collect_count from tb_article where article_id = #{articleId}
     </select>
 
     <update id="updateArticleCountBath">

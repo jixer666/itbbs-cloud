@@ -32,6 +32,17 @@ public class RedisUtils {
                     "  return tonumber(redis.call('INCR',key)) \n" +
                     "end ";
 
+    private static final String LUA_DECR_EXPIRE =
+            "local key,ttl=KEYS[1],ARGV[1] \n" +
+                    " \n" +
+                    "local current = redis.call('GET', key) \n" +
+                    "if not current then \n" +
+                    "    redis.call('SETEX', key, ttl, -1) \n" +
+                    "    return -1 \n" +
+                    "else \n" +
+                    "    return redis.call('DECR', key) \n" +
+                    "end";
+
     public static Long inc(String key, int time, TimeUnit unit) {
         RedisScript<Long> redisScript = new DefaultRedisScript<>(LUA_INCR_EXPIRE, Long.class);
         return stringRedisTemplate.execute(redisScript, Collections.singletonList(key), String.valueOf(unit.toSeconds(time)));
@@ -52,6 +63,18 @@ public class RedisUtils {
             RedisUtils.del(key);
             throw e;
         }
+    }
+
+    /**
+     * 自减
+     * @param key
+     * @param time
+     */
+    public static Long dec(String key, int time, TimeUnit unit) {
+        RedisScript<Long> redisScript = new DefaultRedisScript<>(LUA_DECR_EXPIRE, Long.class);
+        return stringRedisTemplate.execute(redisScript,
+                Collections.singletonList(key),
+                String.valueOf(unit.toSeconds(time)));
     }
 
     /**
@@ -349,7 +372,6 @@ public class RedisUtils {
      */
     public static Map<Object, Object> hmget(String key) {
         return stringRedisTemplate.opsForHash().entries(key);
-
     }
 
     /**

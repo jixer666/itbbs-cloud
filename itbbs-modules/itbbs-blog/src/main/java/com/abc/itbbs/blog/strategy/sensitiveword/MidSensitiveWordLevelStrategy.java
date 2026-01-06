@@ -1,4 +1,4 @@
-package com.abc.itbbs.blog.strategy;
+package com.abc.itbbs.blog.strategy.sensitiveword;
 
 import org.springframework.stereotype.Service;
 

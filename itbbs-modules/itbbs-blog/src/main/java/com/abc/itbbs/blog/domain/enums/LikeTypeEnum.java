@@ -6,8 +6,8 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum LikeTypeEnum {
-    ARTICLE(1, "文章"),
-    COMMENT(2, "评论");
+    LIKE(1, "点赞"),
+    UNLIKE(2, "取消点赞");
 
     private Integer type;
     private String desc;

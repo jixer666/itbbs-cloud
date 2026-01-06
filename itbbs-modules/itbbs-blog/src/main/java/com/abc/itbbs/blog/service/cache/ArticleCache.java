@@ -1,12 +1,16 @@
 package com.abc.itbbs.blog.service.cache;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.abc.itbbs.blog.domain.entity.Article;
 import com.abc.itbbs.blog.mapper.ArticleMapper;
 import com.abc.itbbs.common.redis.cache.AbstractRedisStringCache;
 import com.abc.itbbs.common.redis.constant.CacheConstants;
+import com.abc.itbbs.common.redis.util.RedisUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -37,4 +41,28 @@ public class ArticleCache extends AbstractRedisStringCache<Long, Article> {
     protected Long getExpireSeconds() {
         return CacheConstants.ARTICLE_INFO_EXPIRE_TIME;
     }
+
+    private String getHashKey(Long id) {
+        return CacheConstants.getFinalKey(CacheConstants.ARTICLE_HASH_INFO, id);
+    }
+
+    public Article getByHash(Long id) {
+        String articleCacheKey = getHashKey(id);
+        if (RedisUtils.hasKey(articleCacheKey)) {
+            Map<Object, Object> articleMap = RedisUtils.hmget(getKey(id));
+            return BeanUtil.fillBeanWithMap(articleMap, new Article(), false);
+        }
+
+        Map<Long, Article> articleMap = load(Collections.singletonList(id));
+        Article article = articleMap.get(id);
+
+        RedisUtils.hmset(articleCacheKey, BeanUtil.beanToMap(article), getExpireSeconds());
+
+        return article;
+    }
+
+    public void updateItemByHash(String key, String item, Object value) {
+        RedisUtils.hset(key, item, value, getExpireSeconds());
+    }
+
 }

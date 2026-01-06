@@ -42,7 +42,7 @@ public class ArticleCountBatchEventListener {
                     .map(item -> {
                         Long articleId = Long.parseLong(item);
                         String viewsCountKey = CacheConstants.getFinalKey(CacheConstants.ARTICLE_VIEWS_COUNT, articleId);
-                        String likeCountKey = CacheConstants.getFinalKey(CacheConstants.ARTICLE_VIEWS_COUNT, articleId);
+                        String likeCountKey = CacheConstants.getFinalKey(CacheConstants.ARTICLE_LIKE_COUNT, articleId);
 
                         Integer articleViewsCount = RedisUtils.get(viewsCountKey, Integer.class);
                         Integer articleLikeCount = RedisUtils.get(likeCountKey, Integer.class);

@@ -6,6 +6,8 @@ import com.abc.itbbs.blog.domain.entity.LikeRecord;
 import com.abc.itbbs.common.core.util.IdUtils;
 import com.abc.itbbs.common.security.util.SecurityUtils;
 
+import java.util.Objects;
+
 /**
  * 点赞记录转换器
  *
@@ -16,7 +18,9 @@ public class LikeRecordConvert {
     public static LikeRecord buildDefaultLikeRecordByLikeRecordDTO(LikeRecordDTO likeRecordDTO) {
         LikeRecord likeRecord = BeanUtil.copyProperties(likeRecordDTO, LikeRecord.class);
         likeRecord.setLikeRecordId(IdUtils.getId());
-        likeRecord.setUserId(SecurityUtils.getUserId());
+        if (Objects.isNull(likeRecordDTO.getUserId())) {
+            likeRecord.setUserId(SecurityUtils.getUserId());
+        }
         likeRecord.setInsertParams();
 
         return likeRecord;

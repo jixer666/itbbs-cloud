@@ -1,7 +1,7 @@
 package com.abc.itbbs.blog.factory;
 
 import com.abc.itbbs.blog.domain.enums.SensitiveWordLevelEnum;
-import com.abc.itbbs.blog.strategy.SensitiveWordLevelStrategy;
+import com.abc.itbbs.blog.strategy.sensitiveword.SensitiveWordLevelStrategy;
 import com.abc.itbbs.common.core.util.AssertUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;

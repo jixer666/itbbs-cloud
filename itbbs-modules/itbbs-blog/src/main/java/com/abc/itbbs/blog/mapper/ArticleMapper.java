@@ -31,4 +31,6 @@ public interface ArticleMapper extends BaseMapper<Article> {
     void updateArticleCountBath(@Param("list") List<ArticleUpdateCountDTO> articleUpdateCountDTOList);
 
     Integer selectArticleLikeCount(Long articleId);
+
+    Integer selectArticleCollectCount(Long articleId);
 }

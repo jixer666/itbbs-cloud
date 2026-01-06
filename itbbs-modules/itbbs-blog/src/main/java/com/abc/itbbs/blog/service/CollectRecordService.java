@@ -20,4 +20,6 @@ public interface CollectRecordService extends IService<CollectRecord> {
     void saveCollectRecord(CollectRecordDTO collectRecordDTO);
 
     void deleteCollectRecord(CollectRecordDTO collectRecordDTO);
+
+    void increaseRecordRecord(Long targetId, Integer biz);
 }
