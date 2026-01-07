@@ -7,12 +7,15 @@ import com.abc.itbbs.api.system.domain.vo.UserVO;
 import com.abc.itbbs.blog.domain.dto.ArticleHisDTO;
 import com.abc.itbbs.blog.domain.dto.ArticleUpdateCountDTO;
 import com.abc.itbbs.blog.domain.enums.ArticleStatusEnum;
+import com.abc.itbbs.blog.domain.enums.CollectBizEnum;
 import com.abc.itbbs.blog.domain.enums.LikeBizEnum;
 import com.abc.itbbs.blog.domain.vo.ArticleMetaVO;
+import com.abc.itbbs.blog.factory.CollectRecordStrategyFactory;
 import com.abc.itbbs.blog.factory.LikeRecordStrategyFactory;
 import com.abc.itbbs.blog.service.ArticleHisService;
 import com.abc.itbbs.blog.service.CollectRecordService;
 import com.abc.itbbs.blog.service.LikeRecordService;
+import com.abc.itbbs.blog.strategy.collectrecord.CollectRecordStrategy;
 import com.abc.itbbs.blog.strategy.likerecord.LikeRecordStrategy;
 import com.abc.itbbs.common.core.constant.CommonConstants;
 import com.abc.itbbs.common.core.constant.ServerConstants;
@@ -184,18 +187,39 @@ public class ArticleServiceImpl extends BaseServiceImpl<ArticleMapper, Article> 
         ArticleMetaVO articleMetaVO = new ArticleMetaVO();
         articleMetaVO.setViewsCount(getArticleViewsCount(articleId));
         articleMetaVO.setLikeCount(getArticleLikeCount(articleId));
-        articleMetaVO.setCollectCount(CommonConstants.ZERO);
+        articleMetaVO.setCollectCount(getArticleCollectCount(articleId));
 
         try {
             Long userId = SecurityUtils.getUserId();
 
             articleMetaVO.setIsLiked(isUserLikeArticle(userId, articleId));
-
+            articleMetaVO.setIsCollected(isUserCollectArticle(userId, articleId));
         } catch (Exception e) {
             articleMetaVO.setIsLiked(false);
             articleMetaVO.setIsCollected(false);
         }
         return articleMetaVO;
+    }
+
+    private Boolean isUserCollectArticle(Long userId, Long articleId) {
+        AssertUtils.isNotEmpty(articleId, "文章ID不能为空");
+        AssertUtils.isNotEmpty(userId, "用户ID不能为空");
+
+        String articleIdSetCacheKey = CacheConstants.getFinalKey(CacheConstants.USER_COLLECT_SET, userId, CollectBizEnum.ARTICLE.getBiz());
+        Set<String> articleIdSet = RedisUtils.zRange(articleIdSetCacheKey, 0, -1);
+        return articleIdSet.contains(articleId.toString());
+    }
+
+    private Integer getArticleCollectCount(Long articleId) {
+        AssertUtils.isNotEmpty(articleId, "文章ID不能为空");
+
+        CollectRecordStrategy collectRecordStrategy = CollectRecordStrategyFactory.getCollectRecordStrategy(CollectBizEnum.ARTICLE.getBiz());
+        collectRecordService.rebuildCollectCountCache(articleId, collectRecordStrategy);
+
+        String collectCountKey = collectRecordStrategy.getCountCacheKey(articleId);
+        String collectCountStr = RedisUtils.get(collectCountKey);
+
+        return Integer.valueOf(collectCountStr);
     }
 
     private Boolean isUserLikeArticle(Long userId, Long articleId) {
@@ -264,7 +288,7 @@ public class ArticleServiceImpl extends BaseServiceImpl<ArticleMapper, Article> 
         RedisUtils.inc(CacheConstants.getFinalKey(CacheConstants.ARTICLE_VIEWS_COUNT, articleId), 24, TimeUnit.HOURS);
 
         // 加入到待同步集合
-        RedisUtils.zAdd(CacheConstants.getFinalKey(CacheConstants.ARTICLE_WAIT_DO_TASK), articleId, (double) new Date().getTime());
+        RedisUtils.zAdd(CacheConstants.getFinalKey(CacheConstants.ARTICLE_COUNT_WAIT_DO_TASK), articleId, (double) new Date().getTime());
     }
 
     private Boolean checkArticleExist(Long articleId) {

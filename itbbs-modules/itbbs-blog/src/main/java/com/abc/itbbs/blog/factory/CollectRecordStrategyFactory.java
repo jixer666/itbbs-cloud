@@ -1,7 +1,7 @@
 package com.abc.itbbs.blog.factory;
 
-import com.abc.itbbs.blog.domain.enums.LikeBizEnum;
-import com.abc.itbbs.blog.strategy.likerecord.LikeRecordStrategy;
+import com.abc.itbbs.blog.domain.enums.CollectBizEnum;
+import com.abc.itbbs.blog.strategy.collectrecord.CollectRecordStrategy;
 import com.abc.itbbs.common.core.util.AssertUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -17,21 +17,21 @@ public class CollectRecordStrategyFactory {
     @Autowired
     private ApplicationContext applicationContext;
 
-    public static Map<Integer, LikeRecordStrategy> LOGIN_MAP = new ConcurrentHashMap<>();
+    public static Map<Integer, CollectRecordStrategy> COLLECT_MAP = new ConcurrentHashMap<>();
 
     @PostConstruct
     public void init(){
-        applicationContext.getBeansOfType(LikeRecordStrategy.class).forEach((k, v)->{
-            LOGIN_MAP.put(LikeBizEnum.getBizByClass(k), v);
+        applicationContext.getBeansOfType(CollectRecordStrategy.class).forEach((k, v)->{
+            COLLECT_MAP.put(CollectBizEnum.getBizByClass(k), v);
         });
     }
 
-    public static LikeRecordStrategy getLikeRecordStrategy(Integer type){
-        AssertUtils.isNotEmpty(type, "点赞业务不能为空");
-        LikeRecordStrategy likeRecordStrategy = LOGIN_MAP.get(type);
-        AssertUtils.isNotEmpty(likeRecordStrategy, "点赞业务不存在");
+    public static CollectRecordStrategy getCollectRecordStrategy(Integer biz){
+        AssertUtils.isNotEmpty(biz, "收藏业务不能为空");
+        CollectRecordStrategy collectRecordStrategy = COLLECT_MAP.get(biz);
+        AssertUtils.isNotEmpty(collectRecordStrategy, "收藏业务不存在");
 
-        return likeRecordStrategy;
+        return collectRecordStrategy;
     }
 
 

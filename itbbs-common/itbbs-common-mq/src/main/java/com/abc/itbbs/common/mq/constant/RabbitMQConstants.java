@@ -33,4 +33,11 @@ public class RabbitMQConstants {
     public static final String BLOG_LIKE_CREATE_QUEUE = "blog.like.create.queue";
     public static final String BLOG_LIKE_CREATE_BATCH_KEY = "blog.like.create.batch";
 
+    /**
+     * 收藏
+     */
+    public static final String BLOG_COLLECT_EXCHANGE = "blog.collect.exchange";
+    public static final String BLOG_COLLECT_CREATE_QUEUE = "blog.collect.create.queue";
+    public static final String BLOG_COLLECT_CREATE_BATCH_KEY = "blog.collect.create.batch";
+
 }

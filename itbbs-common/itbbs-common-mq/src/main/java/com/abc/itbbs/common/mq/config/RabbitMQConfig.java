@@ -128,6 +128,11 @@ public class RabbitMQConfig {
         return new Queue(RabbitMQConstants.BLOG_ARTICLE_COUNT_QUEUE, true, false, false, null);
     }
 
+    @Bean
+    public Queue recordCreateEsQueue() {
+        // String name, boolean durable, boolean exclusive, boolean autoDelete, Map<String, Object> arguments
+        return new Queue(RabbitMQConstants.BLOG_COLLECT_CREATE_QUEUE, true, false, false, null);
+    }
 
 
 //    /**
@@ -166,6 +171,12 @@ public class RabbitMQConfig {
     public Exchange likeEventExchange() {
         // String name, boolean durable, boolean autoDelete
         return new TopicExchange(RabbitMQConstants.BLOG_LIKE_EXCHANGE, true, false);
+    }
+
+    @Bean
+    public Exchange collectEventExchange() {
+        // String name, boolean durable, boolean autoDelete
+        return new TopicExchange(RabbitMQConstants.BLOG_COLLECT_EXCHANGE, true, false);
     }
 
 
@@ -247,6 +258,16 @@ public class RabbitMQConfig {
                 RabbitMQConstants.BLOG_ARTICLE_COUNT_KEY,
                 null);
     }
+
+    @Bean
+    public Binding collectCreateBinding() {
+        return new Binding(RabbitMQConstants.BLOG_COLLECT_CREATE_QUEUE,
+                Binding.DestinationType.QUEUE,
+                RabbitMQConstants.BLOG_COLLECT_EXCHANGE,
+                RabbitMQConstants.BLOG_COLLECT_CREATE_BATCH_KEY,
+                null);
+    }
+
 
 
 

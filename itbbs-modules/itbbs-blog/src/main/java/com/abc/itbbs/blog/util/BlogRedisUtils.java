@@ -82,8 +82,8 @@ public class BlogRedisUtils extends RedisUtils {
         return stringRedisTemplate.execute(redisScript, Arrays.asList(key1, key2));
     }
 
-    public static Long toggleLikeOrUnLikeByLua(String likeCountKey, String userLikeSetKey, String waitDoTaskKey, String recordTaskKey,
-                                               Long targetId, Long userId, Long maxLength, Long expireTime, Integer biz, Long timestamp) {
+    public static Long toggleLikeOrCollectByLua(String likeCountKey, String userLikeSetKey, String waitDoTaskKey, String recordTaskKey,
+                                                Long targetId, Long userId, Long maxLength, Long expireTime, Integer biz, Long timestamp) {
         RedisScript<Long> redisScript = new DefaultRedisScript<>(TOGGLE_LIKE_LUA, Long.class);
         return stringRedisTemplate.execute(redisScript,
                 Arrays.asList(likeCountKey, userLikeSetKey, waitDoTaskKey, recordTaskKey),

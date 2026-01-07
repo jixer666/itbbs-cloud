@@ -23,5 +23,13 @@
         <include refid="selectCollectRecordVo" />
     </select>
 
+    <select id="selectCollectTargetIdsByUserId" resultMap="CollectRecordResult">
+        select target_id, create_time from tb_collect_record
+        where user_id = #{userId}
+        <if test="isLimit">
+            limit 0, 9999
+        </if>
+    </select>
+
 
 </mapper>

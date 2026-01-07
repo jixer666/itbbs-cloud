@@ -19,7 +19,7 @@ import java.util.Set;
  */
 @Slf4j
 @Component
-public class LikeRecordSaveTask {
+public class CollectRecordSaveTask {
 
     @Autowired
     private TaskHelper taskHelper;
@@ -27,18 +27,18 @@ public class LikeRecordSaveTask {
     @Autowired
     private RabbitMQProducer rabbitMQProducer;
 
-    @Scheduled(fixedRate = 90 * 1000)
+    @Scheduled(fixedRate = 60 * 1000)
     public void run() {
         taskHelper.run(JobConstants.LIKE_RECORD_SAVE_TASK_NAME, JobConstants.LIKE_RECORD_SAVE_TASK_TARGET, task -> {
-            String likeRecordWaitDoSetCacheKey = CacheConstants.getFinalKey(CacheConstants.LIKE_RECORD_WAIT_DO_TASK);
-            Set<String> likeRecordDtoStrSet = RedisUtils.zRange(likeRecordWaitDoSetCacheKey, 0, 299);
-            if (CollUtil.isEmpty(likeRecordDtoStrSet)) {
+            String collectRecordWaitDoSetCacheKey = CacheConstants.getFinalKey(CacheConstants.COLLECT_RECORD_WAIT_DO_TASK);
+            Set<String> collectRecordDtoStrSet = RedisUtils.zRange(collectRecordWaitDoSetCacheKey, 0, 299);
+            if (CollUtil.isEmpty(collectRecordDtoStrSet)) {
                 return null;
             }
 
-            rabbitMQProducer.sendMessage(RabbitMQConstants.BLOG_LIKE_EXCHANGE, RabbitMQConstants.BLOG_LIKE_CREATE_BATCH_KEY, likeRecordDtoStrSet);
+            rabbitMQProducer.sendMessage(RabbitMQConstants.BLOG_COLLECT_EXCHANGE, RabbitMQConstants.BLOG_COLLECT_CREATE_BATCH_KEY, collectRecordDtoStrSet);
 
-            RedisUtils.zRemoveRange(likeRecordWaitDoSetCacheKey, 0, likeRecordDtoStrSet.size() - 1);
+            RedisUtils.zRemoveRange(collectRecordWaitDoSetCacheKey, 0, collectRecordDtoStrSet.size() - 1);
 
             return task;
         }, task -> {

@@ -39,19 +39,16 @@ public class LikeCreateBatchEventListener {
     public void handleArticleEsEvent(Set<String> likeRecordDTOSet, Message message, Channel channel) throws IOException {
         log.info("===开始消费点赞记录批量构建===");
         try {
-            try {
-                List<LikeRecord> likeRecordList = likeRecordDTOSet.stream().map(item -> {
-                    LikeRecordDTO likeRecordDTO = JSONUtil.toBean(item, LikeRecordDTO.class);
-                    return LikeRecordConvert.buildDefaultLikeRecordByLikeRecordDTO(likeRecordDTO);
-                }).collect(Collectors.toList());
+            List<LikeRecord> likeRecordList = likeRecordDTOSet.stream().map(item -> {
+                LikeRecordDTO likeRecordDTO = JSONUtil.toBean(item, LikeRecordDTO.class);
+                return LikeRecordConvert.buildDefaultLikeRecordByLikeRecordDTO(likeRecordDTO);
+            }).collect(Collectors.toList());
 
-                likeRecordService.saveBatch(likeRecordList);
-            } catch (GlobalException e) {
-                // 捕获重复点赞异常
-            }
+            likeRecordService.saveBatch(likeRecordList);
 
             channel.basicAck(message.getMessageProperties().getDeliveryTag(),false);
         } catch (Exception e) {
+            log.error("消费点赞记录出错：{}", e.getMessage(), e);
             channel.basicAck(message.getMessageProperties().getDeliveryTag(),true);
         }
         log.info("===完成消费点赞记录批量构建===");

@@ -1,7 +1,6 @@
 package com.abc.itbbs.blog.task;
 
 import cn.hutool.core.collection.CollUtil;
-import com.abc.itbbs.blog.service.ArticleService;
 import com.abc.itbbs.common.job.JobConstants;
 import com.abc.itbbs.common.job.TaskHelper;
 import com.abc.itbbs.common.mq.constant.RabbitMQConstants;
@@ -35,7 +34,7 @@ public class ArticleCountTask {
     public void run() {
         taskHelper.run(JobConstants.ARTICLE_COUNT_TASK_NAME, JobConstants.ARTICLE_COUNT_TASK_TARGET, task -> {
             // 注意：在多服务中可能重复取到数据，但对数据无影响，所以这里并没有做幂等性处理
-            String articleCountWaitDoCacheKey = CacheConstants.getFinalKey(CacheConstants.ARTICLE_WAIT_DO_TASK);
+            String articleCountWaitDoCacheKey = CacheConstants.getFinalKey(CacheConstants.ARTICLE_COUNT_WAIT_DO_TASK);
             Set<String> articleIdSet = RedisUtils.zRange(articleCountWaitDoCacheKey, 0, 999);
             if (CollUtil.isEmpty(articleIdSet)) {
                 return null;

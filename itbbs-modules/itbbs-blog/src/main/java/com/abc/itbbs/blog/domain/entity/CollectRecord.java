@@ -29,6 +29,9 @@ public class CollectRecord extends BaseEntity {
     @ApiModelProperty("类型")
     private Integer type;
 
+    @ApiModelProperty("业务类型")
+    private Integer biz;
+
     @ApiModelProperty("目标ID")
     private Long targetId;
 

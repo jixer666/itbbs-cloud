@@ -16,4 +16,6 @@ import java.util.List;
 @Mapper
 public interface CollectRecordMapper extends BaseMapper<CollectRecord> {
     List<CollectRecord> selectCollectRecordList(CollectRecordDTO collectRecordDTO);
+
+    List<CollectRecord> selectCollectTargetIdsByUserId(Long userId, Boolean isLimit);
 }

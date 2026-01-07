@@ -26,9 +26,9 @@ public class LikeRecordStrategyFactory {
         });
     }
 
-    public static LikeRecordStrategy getLikeRecordStrategy(Integer type){
-        AssertUtils.isNotEmpty(type, "点赞业务不能为空");
-        LikeRecordStrategy likeRecordStrategy = LOGIN_MAP.get(type);
+    public static LikeRecordStrategy getLikeRecordStrategy(Integer biz){
+        AssertUtils.isNotEmpty(biz, "点赞业务不能为空");
+        LikeRecordStrategy likeRecordStrategy = LOGIN_MAP.get(biz);
         AssertUtils.isNotEmpty(likeRecordStrategy, "点赞业务不存在");
 
         return likeRecordStrategy;

@@ -32,7 +32,7 @@ public class ArticleLikeRecordStrategy implements LikeRecordStrategy {
 
     @Override
     public String getWaitDoTask() {
-        return CacheConstants.getFinalKey(CacheConstants.ARTICLE_WAIT_DO_TASK);
+        return CacheConstants.getFinalKey(CacheConstants.ARTICLE_COUNT_WAIT_DO_TASK);
     }
 
     @Override

@@ -31,6 +31,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * 点赞记录业务处理
@@ -91,7 +92,16 @@ public class LikeRecordServiceImpl extends BaseServiceImpl<LikeRecordMapper, Lik
     public List<LikeRecord> selectLikeTargetIdsByUserId(Long userId, Boolean isLimit) {
         AssertUtils.isNotEmpty(userId, "用户ID不存在");
 
-        return likeRecordMapper.selectLikeTargetIdsByUserId(userId, isLimit);
+        List<LikeRecord> likeRecords = likeRecordMapper.selectLikeTargetIdsByUserId(userId, isLimit);
+        Map<Long, List<LikeRecord>> likeMap = likeRecords.stream().collect(Collectors.groupingBy(LikeRecord::getUserId));
+
+        return likeMap.entrySet().stream()
+                .filter(entry -> entry.getValue().size() % 2 != 0) // 可以重复点赞，所以单数就代表点赞，双数就代表已取消
+                .map(entry -> {
+                    List<LikeRecord> likeRecordTemps = likeMap.get(entry.getKey());
+                    return likeRecordTemps.get(likeRecordTemps.size() - 1);
+                })
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -128,7 +138,7 @@ public class LikeRecordServiceImpl extends BaseServiceImpl<LikeRecordMapper, Lik
 
 //        方案二：改为Lua脚本，减少网络IO
         try {
-            BlogRedisUtils.toggleLikeOrUnLikeByLua(
+            BlogRedisUtils.toggleLikeOrCollectByLua(
                     likeCountKey, userLikeSetKey,
                     likeRecordStrategy.getWaitDoTask(),
                     CacheConstants.getFinalKey(CacheConstants.LIKE_RECORD_WAIT_DO_TASK),
@@ -138,7 +148,7 @@ public class LikeRecordServiceImpl extends BaseServiceImpl<LikeRecordMapper, Lik
                     biz,
                     new Date().getTime());
         } catch (Exception e) {
-            log.error("执行保存脚本出错", e.getMessage(), e);
+            log.error("执行保存点赞Lua脚本出错", e.getMessage(), e);
             throw new GlobalException(BizCodeEnum.BIZ_ERROR.getCode(), "执行点赞出错");
         }
     }

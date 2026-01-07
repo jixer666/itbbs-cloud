@@ -19,8 +19,9 @@ public class CacheConstants {
     public static final String ARTICLE_HASH_INFO = "articleHashInfo:%d";
     public static final Long ARTICLE_INFO_EXPIRE_TIME = 3600L;
 
-    public static final String ARTICLE_WAIT_DO_TASK = "articleWaitDoTask";
+    public static final String ARTICLE_COUNT_WAIT_DO_TASK = "articleWaitDoTask";
     public static final String LIKE_RECORD_WAIT_DO_TASK = "likeRecordWaitDoTask";
+    public static final String COLLECT_RECORD_WAIT_DO_TASK = "collectRecordWaitDoTask";
 
     public static final String ARTICLE_VIEWS_COUNT = "articleViewsCount:%d";
     public static final String ARTICLE_VIEW_COUNT_LOCK = "articleViewCountLock:%d";
@@ -36,6 +37,10 @@ public class CacheConstants {
     public static final String ARTICLE_COLLECT_COUNT = "articleCollectCount:%d";
     public static final Long ARTICLE_COLLECT_COUNT_EXPIRE_TIME = 24L;
     public static final String ARTICLE_COLLECT_COUNT_LOCK = "articleCollectCountLock:%d";
+
+    public static final String USER_COLLECT_SET = "userCollectSet:%d:%d";
+    public static final String USER_COLLECT_SET_LOCK = "userCollectSetLock:%d";
+    public static final Long USER_COLLECT_SET_MAX_LENGTH = 9999L;
 
 
 
