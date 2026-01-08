@@ -30,7 +30,7 @@ public class ArticleController {
     @ApiOperation("查询文章分页")
     @GetMapping("/page")
     public ApiResult<PageResult> getArticlePage(ArticleDTO articleDTO) {
-        PageResult articlePages = articleService.getArticlePageWithUiParam(articleDTO);
+        PageResult articlePages = articleService.getArticlePageWithUiParamV2(articleDTO);
 
         return ApiResult.success(articlePages);
     }

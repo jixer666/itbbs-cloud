@@ -1,6 +1,7 @@
 package com.abc.itbbs.blog.service;
 
 import com.abc.itbbs.blog.domain.dto.ArticleDTO;
+import com.abc.itbbs.blog.domain.dto.ArticlePreloadDTO;
 import com.abc.itbbs.blog.domain.dto.ArticleUpdateCountDTO;
 import com.abc.itbbs.blog.domain.entity.Article;
 import com.abc.itbbs.blog.domain.vo.ArticleMetaVO;
@@ -18,7 +19,9 @@ import java.util.List;
  */
 public interface ArticleService extends IService<Article> {
 
-    PageResult getArticlePageWithUiParam(ArticleDTO articleDTO);
+    PageResult getArticlePageWithUiParamV1(ArticleDTO articleDTO);
+
+    PageResult getArticlePageWithUiParamV2(ArticleDTO articleDTO);
 
     void updateArticle(ArticleDTO articleDTO);
 
@@ -47,4 +50,8 @@ public interface ArticleService extends IService<Article> {
     void increaseArticleCollectCount(Long articleId);
 
     Integer selectArticleCollectCount(Long articleId);
+
+    List<Article> selectArticleList(ArticleDTO articleDTO);
+
+    void loadArticleCache(ArticlePreloadDTO articlePreloadDTO);
 }

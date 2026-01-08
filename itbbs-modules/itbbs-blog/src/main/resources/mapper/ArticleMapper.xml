@@ -18,6 +18,8 @@
             <result property="creationStatement"    column="creation_statement"    />
             <result property="viewsCount"    column="views_count"    />
             <result property="likeCount"    column="like_count"    />
+            <result property="commentCount"    column="comment_count"    />
+            <result property="shareCount"    column="share_count"    />
             <result property="htmlFilePath"    column="html_file_path"    />
             <result property="collectCount"    column="collect_count"    />
             <result property="createTime"    column="create_time"    />
@@ -30,18 +32,53 @@
         <result property="viewsCount"    column="views_count"    />
         <result property="likeCount"    column="like_count"    />
         <result property="collectCount"    column="collect_count"    />
+        <result property="commentCount"    column="comment_count"    />
+        <result property="shareCount"    column="share_count"    />
     </resultMap>
 
     <sql id="selectArticleVo">
-        select article_id, user_id, title, content, summary, category_id, tag_details, cover, type, visible_range, html_file_path, creation_statement, views_count, like_count, collect_count, create_time, update_time, status, ver from tb_article
+        select article_id, user_id, title, content, summary, category_id, tag_details, cover, type, visible_range, html_file_path, creation_statement, views_count, like_count, collect_count, comment_count, share_count, create_time, update_time, status, ver from tb_article
     </sql>
 
     <sql id="selectArticleWithoutVo">
-        select article_id, user_id, title, summary, category_id, tag_details, cover, type, visible_range, views_count, like_count, collect_count, create_time, status, ver, html_file_path from tb_article
+        select article_id, user_id, title, summary, category_id, tag_details, cover, type, visible_range, views_count, like_count, collect_count, comment_count, share_count, create_time, status, ver, html_file_path from tb_article
     </sql>
 
     <select id="selectArticleList" resultMap="ArticleResult">
-        <include refid="selectArticleVo" />
+        <include refid="selectArticleWithoutVo" />
+        <where>
+            <if test="status != null">and status = #{status}</if>
+        </where>
+        <choose>
+            <when test="loadType != null and loadType == 1">
+                order by create_time desc
+            </when>
+            <when test="loadType != null and loadType == 2">
+                order by
+                (
+                    -- 总公式：热度分 = (互动分 × 质量因子) ÷ 时间衰减因子
+                    -- 互动分
+                    (like_count * 0.5 + comment_count  * 0.4 + collect_count * 0.3 + share_count  * 0.2)
+                    -- 质量分（考虑浏览转化率）
+                    * (CASE
+                    WHEN views_count > 0 THEN
+                        (like_count + comment_count) / views_count
+                    ELSE 0
+                    END + 1)
+                    -- 时间衰减（牛顿冷却定律）
+                    / EXP(
+                        (UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(create_time))
+                        / (3600 * 24)  -- 转换为天数
+                        * 0.05  -- 衰减系数
+                    )
+                )
+                desc
+            </when>
+        </choose>
+
+        <if test="pageNum != null">
+            limit #{pageNum}, #{pageSize}
+        </if>
     </select>
 
     <select id="selectArticleListWithoutContent" resultMap="ArticleResult">

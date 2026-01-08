@@ -100,38 +100,37 @@ public class RabbitMQConfig {
 
     @Bean
     public Queue articleCreateHtmlQueue() {
-        // String name, boolean durable, boolean exclusive, boolean autoDelete, Map<String, Object> arguments
         return new Queue(RabbitMQConstants.BLOG_ARTICLE_HTML_QUEUE, true, false, false, null);
     }
 
     @Bean
     public Queue articleCreateVectorQueue() {
-        // String name, boolean durable, boolean exclusive, boolean autoDelete, Map<String, Object> arguments
         return new Queue(RabbitMQConstants.BLOG_ARTICLE_VECTOR_QUEUE, true, false, false, null);
     }
 
     @Bean
     public Queue articleCreateEsQueue() {
-        // String name, boolean durable, boolean exclusive, boolean autoDelete, Map<String, Object> arguments
         return new Queue(RabbitMQConstants.BLOG_ARTICLE_ES_QUEUE, true, false, false, null);
     }
 
     @Bean
     public Queue likeCreateEsQueue() {
-        // String name, boolean durable, boolean exclusive, boolean autoDelete, Map<String, Object> arguments
         return new Queue(RabbitMQConstants.BLOG_LIKE_CREATE_QUEUE, true, false, false, null);
     }
 
     @Bean
     public Queue articleViewQueue() {
-        // String name, boolean durable, boolean exclusive, boolean autoDelete, Map<String, Object> arguments
         return new Queue(RabbitMQConstants.BLOG_ARTICLE_COUNT_QUEUE, true, false, false, null);
     }
 
     @Bean
     public Queue recordCreateEsQueue() {
-        // String name, boolean durable, boolean exclusive, boolean autoDelete, Map<String, Object> arguments
         return new Queue(RabbitMQConstants.BLOG_COLLECT_CREATE_QUEUE, true, false, false, null);
+    }
+
+    @Bean
+    public Queue articlePreloadQueue() {
+        return new Queue(RabbitMQConstants.BLOG_ARTICLE_PRELOAD_QUEUE, true, false, false, null);
     }
 
 
@@ -169,13 +168,11 @@ public class RabbitMQConfig {
 
     @Bean
     public Exchange likeEventExchange() {
-        // String name, boolean durable, boolean autoDelete
         return new TopicExchange(RabbitMQConstants.BLOG_LIKE_EXCHANGE, true, false);
     }
 
     @Bean
     public Exchange collectEventExchange() {
-        // String name, boolean durable, boolean autoDelete
         return new TopicExchange(RabbitMQConstants.BLOG_COLLECT_EXCHANGE, true, false);
     }
 
@@ -265,6 +262,15 @@ public class RabbitMQConfig {
                 Binding.DestinationType.QUEUE,
                 RabbitMQConstants.BLOG_COLLECT_EXCHANGE,
                 RabbitMQConstants.BLOG_COLLECT_CREATE_BATCH_KEY,
+                null);
+    }
+
+    @Bean
+    public Binding articlePreloadBinding() {
+        return new Binding(RabbitMQConstants.BLOG_ARTICLE_PRELOAD_QUEUE,
+                Binding.DestinationType.QUEUE,
+                RabbitMQConstants.BLOG_ARTICLE_EXCHANGE,
+                RabbitMQConstants.BLOG_ARTICLE_PRELOAD_BATCH_KEY,
                 null);
     }
 

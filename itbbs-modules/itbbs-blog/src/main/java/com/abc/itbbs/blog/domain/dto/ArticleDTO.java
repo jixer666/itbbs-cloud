@@ -47,6 +47,11 @@ public class ArticleDTO {
     // 用于批量删除
     private List<Long> articleIds;
 
+    // 分页查询
+    private Long pageNum = 1L;
+    private Long pageSize = 10L;
+    private Integer loadType;
+
     public void checkUpdateParams() {
         AssertUtils.isNotEmpty(this, "文章参数不能为空");
         AssertUtils.isNotEmpty(articleId, "文章ID不能为空");
@@ -80,4 +85,10 @@ public class ArticleDTO {
         return ArticleStatusEnum.PENDING.getStatus().equals(status);
     }
 
+    public void checkQueryPageParams() {
+        AssertUtils.isNotEmpty(this, "分页参数不能为空");
+        AssertUtils.isNotEmpty(this.getPageNum(), "页码不能为空");
+        AssertUtils.isNotEmpty(this.getPageSize(), "页数不能为空");
+        AssertUtils.isNotEmpty(this.getLoadType(), "文章加载类型不能为空");
+    }
 }

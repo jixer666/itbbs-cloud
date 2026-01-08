@@ -140,7 +140,8 @@ export default {
       getArticlePage({
         pageNum: this.pagination.current,
         pageSize: this.pagination.size,
-        status: 3
+        status: 3,
+        loadType: 1
       }).then(res => {
         const articles = res.data.list
 

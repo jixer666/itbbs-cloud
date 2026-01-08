@@ -13,6 +13,10 @@ public class ArticleMetaVO {
 
     private Integer collectCount;
 
+    private Integer commentCount;
+
+    private Integer shareCount;
+
     private Boolean isCollected;
 
     private Integer likeCount;

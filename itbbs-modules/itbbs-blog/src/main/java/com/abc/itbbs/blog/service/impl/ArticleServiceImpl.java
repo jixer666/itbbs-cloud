@@ -1,23 +1,27 @@
 package com.abc.itbbs.blog.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.extra.spring.SpringUtil;
 import com.abc.itbbs.api.system.UserServiceClient;
 import com.abc.itbbs.api.system.domain.entity.User;
 import com.abc.itbbs.api.system.domain.vo.UserVO;
 import com.abc.itbbs.blog.domain.dto.ArticleHisDTO;
+import com.abc.itbbs.blog.domain.dto.ArticlePreloadDTO;
 import com.abc.itbbs.blog.domain.dto.ArticleUpdateCountDTO;
 import com.abc.itbbs.blog.domain.enums.ArticleStatusEnum;
 import com.abc.itbbs.blog.domain.enums.CollectBizEnum;
 import com.abc.itbbs.blog.domain.enums.LikeBizEnum;
 import com.abc.itbbs.blog.domain.vo.ArticleMetaVO;
+import com.abc.itbbs.blog.factory.ArticleLoadStrategyFactory;
 import com.abc.itbbs.blog.factory.CollectRecordStrategyFactory;
 import com.abc.itbbs.blog.factory.LikeRecordStrategyFactory;
 import com.abc.itbbs.blog.service.ArticleHisService;
 import com.abc.itbbs.blog.service.CollectRecordService;
 import com.abc.itbbs.blog.service.LikeRecordService;
+import com.abc.itbbs.blog.strategy.articleload.ArticleLoadStrategy;
 import com.abc.itbbs.blog.strategy.collectrecord.CollectRecordStrategy;
 import com.abc.itbbs.blog.strategy.likerecord.LikeRecordStrategy;
-import com.abc.itbbs.common.core.constant.CommonConstants;
 import com.abc.itbbs.common.core.constant.ServerConstants;
 import com.abc.itbbs.common.core.domain.service.BaseServiceImpl;
 import com.abc.itbbs.common.core.domain.vo.ApiResult;
@@ -43,6 +47,9 @@ import org.redisson.api.RedissonClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.data.redis.core.DefaultTypedTuple;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -87,9 +94,11 @@ public class ArticleServiceImpl extends BaseServiceImpl<ArticleMapper, Article> 
     @Autowired
     private CollectRecordService collectRecordService;
 
+    @Autowired
+    private ApplicationContext applicationContext;
+
     @Override
-    public PageResult getArticlePageWithUiParam(ArticleDTO articleDTO) {
-        // TODO 优化文章分页
+    public PageResult getArticlePageWithUiParamV1(ArticleDTO articleDTO) {
         startPage();
         List<Article> articles = articleMapper.selectArticleListWithoutContent(articleDTO);
 
@@ -112,6 +121,39 @@ public class ArticleServiceImpl extends BaseServiceImpl<ArticleMapper, Article> 
 
         return buildPageResult(articleVOList);
     }
+
+    @Override
+    public PageResult getArticlePageWithUiParamV2(ArticleDTO articleDTO) {
+        articleDTO.checkQueryPageParams();
+
+        ArticleLoadStrategy articleLoadStrategy = ArticleLoadStrategyFactory.getArticleLoadStrategy(articleDTO.getLoadType());
+        AssertUtils.isNotEmpty(articleLoadStrategy, "文章加载类型不存在");
+        List<ArticleVO> articleVOList = articleLoadStrategy.getArticleList(articleDTO);
+
+        fillArticleVOPageParams(articleVOList);
+
+        return buildPageResult(articleVOList, (long) articleVOList.size());
+    }
+
+    private void fillArticleVOPageParams(List<ArticleVO> articleVOList) {
+        if (CollUtil.isEmpty(articleVOList)) {
+            return;
+        }
+
+        Map<Long, User> userMap = ApiResult.invokeRemoteMethod(
+                userServiceClient.getUserMapByUserIds(
+                    articleVOList.stream().map(ArticleVO::getUserId).collect(Collectors.toList())
+                )
+        );
+
+        for (ArticleVO item : articleVOList) {
+            User user = userMap.get(item.getUserId());
+            if (Objects.nonNull(user)) {
+                item.setUserInfo(BeanUtil.copyProperties(user, UserVO.class));
+            }
+        }
+    }
+
 
     @Override
     public void updateArticle(ArticleDTO articleDTO) {
@@ -355,4 +397,18 @@ public class ArticleServiceImpl extends BaseServiceImpl<ArticleMapper, Article> 
 
         return articleMapper.selectArticleCollectCount(articleId);
     }
+
+    @Override
+    public List<Article> selectArticleList(ArticleDTO articleDTO) {
+
+        return articleMapper.selectArticleList(articleDTO);
+    }
+
+    @Override
+    public void loadArticleCache(ArticlePreloadDTO articlePreloadDTO) {
+        applicationContext.getBeansOfType(ArticleLoadStrategy.class).forEach((k, v)->{
+            v.saveArticleCache(articlePreloadDTO);
+        });
+    }
+
 }

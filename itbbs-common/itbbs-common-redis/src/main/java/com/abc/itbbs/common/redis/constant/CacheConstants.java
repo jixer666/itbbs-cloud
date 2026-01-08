@@ -42,15 +42,19 @@ public class CacheConstants {
     public static final String USER_COLLECT_SET_LOCK = "userCollectSetLock:%d";
     public static final Long USER_COLLECT_SET_MAX_LENGTH = 9999L;
 
+    public static final String ARTICLE_PRELOAD_LOCK_KEY = "articlePreloadLock";
+    public static final Long ARTICLE_PRELOAD_LOCK_EXPIRE_TIME = 10L;
 
+    public static final String ARTICLE_NEW_LIST = "articleNewList";
+    public static final Long ARTICLE_NEW_LIST_EXPIRE_TIME = 24L;
+
+    public static final String ARTICLE_HOT_LIST = "articleHotList";
+    public static final Long ARTICLE_HOT_LIST_EXPIRE_TIME = 3L;
 
 
     public static String getFinalKey(String key, Object...values) {
         return String.format(SYSTEM_NAME + key, values);
     }
-
-
-
 
 
 }

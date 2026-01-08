@@ -40,6 +40,13 @@ public class BaseServiceImpl<M extends BaseMapper<T>, T> extends ServiceImpl<M, 
                 .build();
     }
 
+    public PageResult buildPageResult(List<?> list, Long total) {
+        return PageResult.builder()
+                .list(list)
+                .total(total)
+                .build();
+    }
+
     public ResponseEntity<byte[]> download(byte[] fileData, String filename) {
         HttpHeaders headers = new HttpHeaders();
         ContentDisposition contentDisposition = ContentDisposition.builder("attachment")

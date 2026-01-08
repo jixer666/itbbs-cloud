@@ -40,4 +40,10 @@ public class RabbitMQConstants {
     public static final String BLOG_COLLECT_CREATE_QUEUE = "blog.collect.create.queue";
     public static final String BLOG_COLLECT_CREATE_BATCH_KEY = "blog.collect.create.batch";
 
+    /**
+     * 文章信息预加载
+     */
+    public static final String BLOG_ARTICLE_PRELOAD_QUEUE = "blog.article.preload.queue";
+    public static final String BLOG_ARTICLE_PRELOAD_BATCH_KEY = "blog.article.preload.batch";
+
 }
