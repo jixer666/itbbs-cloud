@@ -392,6 +392,44 @@ public class RedisUtils {
     }
 
     /**
+     * HashSet 批量插入
+     *
+     * @param hashDataMap
+     */
+    public static void batchHMSet(Map<String, Map<String, String>> hashDataMap,
+                                  Long timeout, TimeUnit unit, Boolean isRadomExpire) {
+        Random random = new Random();
+        stringRedisTemplate.executePipelined((RedisCallback<Object>) connection -> {
+            for (Map.Entry<String, Map<String, String>> entry : hashDataMap.entrySet()) {
+                String key = entry.getKey();
+                Map<String, String> data = entry.getValue();
+
+                Map<byte[], byte[]> byteMap = new HashMap<>();
+                for (Map.Entry<String, String> dataEntry : data.entrySet()) {
+                    byteMap.put(
+                            serialize(dataEntry.getKey()),
+                            serialize(dataEntry.getValue())
+                    );
+                }
+                connection.hMSet(serialize(key), byteMap);
+                if (isRadomExpire) {
+                    // 加随机数防止缓存过多失效导致缓存雪崩
+                    long randomOffset = (long) (timeout * 0.1 * (random.nextDouble() * 2 - 1));
+                    long finalExpire = timeout + randomOffset;
+                    connection.expire(serialize(key), unit.toSeconds(finalExpire));
+                } else {
+                    connection.expire(serialize(key), unit.toSeconds(timeout));
+                }
+            }
+            return null;
+        });
+    }
+
+    private static byte[] serialize(String str) {
+        return stringRedisTemplate.getStringSerializer().serialize(str);
+    }
+
+    /**
      * HashSet 并设置时间
      *
      * @param key  键
