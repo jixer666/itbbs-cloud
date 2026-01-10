@@ -80,6 +80,7 @@ public class ArticleConvert {
         articleDTO.setPageNum(Long.valueOf(ArticleConstants.PRELOAD_PAGE_NUM));
         articleDTO.setPageSize(Long.valueOf(ArticleConstants.PRELOAD_PAGE_SIZE));
         articleDTO.setStatus(ArticleStatusEnum.PUBLISHED.getStatus());
+        articleDTO.setBeginPage((articleDTO.getPageNum() - 1) * articleDTO.getPageNum());
 
         return articleDTO;
     }

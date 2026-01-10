@@ -77,7 +77,7 @@
         </choose>
 
         <if test="pageNum != null">
-            limit #{pageNum}, #{pageSize}
+            limit #{beginPage}, #{pageSize}
         </if>
     </select>
 

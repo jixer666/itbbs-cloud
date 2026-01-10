@@ -2,7 +2,6 @@ package com.abc.itbbs.blog.strategy.articleload;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.json.JSONUtil;
 import com.abc.itbbs.blog.domain.dto.ArticleDTO;
 import com.abc.itbbs.blog.domain.dto.ArticlePreloadDTO;
 import com.abc.itbbs.blog.domain.vo.ArticleVO;
@@ -30,16 +29,21 @@ public interface ArticleLoadStrategy {
     default List<ArticleVO> getArticleList(ArticleDTO articleDTO) {
         AssertUtils.isTrue(getLoadType().equals(articleDTO.getLoadType()), "文章加载类型不匹配");
 
-        String articleNewListCacheKey = getArticleLoadCacheKey();
+        String articleListCacheKey = getArticleLoadCacheKey();
 
         // 获取文章ID列表
         Long pageBegin = (articleDTO.getPageNum() - 1) * articleDTO.getPageSize();
         Long pageNum = articleDTO.getPageSize();
-        Set<String> articleVoSet = RedisUtils.zRange(articleNewListCacheKey, pageBegin, pageNum);
+        Set<String> articleVoSet = RedisUtils.zRange(articleListCacheKey, pageBegin, pageBegin + pageNum - 1);
+
+        List<String> articleCackeList = articleVoSet.stream().map(
+                item -> CacheConstants.getFinalKey(CacheConstants.ARTICLE_HASH_INFO, Long.parseLong(item))
+        ).collect(Collectors.toList());
 
         // 根据ID列表查询数据
-
-        return articleVoSet.stream().map(item -> JSONUtil.toBean(item, ArticleVO.class)).collect(Collectors.toList());
+        return RedisUtils.batchGetHash(articleCackeList, null).stream().map(item ->{
+            return BeanUtil.copyProperties(item, ArticleVO.class);
+        }).collect(Collectors.toList());
     }
 
     default void saveArticleCache(ArticlePreloadDTO articlePreloadDTO) {
@@ -48,9 +52,7 @@ public interface ArticleLoadStrategy {
             return;
         }
 
-        // 缓存文章ID列表（用于分页查询）
         Set<ZSetOperations.TypedTuple<String>> tuples = new HashSet<>();
-        // 缓存文章详情信息
         Map<String, Map<String, String>> articlesMap = new HashMap<>();
         for (ArticleVO articleVO : articleVOList) {
             tuples.add(new DefaultTypedTuple<>(articleVO.getArticleId().toString(), articleVO.getCreateTime().getTime() * -1.0));
@@ -58,9 +60,15 @@ public interface ArticleLoadStrategy {
         }
 
         String articleNewListCacheKey = getArticleLoadCacheKey();
+        // 缓存文章ID列表（用于分页查询）
         RedisUtils.zAdd(articleNewListCacheKey, tuples);
         RedisUtils.expire(articleNewListCacheKey, getArticleLoadExpireTime(), TimeUnit.HOURS);
 
+        // 缓存文章详情信息
         RedisUtils.batchHMSet(articlesMap, CacheConstants.ARTICLE_INFO_EXPIRE_TIME, TimeUnit.HOURS, true);
+    }
+
+    default Long getArticleTotalSize() {
+        return RedisUtils.zSize(getArticleLoadCacheKey());
     }
 }

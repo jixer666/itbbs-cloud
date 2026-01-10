@@ -1,13 +1,12 @@
 package com.abc.itbbs.blog.listener;
 
-import cn.hutool.core.bean.BeanUtil;
-import com.abc.itbbs.blog.constant.TemplateConstants;
 import com.abc.itbbs.blog.domain.entity.Article;
-import com.abc.itbbs.blog.service.ArticleService;
 import com.abc.itbbs.blog.service.SensitiveWordService;
-import com.abc.itbbs.common.core.constant.FileSuffixConstants;
+import com.abc.itbbs.common.core.util.BeanUtils;
 import com.abc.itbbs.common.mq.constant.RabbitMQConstants;
 import com.abc.itbbs.common.mq.producer.RabbitMQProducer;
+import com.abc.itbbs.common.redis.constant.CacheConstants;
+import com.abc.itbbs.common.redis.util.RedisUtils;
 import com.rabbitmq.client.Channel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
@@ -46,6 +45,7 @@ public class ArticleCreatedEventListener {
                 // 审核未通过
                 channel.basicAck(message.getMessageProperties().getDeliveryTag(),false);
             }
+
 
             // 审核通过
             // 生成静态文件

@@ -51,6 +51,7 @@ public class ArticleDTO {
     private Long pageNum = 1L;
     private Long pageSize = 10L;
     private Integer loadType;
+    private Long beginPage;
 
     public void checkUpdateParams() {
         AssertUtils.isNotEmpty(this, "文章参数不能为空");

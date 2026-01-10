@@ -1,10 +1,12 @@
 package com.abc.itbbs.common.redis.util;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.extra.spring.SpringUtil;
 import com.abc.itbbs.common.core.util.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.StringRedisConnection;
 import org.springframework.data.redis.core.*;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.data.redis.core.script.RedisScript;
@@ -397,7 +399,7 @@ public class RedisUtils {
      * @param hashDataMap
      */
     public static void batchHMSet(Map<String, Map<String, String>> hashDataMap,
-                                  Long timeout, TimeUnit unit, Boolean isRadomExpire) {
+                                  Long timeout, TimeUnit unit, Boolean isRandomExpire) {
         Random random = new Random();
         stringRedisTemplate.executePipelined((RedisCallback<Object>) connection -> {
             for (Map.Entry<String, Map<String, String>> entry : hashDataMap.entrySet()) {
@@ -412,7 +414,7 @@ public class RedisUtils {
                     );
                 }
                 connection.hMSet(serialize(key), byteMap);
-                if (isRadomExpire) {
+                if (isRandomExpire) {
                     // 加随机数防止缓存过多失效导致缓存雪崩
                     long randomOffset = (long) (timeout * 0.1 * (random.nextDouble() * 2 - 1));
                     long finalExpire = timeout + randomOffset;
@@ -429,6 +431,55 @@ public class RedisUtils {
         return stringRedisTemplate.getStringSerializer().serialize(str);
     }
 
+
+    /**
+     * 批量更新多个Hash的相同字段（如批量更新文章点赞数）
+     */
+    public static void batchUpdateHashField(List<String> hashKeys, String field, List<Object> values) {
+        if (hashKeys.size() != values.size()) {
+            throw new IllegalArgumentException("Keys和values个数不匹配");
+        }
+
+        stringRedisTemplate.executePipelined((RedisCallback<Object>) connection -> {
+            for (int i = 0; i < hashKeys.size(); i++) {
+                String key = hashKeys.get(i);
+                Object value = values.get(i);
+                connection.hSet(
+                        key.getBytes(),
+                        field.getBytes(),
+                        value.toString().getBytes()
+                );
+            }
+            return null;
+        });
+    }
+
+    /**
+     * HashSet 批量获取
+     *
+     * @param hashKeys
+     * @param hashFields
+     */
+    public static List<Object> batchGetHash(List<String> hashKeys, List<Object> hashFields) {
+       return stringRedisTemplate.executePipelined(
+                (RedisCallback<Object>) connection -> {
+                    StringRedisConnection stringRedisConn = (StringRedisConnection) connection;
+
+                    for (String hashKey : hashKeys) {
+                        if (CollUtil.isEmpty(hashFields)) {
+                            // 获取所有字段
+                             stringRedisConn.hGetAll(hashKey);
+                        } else {
+                            // 指定字段
+                            stringRedisConn.hMGet(hashKey,
+                                    hashFields.toArray(new String[0]));
+                        }
+                    }
+                    return null;
+                }
+        );
+    }
+
     /**
      * HashSet 并设置时间
      *
@@ -438,6 +489,27 @@ public class RedisUtils {
      * @return true成功 false失败
      */
     public static Boolean hmset(String key, Map<String, Object> map, long time) {
+        try {
+            stringRedisTemplate.opsForHash().putAll(key, map);
+            if (time > 0) {
+                expire(key, time);
+            }
+            return true;
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return false;
+        }
+    }
+
+    /**
+     * HashSet 并设置时间
+     *
+     * @param key  键
+     * @param map  对应多个键值
+     * @param time 时间(秒)
+     * @return true成功 false失败
+     */
+    public static Boolean hmsetByStrMap(String key, Map<String, String> map, long time) {
         try {
             stringRedisTemplate.opsForHash().putAll(key, map);
             if (time > 0) {

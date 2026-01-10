@@ -132,7 +132,7 @@ public class ArticleServiceImpl extends BaseServiceImpl<ArticleMapper, Article> 
 
         fillArticleVOPageParams(articleVOList);
 
-        return buildPageResult(articleVOList, (long) articleVOList.size());
+        return buildPageResult(articleVOList, articleLoadStrategy.getArticleTotalSize());
     }
 
     private void fillArticleVOPageParams(List<ArticleVO> articleVOList) {

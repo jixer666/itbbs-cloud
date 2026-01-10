@@ -17,7 +17,7 @@ public class CacheConstants {
 
     public static final String ARTICLE_INFO = "articleInfo:%d";
     public static final String ARTICLE_HASH_INFO = "articleHashInfo:%d";
-    public static final Long ARTICLE_INFO_EXPIRE_TIME = 3 * 3600L;
+    public static final Long ARTICLE_INFO_EXPIRE_TIME = 24 * 3600L;
 
     public static final String ARTICLE_COUNT_WAIT_DO_TASK = "articleWaitDoTask";
     public static final String LIKE_RECORD_WAIT_DO_TASK = "likeRecordWaitDoTask";

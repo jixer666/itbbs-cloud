@@ -20,7 +20,7 @@ public class NewArticleLoadStrategy implements ArticleLoadStrategy {
 
     @Override
     public String getArticleLoadCacheKey() {
-        return CacheConstants.getFinalKey(CacheConstants.ARTICLE_HOT_LIST);
+        return CacheConstants.getFinalKey(CacheConstants.ARTICLE_NEW_LIST);
     }
 
     @Override

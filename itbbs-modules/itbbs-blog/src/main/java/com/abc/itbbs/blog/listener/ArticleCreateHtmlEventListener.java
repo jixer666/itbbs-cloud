@@ -12,7 +12,10 @@ import com.abc.itbbs.blog.service.TemplateService;
 import com.abc.itbbs.common.core.constant.FileSuffixConstants;
 import com.abc.itbbs.common.core.domain.vo.ApiResult;
 import com.abc.itbbs.common.core.module.threadlocal.ThreadLocalTempVar;
+import com.abc.itbbs.common.core.util.BeanUtils;
 import com.abc.itbbs.common.mq.constant.RabbitMQConstants;
+import com.abc.itbbs.common.redis.constant.CacheConstants;
+import com.abc.itbbs.common.redis.util.RedisUtils;
 import com.rabbitmq.client.Channel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
@@ -65,6 +68,8 @@ public class ArticleCreateHtmlEventListener {
 
             articleService.updateHtmlFilePathByArticleId(article.getArticleId(), fileVO.getFilePath());
 
+            saveArticleCache(article);
+
             channel.basicAck(message.getMessageProperties().getDeliveryTag(),false);
         } catch (Exception e) {
             log.error("页面静态化出错：{}", e.getMessage(), e);
@@ -85,6 +90,19 @@ public class ArticleCreateHtmlEventListener {
         articleContext.put("userInfo", userMap.get(article.getUserId()));
 
         return articleContext;
+    }
+
+
+    private void saveArticleCache(Article article) {
+        // 添加最新文章缓存
+        RedisUtils.zAdd(CacheConstants.getFinalKey(CacheConstants.ARTICLE_NEW_LIST),
+                article.getArticleId().toString(),
+                article.getCreateTime().getTime() * -1);
+
+        // 添加文章详情缓存
+        RedisUtils.hmsetByStrMap(CacheConstants.getFinalKey(CacheConstants.ARTICLE_HASH_INFO, article.getArticleId()),
+                BeanUtils.convertToMap(article),
+                CacheConstants.ARTICLE_INFO_EXPIRE_TIME);
     }
 
 }
