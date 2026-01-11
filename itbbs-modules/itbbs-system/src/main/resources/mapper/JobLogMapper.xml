@@ -5,7 +5,7 @@
 <mapper namespace="com.abc.itbbs.system.mapper.JobLogMapper">
 
     <resultMap type="JobLog" id="JobLogResult">
-            <result property="tbJobLog"    column="tb_job_log"    />
+            <result property="jobLogId"    column="job_log_id"    />
             <result property="jobName"    column="job_name"    />
             <result property="invokeTarget"    column="invoke_target"    />
             <result property="jobMessage"    column="job_message"    />
@@ -17,7 +17,7 @@
     </resultMap>
 
     <sql id="selectJobLogVo">
-        select tb_job_log, job_name, invoke_target, job_message, exception_info, create_time, update_time, status, ver from tb_job_log
+        select job_log_id, job_name, invoke_target, job_message, exception_info, create_time, update_time, status, ver from tb_job_log
     </sql>
 
     <select id="selectJobLogList" resultMap="JobLogResult">

@@ -44,7 +44,7 @@ public class TaskHelper {
         String jobMessage = String.format("【%s】总共耗时：%d毫秒", taskName, runMs);
 
         JobLogSaveDTO jobLogSaveDTO = new JobLogSaveDTO();
-        jobLogSaveDTO.setJobMessage(jobMessage);
+        jobLogSaveDTO.setJobName(taskName);
         jobLogSaveDTO.setInvokeTarget(invokeTarget);
         jobLogSaveDTO.setJobMessage(jobMessage);
         jobLogSaveDTO.setStatus(status);
