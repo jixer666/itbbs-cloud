@@ -5,21 +5,18 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.abc</groupId>
-        <artifactId>itbbs</artifactId>
+        <artifactId>itbbs-modules</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>itbbs-modules</artifactId>
-    <packaging>pom</packaging>
-    <modules>
-        <module>itbbs-system</module>
-        <module>itbbs-ai</module>
-    </modules>
+    <artifactId>itbbs-ai</artifactId>
 
     <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
+
 
 </project>
