@@ -28,6 +28,7 @@ public class AiController {
         return ApiResult.success(aiChatVO);
     }
 
+
 //    @PostMapping("/stream")
 //    public ApiResult<Void> chatAiStream(@RequestBody AiChatDTO aiChatDTO) {
 //        aiService.chatAiStream(aiChatDTO);
