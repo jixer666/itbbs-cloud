@@ -13,6 +13,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>itbbs-api-system</module>
+        <module>itbbs-api-ai</module>
     </modules>
 
     <properties>

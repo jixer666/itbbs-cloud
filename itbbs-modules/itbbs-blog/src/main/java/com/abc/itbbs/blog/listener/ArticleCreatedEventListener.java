@@ -55,7 +55,7 @@ public class ArticleCreatedEventListener {
 //            rabbitMQProducer.sendMessage(RabbitMQConstants.BLOG_ARTICLE_EXCHANGE, RabbitMQConstants.BLOG_ARTICLE_ES_KEY, message);
 //
 //            // 保存向量数据库
-//            rabbitMQProducer.sendMessage(RabbitMQConstants.BLOG_ARTICLE_EXCHANGE, RabbitMQConstants.BLOG_ARTICLE_VECTOR_KEY, message);
+            rabbitMQProducer.sendMessage(RabbitMQConstants.BLOG_ARTICLE_EXCHANGE, RabbitMQConstants.BLOG_ARTICLE_VECTOR_KEY, message);
 
             channel.basicAck(message.getMessageProperties().getDeliveryTag(),false);
 

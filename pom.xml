@@ -114,6 +114,12 @@
 
             <dependency>
                 <groupId>com.abc</groupId>
+                <artifactId>itbbs-common-ai</artifactId>
+                <version>${itbbs.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.abc</groupId>
                 <artifactId>itbbs-api</artifactId>
                 <version>${itbbs.version}</version>
             </dependency>
@@ -124,6 +130,11 @@
                 <version>${itbbs.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>com.abc</groupId>
+                <artifactId>itbbs-api-ai</artifactId>
+                <version>${itbbs.version}</version>
+            </dependency>
 
             <!-- Spring Boot 依赖管理 -->
             <dependency>

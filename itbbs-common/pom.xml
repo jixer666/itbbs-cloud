@@ -21,6 +21,7 @@
         <module>itbbs-common-oss</module>
         <module>itbbs-common-mq</module>
         <module>itbbs-common-job</module>
+        <module>itbbs-common-ai</module>
     </modules>
 
 

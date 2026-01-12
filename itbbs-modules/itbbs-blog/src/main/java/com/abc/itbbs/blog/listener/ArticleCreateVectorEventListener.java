@@ -26,8 +26,13 @@ public class ArticleCreateVectorEventListener {
     @RabbitHandler
     public void handleArticleVectorEvent(Article article, Message message, Channel channel) throws IOException {
         log.info("===开始消费文章向量数据构建===");
-        // TODO
-        channel.basicAck(message.getMessageProperties().getDeliveryTag(),false);
+        try {
+
+            channel.basicAck(message.getMessageProperties().getDeliveryTag(),false);
+        } catch (Exception e) {
+            log.error("文章向量数据构建出错：{}", e.getMessage(), e);
+            channel.basicAck(message.getMessageProperties().getDeliveryTag(),true);
+        }
         log.info("===完成消费文章向量数据构建===");
     }
 
