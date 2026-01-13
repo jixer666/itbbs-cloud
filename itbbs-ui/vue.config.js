@@ -72,6 +72,16 @@ module.exports = {
           '^/blog-api': ''
         }
       },
+      '/ai-api': {
+        target: baseUrl,
+        changeOrigin: true,
+        headers: {
+          Host: 'ai.itbbs.com'
+        },
+        pathRewrite: {
+          '^/ai-api': ''
+        }
+      },
       // springdoc proxy
       '^/v3/api-docs/(.*)': {
         target: baseUrl,

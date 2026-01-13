@@ -112,6 +112,8 @@
 </template>
 
 <script>
+import { chatAiStream, chatAi } from '@/api/ai/bot';
+
 export default {
   name: "AiChat",
   data() {
@@ -253,17 +255,8 @@ export default {
       this.loading = true;
 
       try {
-        // 模拟AI响应（实际应用中应调用AI接口）
-        setTimeout(() => {
-          const aiResponse = {
-            role: "ai",
-            content: this.generateMockResponse(message),
-            timestamp: new Date(),
-          };
-
-          this.currentMessages.push(aiResponse);
-          this.loading = false;
-        }, 1000);
+        // 调用SSE流式AI接口
+        await this.callAiStreamApi(message);
       } catch (error) {
         console.error("发送消息失败:", error);
         this.currentMessages.push({
@@ -271,6 +264,79 @@ export default {
           content: "抱歉，暂时无法处理您的请求，请稍后再试。",
           timestamp: new Date(),
         });
+        this.loading = false;
+      }
+    },
+
+    // 调用SSE流式AI接口
+    async callAiStreamApi(message) {
+      // 创建一个空的AI消息对象，用于逐步填充内容
+      const aiMessage = {
+        role: "ai",
+        content: "",
+        timestamp: new Date(),
+      };
+      
+      this.currentMessages.push(aiMessage);
+      
+      // 准备请求数据
+      const requestData = {
+        content: message,
+        chatId: this.currentChatIndex.toString()
+      };
+      
+      try {
+        // 发起SSE请求
+        const response = await chatAiStream(requestData);
+        
+        // 处理SSE响应
+        if (response && response.data) {
+          const reader = response.data.getReader();
+          const decoder = new TextDecoder('utf-8');
+          let done = false;
+          
+          while (!done) {
+            const { value, done: readerDone } = await reader.read();
+            done = readerDone;
+            
+            if (value) {
+              const chunk = decoder.decode(value, { stream: true });
+              const lines = chunk.split('\n');
+              
+              for (const line of lines) {
+                if (line.startsWith('data: ')) {
+                  const dataStr = line.slice(6); // 移除 'data: ' 前缀
+                  if (dataStr && dataStr !== '[DONE]') {
+                    try {
+                      const data = JSON.parse(dataStr);
+                      if (data.content) {
+                        // 更新AI消息的内容
+                        aiMessage.content += data.content;
+                        // 触发视图更新
+                        this.$set(this.currentMessages, this.currentMessages.length - 1, aiMessage);
+                        // 确保滚动到底部
+                        this.scrollToBottom();
+                      }
+                    } catch (e) {
+                      console.error('解析SSE数据出错:', e);
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.error('SSE请求失败:', error);
+        // 在错误情况下更新最后一条消息为错误信息
+        const errorMessage = {
+          role: "ai",
+          content: "抱歉，AI服务暂时不可用，请稍后再试。",
+          timestamp: new Date(),
+        };
+        this.currentMessages.pop(); // 移除空的消息占位符
+        this.currentMessages.push(errorMessage); // 添加错误消息
+      } finally {
         this.loading = false;
       }
     },
