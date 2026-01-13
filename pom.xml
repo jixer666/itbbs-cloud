@@ -47,6 +47,7 @@
         <simplemagic.version>1.17</simplemagic.version>
         <jsoup.version>1.15.4</jsoup.version>
         <redisson-spring-boot-starter.version>3.17.1</redisson-spring-boot-starter.version>
+        <milvus.version>2.6.11</milvus.version>
 
     </properties>
 
@@ -290,6 +291,12 @@
                 <groupId>org.redisson</groupId>
                 <artifactId>redisson-spring-boot-starter</artifactId>
                 <version>${redisson-spring-boot-starter.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.milvus</groupId>
+                <artifactId>milvus-sdk-java</artifactId>
+                <version>${milvus.version}</version>
             </dependency>
 
         </dependencies>

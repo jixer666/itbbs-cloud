@@ -4,7 +4,7 @@ import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONUtil;
-import com.abc.itbbs.common.ai.client.SseClient;
+import com.abc.itbbs.common.ai.listener.SseEventSourceListener;
 import com.abc.itbbs.common.ai.listener.StreamResponseListener;
 import okhttp3.*;
 import okhttp3.sse.EventSource;
@@ -42,14 +42,14 @@ public class HttpUtils extends HttpUtil {
         }
         if (!headers.containsKey("Accept")) {
             // 确保包含SSE必需的Accept头
-            requestBuilder.addHeader("Accept", "text/event-stream");
+            requestBuilder.addHeader("Accept", "text/event-stream, application/x-ndjson");
         }
 
         Request request = requestBuilder.build();
         EventSource.Factory factory = EventSources.createFactory(client);
 
-        SseClient sseClient = new SseClient(listener);
-        factory.newEventSource(request, sseClient);
+        SseEventSourceListener sseEventSourceListener = new SseEventSourceListener(listener);
+        factory.newEventSource(request, sseEventSourceListener);
 
         if (Objects.nonNull(listener)) {
             listener.onStart();

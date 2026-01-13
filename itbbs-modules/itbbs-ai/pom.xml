@@ -38,6 +38,10 @@
             <groupId>com.abc</groupId>
             <artifactId>itbbs-api-system</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.abc</groupId>
+            <artifactId>itbbs-api-ai</artifactId>
+        </dependency>
 
 
         <dependency>
@@ -60,6 +64,10 @@
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.milvus</groupId>
+            <artifactId>milvus-sdk-java</artifactId>
         </dependency>
     </dependencies>
     <dependencyManagement>

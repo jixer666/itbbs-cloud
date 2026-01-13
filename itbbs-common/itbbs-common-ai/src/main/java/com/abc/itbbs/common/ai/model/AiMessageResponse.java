@@ -9,7 +9,7 @@ public class AiMessageResponse {
 
     private String model;
 
-    private Date created_at;
+    private String created_at;
 
     private AiMessage message;
 
