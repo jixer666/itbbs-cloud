@@ -9,8 +9,13 @@ import io.milvus.v2.service.collection.request.HasCollectionReq;
 import io.milvus.v2.service.database.request.CreateDatabaseReq;
 import io.milvus.v2.service.database.response.ListDatabasesResp;
 import io.milvus.v2.service.vector.request.InsertReq;
+import io.milvus.v2.service.vector.request.SearchReq;
+import io.milvus.v2.service.vector.request.data.BaseVector;
+import io.milvus.v2.service.vector.request.data.FloatVec;
 import io.milvus.v2.service.vector.response.InsertResp;
+import io.milvus.v2.service.vector.response.SearchResp;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -52,7 +57,7 @@ public class MilvusUtils {
         );
     }
 
-    public static InsertResp insert(List<?> dataList, String collectionName) {
+    public static InsertResp insert(List<?> dataList, String database, String collectionName) {
         if (CollUtil.isEmpty(dataList)) {
             return null;
         }
@@ -61,6 +66,7 @@ public class MilvusUtils {
         List<JsonObject> dataJsonObjectList = dataList.stream().map(item -> gson.toJsonTree(item).getAsJsonObject()).collect(Collectors.toList());
 
         InsertReq insertReq = InsertReq.builder()
+                .databaseName(database)
                 .collectionName(collectionName)
                 .data(dataJsonObjectList)
                 .build();
@@ -68,5 +74,19 @@ public class MilvusUtils {
         return client.insert(insertReq);
     }
 
+    public static SearchResp searchSingle(String database, String collection, List<Float> vectorList, String field, Integer topK) {
+        FloatVec queryVector = new FloatVec(vectorList);
+        List<BaseVector> floatVecList = Collections.singletonList(queryVector);
+
+        SearchReq searchReq = SearchReq.builder()
+                .databaseName(database)
+                .collectionName(collection)
+                .data(floatVecList)
+                .annsField(field)
+                .topK(topK)
+                .build();
+
+        return client.search(searchReq);
+    }
 
 }

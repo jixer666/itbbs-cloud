@@ -4,18 +4,3 @@ mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     map-underscore-to-camel-case: true
-
-
-ai:
-  type: 1
-  deepseek:
-    api-key: sk-72f3a9f57c8a4f6889fc9d1219c4caa9
-    model: deepseek-chat
-  ollama:
-    api-key: xxxx
-    model: deepseek-r1:8b
-
-milvus:
-  uri: http://127.0.0.1:19530
-  token: root:Milvus
-  database: itbbs

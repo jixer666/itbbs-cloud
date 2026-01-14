@@ -1,6 +1,7 @@
 package com.abc.itbbs.blog.listener;
 
 import com.abc.itbbs.api.ai.DocumentServiceClient;
+import com.abc.itbbs.api.ai.domain.dto.ArticleDocumentDTO;
 import com.abc.itbbs.api.ai.domain.dto.DocumentDTO;
 import com.abc.itbbs.api.ai.domain.enums.DocumentBizEnum;
 import com.abc.itbbs.blog.domain.entity.Article;
@@ -47,9 +48,12 @@ public class ArticleCreateVectorEventListener {
 
     private DocumentDTO buildDocumentDTO(Article article) {
         DocumentDTO documentDTO = new DocumentDTO();
-        documentDTO.setArticleId(article.getArticleId());
-        documentDTO.setContent(article.getContent());
         documentDTO.setBiz(DocumentBizEnum.ARTICLE.getBiz());
+
+        ArticleDocumentDTO articleDocumentDTO = new ArticleDocumentDTO();
+        articleDocumentDTO.setArticleId(article.getArticleId());
+        articleDocumentDTO.setContent(article.getContent());
+        documentDTO.setObj(articleDocumentDTO);
 
         return documentDTO;
     }

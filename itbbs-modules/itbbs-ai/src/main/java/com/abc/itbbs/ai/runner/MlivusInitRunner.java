@@ -69,7 +69,7 @@ public class MlivusInitRunner implements ApplicationRunner {
         schema.addField(AddFieldReq.builder()
                 .fieldName("document_chunk_vector")
                 .dataType(DataType.FloatVector)
-                .dimension(5)
+                .dimension(768)
                 .build());
         schema.addField(AddFieldReq.builder()
                 .fieldName("created_at")

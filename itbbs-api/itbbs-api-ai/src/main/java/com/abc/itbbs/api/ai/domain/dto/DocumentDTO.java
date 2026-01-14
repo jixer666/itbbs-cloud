@@ -6,14 +6,11 @@ import lombok.Data;
 @Data
 public class DocumentDTO {
 
-    private String biz;
+    private Integer biz;
 
-    private Long articleId;
-
-    private String content;
+    private Object obj;
 
     public void checkVectorSaveParams() {
-        AssertUtils.isNotEmpty(articleId, "目标对象ID不能为空");
-        AssertUtils.isNotEmpty(content, "内容不能为空");
+        AssertUtils.isNotEmpty(biz, "文档业务类型不能为空");
     }
 }

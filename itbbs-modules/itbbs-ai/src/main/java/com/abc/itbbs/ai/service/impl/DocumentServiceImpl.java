@@ -2,47 +2,43 @@ package com.abc.itbbs.ai.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import com.abc.itbbs.ai.constant.DocumentConstants;
+import com.abc.itbbs.ai.factory.DocumentBizStrategyFactory;
 import com.abc.itbbs.ai.service.DocumentService;
+import com.abc.itbbs.ai.strategy.documentbiz.DocumentBizStrategy;
 import com.abc.itbbs.ai.util.MilvusUtils;
 import com.abc.itbbs.api.ai.domain.dto.DocumentDTO;
-import com.abc.itbbs.common.ai.model.DocumentChunk;
-import com.abc.itbbs.common.ai.strategy.splitter.DocumentSplitter;
-import com.abc.itbbs.common.ai.strategy.splitter.RecursiveDocumentSplitter;
-import io.milvus.v2.client.MilvusClientV2;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
 @Service
 public class DocumentServiceImpl implements DocumentService {
 
-    @Autowired
-    private MilvusClientV2 milvusClientV2;
+    @Value("${milvus.database}")
+    private String database;
 
     @Override
     public void vectorSave(DocumentDTO documentDTO) {
         documentDTO.checkVectorSaveParams();
 
-        List<DocumentChunk> documentChunks = splitDocument(documentDTO);
+        DocumentBizStrategy documentBizStrategy = DocumentBizStrategyFactory.getDocumentBizStrategy(documentDTO.getBiz());
+        List<Object> documentDTOList = documentBizStrategy.run(documentDTO.getObj());
 
-        saveToMilvus(documentChunks);
+        log.info("开始保存向量数据：{}", documentDTO);
+        saveToMilvus(documentDTOList);
+        log.info("完成保存向量数据：{}", documentDTO);
     }
 
-    private void saveToMilvus(List<DocumentChunk> documentChunks) {
-        if (CollUtil.isEmpty(documentChunks)) {
+
+    private void saveToMilvus(List<Object> vectorList) {
+        if (CollUtil.isEmpty(vectorList)) {
             return;
         }
 
-        MilvusUtils.insert(documentChunks, DocumentConstants.DOCUMENT_CHUNK_COLLECTION);
+        MilvusUtils.insert(vectorList, database, DocumentConstants.DOCUMENT_CHUNK_COLLECTION);
     }
-
-    private List<DocumentChunk> splitDocument(DocumentDTO documentDTO) {
-        DocumentSplitter documentSplitter = new RecursiveDocumentSplitter(
-                DocumentConstants.CHUNK_SIZE, DocumentConstants.CHUNK_OVER_LAP
-        );
-        return documentSplitter.split(documentDTO.getContent());
-    }
-
 
 }

@@ -1,5 +1,8 @@
 package com.abc.itbbs.common.ai.listener;
 
+import cn.hutool.json.JSONUtil;
+import com.abc.itbbs.common.ai.model.AiMessageResponse;
+import com.abc.itbbs.common.ai.model.AiMessageStreamResponse;
 import okhttp3.Response;
 import okhttp3.sse.EventSource;
 import okhttp3.sse.EventSourceListener;
@@ -21,9 +24,8 @@ public class SseEventSourceListener extends EventSourceListener {
     public void onEvent(EventSource eventSource, String id, String type, String data) {
         if (!"[DONE]".equals(data)) {
             // 解析并处理数据
-            System.out.println("收到数据: " + data);
-            // TODO
-//             listener.onMessage();
+            AiMessageStreamResponse response = JSONUtil.toBean(data, AiMessageStreamResponse.class);
+            listener.onMessage(response);
         }
     }
 

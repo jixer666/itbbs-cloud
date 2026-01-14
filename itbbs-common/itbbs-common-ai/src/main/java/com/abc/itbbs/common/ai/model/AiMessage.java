@@ -9,4 +9,7 @@ public class AiMessage {
 
     private String content;
 
+    // 思考内容
+    private String reasoning_content;
+
 }

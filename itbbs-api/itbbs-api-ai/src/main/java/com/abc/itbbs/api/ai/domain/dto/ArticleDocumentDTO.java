@@ -1,23 +1,21 @@
-package com.abc.itbbs.ai.domain.dto;
+package com.abc.itbbs.api.ai.domain.dto;
 
 import com.abc.itbbs.common.core.util.AssertUtils;
 import lombok.Data;
 
 /**
  * @author LiJunXi
- * @date 2026/1/12
+ * @date 2026/1/14
  */
 @Data
-public class BotChatDTO {
+public class ArticleDocumentDTO {
 
-    private Long sessionId;
+    private Long articleId;
 
     private String content;
 
-    private Integer mode;
-
     public void checkParams() {
-        AssertUtils.isNotEmpty(this, "参数不能为空");
+        AssertUtils.isNotEmpty(articleId, "文章ID不能为空");
         AssertUtils.isNotEmpty(content, "内容不能为空");
     }
 }

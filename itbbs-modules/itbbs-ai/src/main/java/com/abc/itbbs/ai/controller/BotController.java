@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 /**
  * @author LiJunXi
@@ -35,10 +36,9 @@ public class BotController {
 
     @ApiOperation("AI聊天Stream流")
     @PostMapping("/chat/stream")
-    public ApiResult<Void> chatStream(@RequestBody BotChatDTO botChatDTO) {
-        botService.chatStream(botChatDTO);
+    public SseEmitter chatStream(@RequestBody BotChatDTO botChatDTO) {
 
-        return ApiResult.success();
+        return botService.chatStream(botChatDTO);
     }
 
 }

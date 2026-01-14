@@ -2,6 +2,7 @@ package com.abc.itbbs.ai.service;
 
 import com.abc.itbbs.ai.domain.dto.BotChatDTO;
 import com.abc.itbbs.ai.domain.vo.BotChatVO;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 /**
  * @author LiJunXi
@@ -11,5 +12,5 @@ public interface BotService {
 
     BotChatVO chat(BotChatDTO botChatDTO);
 
-    void chatStream(BotChatDTO botChatDTO);
+    SseEmitter chatStream(BotChatDTO botChatDTO);
 }

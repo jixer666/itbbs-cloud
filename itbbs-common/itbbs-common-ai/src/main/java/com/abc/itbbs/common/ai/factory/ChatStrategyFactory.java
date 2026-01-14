@@ -1,6 +1,6 @@
 package com.abc.itbbs.common.ai.factory;
 
-import com.abc.itbbs.common.ai.enums.ChatTypeEnum;
+import com.abc.itbbs.common.ai.enums.ChatModelTypeEnum;
 import com.abc.itbbs.common.ai.strategy.chat.ChatStrategy;
 import com.abc.itbbs.common.core.util.AssertUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ public class ChatStrategyFactory {
     @PostConstruct
     public void init(){
         applicationContext.getBeansOfType(ChatStrategy.class).forEach((k, v)->{
-            CHAT_MAP.put(ChatTypeEnum.getTypeByClass(k), v);
+            CHAT_MAP.put(ChatModelTypeEnum.getTypeByClass(k), v);
         });
     }
 
