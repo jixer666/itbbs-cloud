@@ -1,7 +1,7 @@
 package com.abc.itbbs.blog.service.cache;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.abc.itbbs.blog.domain.entity.Article;
+import com.abc.itbbs.api.blog.domain.entity.Article;
 import com.abc.itbbs.blog.mapper.ArticleMapper;
 import com.abc.itbbs.common.redis.cache.AbstractRedisStringCache;
 import com.abc.itbbs.common.redis.constant.CacheConstants;
@@ -9,7 +9,6 @@ import com.abc.itbbs.common.redis.util.RedisUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;

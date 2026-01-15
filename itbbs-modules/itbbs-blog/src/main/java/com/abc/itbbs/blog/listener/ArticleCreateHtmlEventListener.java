@@ -6,7 +6,7 @@ import com.abc.itbbs.api.system.UserServiceClient;
 import com.abc.itbbs.api.system.domain.entity.User;
 import com.abc.itbbs.api.system.domain.vo.FileVO;
 import com.abc.itbbs.blog.constant.TemplateConstants;
-import com.abc.itbbs.blog.domain.entity.Article;
+import com.abc.itbbs.api.blog.domain.entity.Article;
 import com.abc.itbbs.blog.service.ArticleService;
 import com.abc.itbbs.blog.service.TemplateService;
 import com.abc.itbbs.common.core.constant.FileSuffixConstants;

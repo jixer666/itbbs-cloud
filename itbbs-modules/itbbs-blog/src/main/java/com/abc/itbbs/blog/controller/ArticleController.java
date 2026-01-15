@@ -1,5 +1,6 @@
 package com.abc.itbbs.blog.controller;
 
+import com.abc.itbbs.api.blog.domain.entity.Article;
 import com.abc.itbbs.blog.domain.vo.ArticleMetaVO;
 import com.abc.itbbs.blog.domain.vo.ArticleVO;
 import com.abc.itbbs.common.core.annotation.RateLimiter;
@@ -12,6 +13,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 文章控制器
@@ -109,5 +113,12 @@ public class ArticleController {
         return ApiResult.success();
     }
 
+    @ApiOperation("远程批量查询文章")
+    @PostMapping("/feign/list/map")
+    public ApiResult<Map<Long, Article>> getArticleMapByIds(@RequestBody List<Long> articleIds) {
+        Map<Long, Article> articleMap = articleService.getArticleMapByIds(articleIds);
+
+        return ApiResult.success(articleMap);
+    }
 
 }

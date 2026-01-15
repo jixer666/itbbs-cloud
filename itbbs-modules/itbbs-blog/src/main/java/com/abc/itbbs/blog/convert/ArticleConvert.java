@@ -8,12 +8,10 @@ import com.abc.itbbs.blog.domain.enums.ArticleStatusEnum;
 import com.abc.itbbs.common.core.constant.CommonConstants;
 import com.abc.itbbs.common.core.util.IdUtils;
 import com.abc.itbbs.blog.domain.dto.ArticleDTO;
-import com.abc.itbbs.blog.domain.entity.Article;
+import com.abc.itbbs.api.blog.domain.entity.Article;
 import com.abc.itbbs.common.core.util.JsoupUtils;
 import com.abc.itbbs.common.core.util.StringUtils;
 import com.abc.itbbs.common.security.util.SecurityUtils;
-
-import java.util.Date;
 
 /**
  * 文章转换器

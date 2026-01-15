@@ -137,6 +137,13 @@
                 <version>${itbbs.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>com.abc</groupId>
+                <artifactId>itbbs-api-blog</artifactId>
+                <version>${itbbs.version}</version>
+            </dependency>
+
+
             <!-- Spring Boot 依赖管理 -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>

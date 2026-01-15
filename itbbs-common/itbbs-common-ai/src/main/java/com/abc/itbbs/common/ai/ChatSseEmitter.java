@@ -1,7 +1,10 @@
 package com.abc.itbbs.common.ai;
 
+import org.springframework.http.HttpOutputMessage;
+import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  *  聊天专用SSE发射器

@@ -9,6 +9,12 @@ import lombok.Data;
 @Data
 public class BotChatVO {
 
+    // 普通输出
     private String content;
+
+    // 流式输出
+    private Integer step;
+
+    private Object data;
 
 }

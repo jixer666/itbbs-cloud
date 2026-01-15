@@ -2,7 +2,7 @@ package com.abc.itbbs.blog.mapper;
 
 import com.abc.itbbs.blog.domain.dto.ArticleDTO;
 import com.abc.itbbs.blog.domain.dto.ArticleUpdateCountDTO;
-import com.abc.itbbs.blog.domain.entity.Article;
+import com.abc.itbbs.api.blog.domain.entity.Article;
 import com.abc.itbbs.blog.domain.vo.ArticleMetaVO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;

@@ -1,5 +1,6 @@
 package com.abc.itbbs.ai.domain.dto;
 
+import com.abc.itbbs.common.ai.filter.PromptInjectionFilter;
 import com.abc.itbbs.common.core.util.AssertUtils;
 import lombok.Data;
 
@@ -19,5 +20,11 @@ public class BotChatDTO {
     public void checkParams() {
         AssertUtils.isNotEmpty(this, "参数不能为空");
         AssertUtils.isNotEmpty(content, "内容不能为空");
+
+        // 清理并校验注入
+        String cleanContent = PromptInjectionFilter.sanitizeInput(content);
+        if (!content.equalsIgnoreCase(cleanContent)) {
+            content = cleanContent;
+        }
     }
 }

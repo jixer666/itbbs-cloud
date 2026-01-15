@@ -17,11 +17,13 @@ public class SseEventSourceListener extends EventSourceListener {
 
     @Override
     public void onOpen(EventSource eventSource, Response response) {
+        listener.onStart();
         System.out.println("连接已打开");
     }
 
     @Override
     public void onEvent(EventSource eventSource, String id, String type, String data) {
+        System.out.println(data);
         if (!"[DONE]".equals(data)) {
             // 解析并处理数据
             AiMessageStreamResponse response = JSONUtil.toBean(data, AiMessageStreamResponse.class);
@@ -31,6 +33,7 @@ public class SseEventSourceListener extends EventSourceListener {
 
     @Override
     public void onClosed(EventSource eventSource) {
+        listener.onStop();
         System.out.println("连接已关闭");
     }
 

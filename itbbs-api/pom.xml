@@ -14,6 +14,7 @@
     <modules>
         <module>itbbs-api-system</module>
         <module>itbbs-api-ai</module>
+        <module>itbbs-api-blog</module>
     </modules>
 
     <properties>

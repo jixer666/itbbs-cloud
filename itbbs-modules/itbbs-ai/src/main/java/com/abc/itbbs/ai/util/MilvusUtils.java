@@ -15,6 +15,7 @@ import io.milvus.v2.service.vector.request.data.FloatVec;
 import io.milvus.v2.service.vector.response.InsertResp;
 import io.milvus.v2.service.vector.response.SearchResp;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -74,7 +75,8 @@ public class MilvusUtils {
         return client.insert(insertReq);
     }
 
-    public static SearchResp searchSingle(String database, String collection, List<Float> vectorList, String field, Integer topK) {
+    public static SearchResp searchSingle(String database, String collection, List<Float> vectorList, String field,
+                                          Integer topK, List<String> outputFields) {
         FloatVec queryVector = new FloatVec(vectorList);
         List<BaseVector> floatVecList = Collections.singletonList(queryVector);
 
@@ -83,6 +85,7 @@ public class MilvusUtils {
                 .collectionName(collection)
                 .data(floatVecList)
                 .annsField(field)
+                .outputFields(outputFields)
                 .topK(topK)
                 .build();
 

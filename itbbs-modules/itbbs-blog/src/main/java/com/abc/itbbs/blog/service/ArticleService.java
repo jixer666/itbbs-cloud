@@ -3,13 +3,14 @@ package com.abc.itbbs.blog.service;
 import com.abc.itbbs.blog.domain.dto.ArticleDTO;
 import com.abc.itbbs.blog.domain.dto.ArticlePreloadDTO;
 import com.abc.itbbs.blog.domain.dto.ArticleUpdateCountDTO;
-import com.abc.itbbs.blog.domain.entity.Article;
+import com.abc.itbbs.api.blog.domain.entity.Article;
 import com.abc.itbbs.blog.domain.vo.ArticleMetaVO;
 import com.abc.itbbs.blog.domain.vo.ArticleVO;
 import com.abc.itbbs.common.core.domain.vo.PageResult;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 文章接口
@@ -54,4 +55,6 @@ public interface ArticleService extends IService<Article> {
     List<Article> selectArticleList(ArticleDTO articleDTO);
 
     void loadArticleCache(ArticlePreloadDTO articlePreloadDTO);
+
+    Map<Long, Article> getArticleMapByIds(List<Long> articleIds);
 }

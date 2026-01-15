@@ -5,6 +5,8 @@ import com.abc.itbbs.common.ai.enums.AiMessageRoleEnum;
 import com.abc.itbbs.common.ai.model.AiMessage;
 import com.abc.itbbs.common.ai.model.Prompt;
 
+import java.util.List;
+
 public interface ChatModeStrategy {
 
     Prompt getPrompt(BotChatDTO chatDTO);
@@ -16,5 +18,7 @@ public interface ChatModeStrategy {
 
         return aiMessage;
     }
+
+    List<Object> getReference(Prompt prompt);
 
 }

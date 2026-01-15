@@ -2,7 +2,6 @@ package com.abc.itbbs.blog.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.extra.spring.SpringUtil;
 import com.abc.itbbs.api.system.UserServiceClient;
 import com.abc.itbbs.api.system.domain.entity.User;
 import com.abc.itbbs.api.system.domain.vo.UserVO;
@@ -29,7 +28,7 @@ import com.abc.itbbs.common.core.domain.vo.PageResult;
 import com.abc.itbbs.common.core.util.AssertUtils;
 import com.abc.itbbs.blog.convert.ArticleConvert;
 import com.abc.itbbs.blog.domain.dto.ArticleDTO;
-import com.abc.itbbs.blog.domain.entity.Article;
+import com.abc.itbbs.api.blog.domain.entity.Article;
 import com.abc.itbbs.blog.domain.vo.ArticleVO;
 import com.abc.itbbs.blog.mapper.ArticleMapper;
 import com.abc.itbbs.blog.service.ArticleService;
@@ -48,13 +47,12 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
-import org.springframework.data.redis.core.DefaultTypedTuple;
-import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -411,4 +409,18 @@ public class ArticleServiceImpl extends BaseServiceImpl<ArticleMapper, Article> 
         });
     }
 
+    @Override
+    public Map<Long, Article> getArticleMapByIds(List<Long> articleIds) {
+        if (CollUtil.isEmpty(articleIds)) {
+            return new HashMap<>();
+        }
+
+        List<String> articleCackeList = articleIds.stream().map(
+                item -> CacheConstants.getFinalKey(CacheConstants.ARTICLE_HASH_INFO, item)
+        ).collect(Collectors.toList());
+
+        return RedisUtils.batchGetHash(articleCackeList, null).stream().map(item -> {
+            return BeanUtil.copyProperties(item, Article.class);
+        }).collect(Collectors.toMap(Article::getArticleId, Function.identity()));
+    }
 }

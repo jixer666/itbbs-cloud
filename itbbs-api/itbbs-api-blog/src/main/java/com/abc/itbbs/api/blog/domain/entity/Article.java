@@ -1,4 +1,4 @@
-package com.abc.itbbs.blog.domain.entity;
+package com.abc.itbbs.api.blog.domain.entity;
 
 import com.abc.itbbs.common.core.domain.entity.BaseEntity;
 import com.baomidou.mybatisplus.annotation.TableId;

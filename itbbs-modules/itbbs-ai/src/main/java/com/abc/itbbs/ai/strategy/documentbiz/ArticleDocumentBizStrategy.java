@@ -64,6 +64,7 @@ public class ArticleDocumentBizStrategy implements DocumentBizStrategy<ArticleDo
             ArticleDocumentMilvusEntity articleDocumentMilvusEntity = new ArticleDocumentMilvusEntity();
             articleDocumentMilvusEntity.setDocument_chunk_id(IdUtils.getId());
             articleDocumentMilvusEntity.setArticle_id(articleId);
+            articleDocumentMilvusEntity.setDocument_chunk(item.getContent());
 
             List<Float> vectorList = embeddingStrategy.getVectorList(item.getContent());
             articleDocumentMilvusEntity.setDocument_chunk_vector(vectorList);

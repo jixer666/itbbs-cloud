@@ -5,6 +5,7 @@ import com.abc.itbbs.common.ai.model.Prompt;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.List;
 
 @Service
 public class CommonChatModeStrategy implements ChatModeStrategy {
@@ -15,5 +16,10 @@ public class CommonChatModeStrategy implements ChatModeStrategy {
         prompt.setMessages(Arrays.asList(buildUserAiMessage(chatDTO.getContent())));
 
         return prompt;
+    }
+
+    @Override
+    public List<Object> getReference(Prompt prompt) {
+        return null;
     }
 }

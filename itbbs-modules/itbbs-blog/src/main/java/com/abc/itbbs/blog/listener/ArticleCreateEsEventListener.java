@@ -1,6 +1,6 @@
 package com.abc.itbbs.blog.listener;
 
-import com.abc.itbbs.blog.domain.entity.Article;
+import com.abc.itbbs.api.blog.domain.entity.Article;
 import com.abc.itbbs.common.mq.constant.RabbitMQConstants;
 import com.rabbitmq.client.Channel;
 import lombok.extern.slf4j.Slf4j;

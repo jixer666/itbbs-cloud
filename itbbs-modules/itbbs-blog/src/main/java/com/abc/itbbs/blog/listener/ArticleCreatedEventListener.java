@@ -1,12 +1,9 @@
 package com.abc.itbbs.blog.listener;
 
-import com.abc.itbbs.blog.domain.entity.Article;
+import com.abc.itbbs.api.blog.domain.entity.Article;
 import com.abc.itbbs.blog.service.SensitiveWordService;
-import com.abc.itbbs.common.core.util.BeanUtils;
 import com.abc.itbbs.common.mq.constant.RabbitMQConstants;
 import com.abc.itbbs.common.mq.producer.RabbitMQProducer;
-import com.abc.itbbs.common.redis.constant.CacheConstants;
-import com.abc.itbbs.common.redis.util.RedisUtils;
 import com.rabbitmq.client.Channel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;

@@ -2,11 +2,10 @@ package com.abc.itbbs.blog.task;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.json.JSONUtil;
 import com.abc.itbbs.blog.convert.ArticleConvert;
 import com.abc.itbbs.blog.domain.dto.ArticleDTO;
 import com.abc.itbbs.blog.domain.dto.ArticlePreloadDTO;
-import com.abc.itbbs.blog.domain.entity.Article;
+import com.abc.itbbs.api.blog.domain.entity.Article;
 import com.abc.itbbs.blog.domain.enums.ArticleLoadTypeEnum;
 import com.abc.itbbs.blog.domain.vo.ArticleVO;
 import com.abc.itbbs.blog.service.ArticleService;
@@ -20,7 +19,6 @@ import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

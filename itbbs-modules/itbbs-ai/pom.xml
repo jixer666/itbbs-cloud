@@ -42,6 +42,10 @@
             <groupId>com.abc</groupId>
             <artifactId>itbbs-api-ai</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.abc</groupId>
+            <artifactId>itbbs-api-blog</artifactId>
+        </dependency>
 
 
         <dependency>

@@ -1,6 +1,7 @@
 package com.abc.itbbs.ai.runner;
 
 import com.abc.itbbs.ai.constant.DocumentConstants;
+import com.abc.itbbs.ai.constant.document.ArticleDocumentEntityConstants;
 import com.abc.itbbs.ai.util.MilvusUtils;
 import io.milvus.v2.client.MilvusClientV2;
 import io.milvus.v2.common.DataType;
@@ -57,36 +58,41 @@ public class MlivusInitRunner implements ApplicationRunner {
         MilvusClientV2 client = MilvusUtils.getClient();
         CreateCollectionReq.CollectionSchema schema = client.createSchema();
         schema.addField(AddFieldReq.builder()
-                .fieldName("document_chunk_id")
+                .fieldName(ArticleDocumentEntityConstants.DOCUMENT_CHUNK_ID)
                 .dataType(DataType.Int64)
                 .isPrimaryKey(true)
                 .autoID(false)
                 .build());
         schema.addField(AddFieldReq.builder()
-                .fieldName("article_id")
+                .fieldName(ArticleDocumentEntityConstants.ARTICLE_ID)
                 .dataType(DataType.Int64)
                 .build());
         schema.addField(AddFieldReq.builder()
-                .fieldName("document_chunk_vector")
+                .fieldName(ArticleDocumentEntityConstants.DOCUMENT_CHUNK)
+                .dataType(DataType.VarChar)
+                .maxLength(600)
+                .build());
+        schema.addField(AddFieldReq.builder()
+                .fieldName(ArticleDocumentEntityConstants.DOCUMENT_CHUNK_VECTOR)
                 .dataType(DataType.FloatVector)
                 .dimension(768)
                 .build());
         schema.addField(AddFieldReq.builder()
-                .fieldName("created_at")
+                .fieldName(ArticleDocumentEntityConstants.CREATE_AT)
                 .dataType(DataType.Int64)
                 .build());
         schema.addField(AddFieldReq.builder()
-                .fieldName("updated_at")
+                .fieldName(ArticleDocumentEntityConstants.UPDATE_AT)
                 .dataType(DataType.Int64)
                 .build());
 
 
         IndexParam indexParamForIdField = IndexParam.builder()
-                .fieldName("article_id")
+                .fieldName(ArticleDocumentEntityConstants.ARTICLE_ID)
                 .indexType(IndexParam.IndexType.STL_SORT)
                 .build();
         IndexParam indexParamForVectorField = IndexParam.builder()
-                .fieldName("document_chunk_vector")
+                .fieldName(ArticleDocumentEntityConstants.DOCUMENT_CHUNK_VECTOR)
                 .indexType(IndexParam.IndexType.IVF_FLAT)
                 .metricType(IndexParam.MetricType.COSINE) // 用余弦相似度
                 .build();

@@ -11,6 +11,8 @@ public class ArticleDocumentMilvusEntity {
 
     private Long article_id;
 
+    private String document_chunk;
+
     private List<Float> document_chunk_vector;
 
     private Long created_at;
