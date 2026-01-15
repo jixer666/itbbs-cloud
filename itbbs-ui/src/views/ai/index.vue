@@ -3,9 +3,11 @@
     <!-- 侧边栏 -->
     <div class="sidebar">
       <div class="new-chat-btn">
-        <el-button type="primary" icon="el-icon-plus" @click="newChat"
-          >新建对话</el-button
-        >
+        <el-button
+          type="primary"
+          icon="el-icon-plus"
+          @click="newChat"
+        >新建对话</el-button>
       </div>
       <div class="chat-history">
         <ul>
@@ -25,13 +27,13 @@
               </span>
               <el-input
                 v-else
+                ref="titleInput"
                 v-model="editingTitleValue"
                 class="edit-title-input"
                 size="mini"
                 @blur="saveEditedTitle(index)"
                 @keyup.enter.native="saveEditedTitle(index)"
-                ref="titleInput"
-              ></el-input>
+              />
             </div>
             <el-button
               v-if="chatHistory.length > 1"
@@ -40,7 +42,7 @@
               class="delete-btn"
               icon="el-icon-delete"
               @click.stop="deleteChat(index)"
-            ></el-button>
+            />
           </li>
         </ul>
       </div>
@@ -53,15 +55,15 @@
       </div>
 
       <div class="message-main-container">
-        <div class="messages-container" ref="messagesContainer">
+        <div ref="messagesContainer" class="messages-container">
           <div
             v-for="(message, index) in currentMessages"
             :key="index"
             :class="['message', message.role]"
           >
             <div class="avatar">
-              <i v-if="message.role === 'user'" class="el-icon-user-solid"></i>
-              <i v-else class="el-icon-chat-dot-round"></i>
+              <i v-if="message.role === 'user'" class="el-icon-user-solid" />
+              <i v-else class="el-icon-chat-dot-round" />
             </div>
             <div class="content">
               <div class="text">{{ message.content }}</div>
@@ -72,13 +74,13 @@
           <!-- 显示加载状态 -->
           <div v-if="loading" class="message ai">
             <div class="avatar">
-              <i class="el-icon-chat-dot-round"></i>
+              <i class="el-icon-chat-dot-round" />
             </div>
             <div class="content">
               <div class="typing-indicator">
-                <span></span>
-                <span></span>
-                <span></span>
+                <span />
+                <span />
+                <span />
               </div>
             </div>
           </div>
@@ -100,8 +102,8 @@
           <el-button
             type="primary"
             :disabled="!inputMessage.trim() || loading"
-            @click="sendMessage"
             class="send-btn"
+            @click="sendMessage"
           >
             发送
           </el-button>
@@ -112,69 +114,69 @@
 </template>
 
 <script>
-import { chatAiStream, chatAi } from '@/api/ai/bot';
+import { chatAiStream, chatAi } from '@/api/ai/bot'
 
 export default {
-  name: "AiChat",
+  name: 'AiChat',
   data() {
     return {
       chatHistory: [
         {
-          title: "欢迎使用AI助手",
+          title: '欢迎使用AI助手',
           messages: [
             {
-              role: "ai",
+              role: 'ai',
               content:
-                "您好！我是AI助手，可以回答问题、创作文字、编程等。请问有什么可以帮助您的？",
-              timestamp: new Date(),
-            },
-          ],
-        },
+                '您好！我是AI助手，可以回答问题、创作文字、编程等。请问有什么可以帮助您的？',
+              timestamp: new Date()
+            }
+          ]
+        }
       ],
       currentChatIndex: 0,
-      inputMessage: "",
+      inputMessage: '',
       loading: false,
       isEditingTitle: [], // 控制哪个对话标题正在被编辑
-      editingTitleValue: "", // 编辑中的标题值
-    };
+      editingTitleValue: '' // 编辑中的标题值
+    }
   },
   computed: {
     currentMessages() {
-      return this.chatHistory[this.currentChatIndex]?.messages || [];
+      return this.chatHistory[this.currentChatIndex]?.messages || []
     },
     currentChatTitle() {
-      return this.chatHistory[this.currentChatIndex]?.title || "AI助手";
-    },
+      return this.chatHistory[this.currentChatIndex]?.title || 'AI助手'
+    }
   },
   mounted() {
-    this.scrollToBottom();
+    this.scrollToBottom()
   },
   updated() {
-    this.scrollToBottom();
+    this.scrollToBottom()
   },
   methods: {
     // 开始编辑对话标题
     startEditTitle(index, event) {
-      event.stopPropagation(); // 阻止冒泡，避免切换对话
+      event.stopPropagation() // 阻止冒泡，避免切换对话
       this.editingTitleValue =
-        this.chatHistory[index].title || `对话 ${index + 1}`;
+        this.chatHistory[index].title || `对话 ${index + 1}`
       // 初始化isEditingTitle数组
       if (!Array.isArray(this.isEditingTitle)) {
-        this.isEditingTitle = [];
+        this.isEditingTitle = []
       }
       // 清除所有编辑状态
-      this.isEditingTitle = this.isEditingTitle.map(() => false);
+      this.isEditingTitle = this.isEditingTitle.map(() => false)
       // 设置当前索引为编辑状态
-      this.$set(this.isEditingTitle, index, true);
+      this.$set(this.isEditingTitle, index, true)
 
       // 等待DOM更新后聚焦到输入框
       this.$nextTick(() => {
-        const inputRef = this.$refs.titleInput;
+        const inputRef = this.$refs.titleInput
         if (inputRef && inputRef[0]) {
-          inputRef[0].focus();
-          inputRef[0].select();
+          inputRef[0].focus()
+          inputRef[0].select()
         }
-      });
+      })
     },
 
     // 保存编辑后的标题
@@ -182,89 +184,89 @@ export default {
       if (this.editingTitleValue.trim()) {
         this.$set(
           this.chatHistory[index],
-          "title",
+          'title',
           this.editingTitleValue.trim()
-        );
+        )
       } else {
         // 如果标题为空，恢复原来的标题
         this.editingTitleValue =
-          this.chatHistory[index].title || `对话 ${index + 1}`;
+          this.chatHistory[index].title || `对话 ${index + 1}`
       }
 
       // 关闭编辑状态
-      this.$set(this.isEditingTitle, index, false);
+      this.$set(this.isEditingTitle, index, false)
     },
 
     // 删除对话
     deleteChat(index) {
-      this.$confirm("确定要删除这个对话吗？", "删除对话", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
+      this.$confirm('确定要删除这个对话吗？', '删除对话', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
       })
         .then(() => {
-          this.chatHistory.splice(index, 1);
+          this.chatHistory.splice(index, 1)
           // 同步更新isEditingTitle数组
-          this.isEditingTitle.splice(index, 1);
+          this.isEditingTitle.splice(index, 1)
 
           // 如果删除的是当前选中的对话，则切换到第一个对话
           if (
             this.currentChatIndex >= this.chatHistory.length &&
             this.chatHistory.length > 0
           ) {
-            this.currentChatIndex = 0;
+            this.currentChatIndex = 0
           } else if (this.chatHistory.length === 0) {
             // 如果删除了所有对话，创建一个新的默认对话
-            this.newChat();
+            this.newChat()
           }
 
           this.$message({
-            type: "success",
-            message: "删除成功!",
-          });
+            type: 'success',
+            message: '删除成功!'
+          })
         })
         .catch(() => {
           // 用户取消删除操作
-        });
+        })
     },
 
     // 发送消息
     async sendMessage() {
-      const message = this.inputMessage.trim();
-      if (!message || this.loading) return;
+      const message = this.inputMessage.trim()
+      if (!message || this.loading) return
 
       // 添加用户消息
       const userMessage = {
-        role: "user",
+        role: 'user',
         content: message,
-        timestamp: new Date(),
-      };
+        timestamp: new Date()
+      }
 
       // 如果是第一个消息，设置对话标题
       if (this.currentMessages.length === 0) {
         this.$set(this.chatHistory, this.currentChatIndex, {
           ...this.chatHistory[this.currentChatIndex],
-          title: message.substring(0, 20) + (message.length > 20 ? "..." : ""),
-          messages: [userMessage],
-        });
+          title: message.substring(0, 20) + (message.length > 20 ? '...' : ''),
+          messages: [userMessage]
+        })
       } else {
-        this.currentMessages.push(userMessage);
+        this.currentMessages.push(userMessage)
       }
 
-      this.inputMessage = "";
-      this.loading = true;
+      this.inputMessage = ''
+      this.loading = true
 
       try {
         // 调用SSE流式AI接口
-        await this.callAiStreamApi(message);
+        await this.callAiStreamApi(message)
       } catch (error) {
-        console.error("发送消息失败:", error);
+        console.error('发送消息失败:', error)
         this.currentMessages.push({
-          role: "ai",
-          content: "抱歉，暂时无法处理您的请求，请稍后再试。",
-          timestamp: new Date(),
-        });
-        this.loading = false;
+          role: 'ai',
+          content: '抱歉，暂时无法处理您的请求，请稍后再试。',
+          timestamp: new Date()
+        })
+        this.loading = false
       }
     },
 
@@ -272,53 +274,56 @@ export default {
     async callAiStreamApi(message) {
       // 创建一个空的AI消息对象，用于逐步填充内容
       const aiMessage = {
-        role: "ai",
-        content: "",
-        timestamp: new Date(),
-      };
-      
-      this.currentMessages.push(aiMessage);
-      
+        role: 'ai',
+        content: '',
+        timestamp: new Date()
+      }
+
+      this.currentMessages.push(aiMessage)
+
       // 准备请求数据
       const requestData = {
         content: message,
-        chatId: this.currentChatIndex.toString()
-      };
-      
+        chatId: this.currentChatIndex.toString(),
+        mode: 2
+      }
+
       try {
         // 发起SSE请求
-        const response = await chatAiStream(requestData);
-        
+        const response = await chatAiStream(requestData)
+
         // 处理SSE响应
         if (response && response.data) {
-          const reader = response.data.getReader();
-          const decoder = new TextDecoder('utf-8');
-          let done = false;
-          
+          const reader = response.data.getReader()
+          const decoder = new TextDecoder('utf-8')
+          let done = false
+
           while (!done) {
-            const { value, done: readerDone } = await reader.read();
-            done = readerDone;
-            
+            console.log(reader.read())
+
+            const { value, done: readerDone } = await reader.read()
+            done = readerDone
+
             if (value) {
-              const chunk = decoder.decode(value, { stream: true });
-              const lines = chunk.split('\n');
-              
+              const chunk = decoder.decode(value, { stream: true })
+              const lines = chunk.split('\n')
+
               for (const line of lines) {
                 if (line.startsWith('data: ')) {
-                  const dataStr = line.slice(6); // 移除 'data: ' 前缀
+                  const dataStr = line.slice(6) // 移除 'data: ' 前缀
                   if (dataStr && dataStr !== '[DONE]') {
                     try {
-                      const data = JSON.parse(dataStr);
+                      const data = JSON.parse(dataStr)
                       if (data.content) {
                         // 更新AI消息的内容
-                        aiMessage.content += data.content;
+                        aiMessage.content += data.content
                         // 触发视图更新
-                        this.$set(this.currentMessages, this.currentMessages.length - 1, aiMessage);
+                        this.$set(this.currentMessages, this.currentMessages.length - 1, aiMessage)
                         // 确保滚动到底部
-                        this.scrollToBottom();
+                        this.scrollToBottom()
                       }
                     } catch (e) {
-                      console.error('解析SSE数据出错:', e);
+                      console.error('解析SSE数据出错:', e)
                     }
                   }
                 }
@@ -327,17 +332,17 @@ export default {
           }
         }
       } catch (error) {
-        console.error('SSE请求失败:', error);
+        console.error('SSE请求失败:', error)
         // 在错误情况下更新最后一条消息为错误信息
         const errorMessage = {
-          role: "ai",
-          content: "抱歉，AI服务暂时不可用，请稍后再试。",
-          timestamp: new Date(),
-        };
-        this.currentMessages.pop(); // 移除空的消息占位符
-        this.currentMessages.push(errorMessage); // 添加错误消息
+          role: 'ai',
+          content: '抱歉，AI服务暂时不可用，请稍后再试。',
+          timestamp: new Date()
+        }
+        this.currentMessages.pop() // 移除空的消息占位符
+        this.currentMessages.push(errorMessage) // 添加错误消息
       } finally {
-        this.loading = false;
+        this.loading = false
       }
     },
 
@@ -348,58 +353,58 @@ export default {
         `您问的是"${input}"吗？这是一个很好的问题。基于我的理解，相关的知识点包括...`,
         `感谢您的提问：${input}。根据我的分析，这个问题可以从以下几个方面来解答...`,
         `针对"${input}"，我的建议是：首先了解基本概念，然后实践操作，最后总结经验。`,
-        `关于"${input}"，目前主流的解决方案包括几种方法，您可以根据具体需求选择合适的方式。`,
-      ];
-      return responses[Math.floor(Math.random() * responses.length)];
+        `关于"${input}"，目前主流的解决方案包括几种方法，您可以根据具体需求选择合适的方式。`
+      ]
+      return responses[Math.floor(Math.random() * responses.length)]
     },
 
     // 新建对话
     newChat() {
       const newChat = {
-        title: "新的对话",
-        messages: [],
-      };
-      this.chatHistory.push(newChat);
-      this.currentChatIndex = this.chatHistory.length - 1;
+        title: '新的对话',
+        messages: []
+      }
+      this.chatHistory.push(newChat)
+      this.currentChatIndex = this.chatHistory.length - 1
 
       // 同步更新isEditingTitle数组
-      this.$set(this.isEditingTitle, this.chatHistory.length - 1, false);
+      this.$set(this.isEditingTitle, this.chatHistory.length - 1, false)
     },
 
     // 切换对话
     switchChat(index) {
-      this.currentChatIndex = index;
+      this.currentChatIndex = index
     },
 
     // 滚动到底部
     scrollToBottom() {
       this.$nextTick(() => {
-        const container = this.$refs.messagesContainer;
+        const container = this.$refs.messagesContainer
         if (container) {
-          container.scrollTop = container.scrollHeight;
+          container.scrollTop = container.scrollHeight
         }
-      });
+      })
     },
 
     // 格式化时间
     formatDate(date) {
-      const now = new Date();
-      const diffMs = now - date;
-      const diffMins = Math.floor(diffMs / 60000);
+      const now = new Date()
+      const diffMs = now - date
+      const diffMins = Math.floor(diffMs / 60000)
 
       if (diffMins < 1) {
-        return "刚刚";
+        return '刚刚'
       } else if (diffMins < 60) {
-        return `${diffMins}分钟前`;
+        return `${diffMins}分钟前`
       } else if (diffMins < 1440) {
         // 小于一天
-        return `${Math.floor(diffMins / 60)}小时前`;
+        return `${Math.floor(diffMins / 60)}小时前`
       } else {
-        return `${Math.floor(diffMins / 1440)}天前`;
+        return `${Math.floor(diffMins / 1440)}天前`
       }
-    },
-  },
-};
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>
