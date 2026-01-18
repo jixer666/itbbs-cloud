@@ -23,7 +23,15 @@
             />
           </div>
           <div v-else class="empty-container">
-            <el-empty description="暂无数据"></el-empty>
+            暂无数据
+          </div>
+          
+          <!-- 加载更多提示，滚动到底部自动加载 -->
+          <div class="load-more" v-if="hasMore || loading">
+            <div v-loading="loading" class="infinite-loading-tips">
+              <span v-if="!loading">正在为您加载更多文章...</span>
+              <span v-else>&nbsp;</span>
+            </div>
           </div>
         </div>
       </el-main>
@@ -342,6 +350,18 @@ export default {
   justify-content: center;
   align-items: center;
   padding: 40px 0;
+}
+
+.load-more {
+  text-align: center;
+  margin: 30px 0;
+}
+
+.infinite-loading-tips {
+  padding: 20px;
+  text-align: center;
+  color: #999;
+  font-size: 14px;
 }
 
 ::v-deep .el-card {

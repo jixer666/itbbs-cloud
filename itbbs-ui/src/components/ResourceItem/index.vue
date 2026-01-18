@@ -1,5 +1,5 @@
 <template>
-  <div class="resource-item-card" @click="handleClick">
+  <div class="resource-item-card">
     <div class="card-content">
       <div class="resource-header">
         <div class="resource-type" :class="getResourceTypeClass(resource.type)">
@@ -19,7 +19,7 @@
         </div>
         
         <div class="resource-info">
-          <h3 class="resource-title">{{ resource.title }}</h3>
+          <h3 class="resource-title" @click="handleClick">{{ resource.title }}</h3>
           <p class="resource-desc">{{ resource.description }}</p>
           
           <div class="resource-meta">
@@ -80,11 +80,10 @@ export default {
      */
     getDefaultCover(type) {
       const covers = {
-        doc: 'https://dummyimage.com/300x200/4a90e2/fff.png&text=文档',
-        code: 'https://dummyimage.com/300x200/50e3c2/fff.png&text=代码',
-        video: 'https://dummyimage.com/300x200/e6745a/fff.png&text=视频',
-        book: 'https://dummyimage.com/300x200/9013fe/fff.png&text=电子书',
-        source: 'https://dummyimage.com/300x200/7ed321/fff.png&text=源码'
+        doc: 'https://dummyimage.com/300x200/4a90e2/fff.png&text=文',
+        code: 'https://dummyimage.com/300x200/50e3c2/fff.png&text=代',
+        video: 'https://dummyimage.com/300x200/e6745a/fff.png&text=视',
+        book: 'https://dummyimage.com/300x200/9013fe/fff.png&text=电',
       }
       return covers[type] || covers.doc
     },
@@ -101,7 +100,6 @@ export default {
 
 <style scoped>
 .resource-item-card {
-  cursor: pointer;
   transition: all 0.3s ease;
   border-radius: 10px;
   overflow: hidden;
@@ -109,11 +107,10 @@ export default {
   display: flex;
   flex-direction: column;
   background: #fff;
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  border: 1px solid #ebeef5;
 }
 
 .resource-item-card:hover {
-  transform: translateY(-5px);
   box-shadow: 0 8px 24px rgba(0,0,0,0.12);
 }
 
@@ -164,7 +161,7 @@ export default {
   align-items: center;
   justify-content: center;
   padding: 10px;
-  background-color: #f8f9fa;
+  background-color: #ffffff;
 }
 
 .resource-cover img {
@@ -181,6 +178,7 @@ export default {
 }
 
 .resource-title {
+  cursor: pointer;
   margin: 0 0 8px;
   font-size: 16px;
   font-weight: 600;
@@ -189,6 +187,10 @@ export default {
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+.resource-title:hover {
+  color: #409eff;
 }
 
 .resource-desc {

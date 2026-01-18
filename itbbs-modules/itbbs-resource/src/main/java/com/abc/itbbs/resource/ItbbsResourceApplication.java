@@ -8,7 +8,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * @author LiJunXi
- * @date 2025/12/23
+ * @date 2026/1/18
  */
 @EnableFeignClients(basePackages = "com.abc.itbbs")
 @EnableDiscoveryClient

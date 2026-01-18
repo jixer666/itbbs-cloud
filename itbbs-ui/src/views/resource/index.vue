@@ -1,18 +1,26 @@
 <template>
-  <ResourceHall 
-    :categories="categories"
-    :resources="resources"
-    :hotResources="hotResources"
-    :recommendAuthors="recommendAuthors"
-    :loading="loading"
-    :hasMore="hasMore"
-    :searchForm="searchForm"
-    @category-change="handleCategoryChange"
-    @search="handleSearch"
-    @sort-change="handleSortChange"
-    @resource-click="viewResource"
-    @load-more="loadMore"
-  />
+  <div>
+    <el-tabs v-model="activeName" @tab-click="handleClick" class="tabs">
+      <el-tab-pane label="免费资源" name="first"></el-tab-pane>
+      <el-tab-pane label="付费资源" name="second"></el-tab-pane>
+      <el-tab-pane label="热门资源" name="third"></el-tab-pane>
+      <el-tab-pane label="秒杀资源" name="fourth"></el-tab-pane>
+    </el-tabs>
+    <ResourceHall 
+      :categories="categories"
+      :resources="resources"
+      :hotResources="hotResources"
+      :recommendAuthors="recommendAuthors"
+      :loading="loading"
+      :hasMore="hasMore"
+      :searchForm="searchForm"
+      @category-change="handleCategoryChange"
+      @search="handleSearch"
+      @sort-change="handleSortChange"
+      @resource-click="viewResource"
+      @load-more="loadMore"
+    />
+  </div>
 </template>
 
 <script>
@@ -27,6 +35,7 @@ export default {
 
   data() {
     return {
+      activeName: 'first',
       categories: [
         '全部', '后端开发', '前端开发', '移动开发', '人工智能', 
         '云计算', '数据库', '运维', '测试', 'UI设计', 
@@ -57,6 +66,32 @@ export default {
 
   methods: {
     /**
+     * 标签页点击事件
+     */
+    handleClick(tab, event) {
+      this.resetPagination();
+      this.loadResources();
+    },
+    
+    /**
+     * 获取资源类型
+     */
+    getResourceType() {
+      switch(this.activeName) {
+        case 'first':
+          return 'free'; // 免费资源
+        case 'second':
+          return 'paid'; // 付费资源
+        case 'third':
+          return 'popular'; // 热门资源
+        case 'fourth':
+          return 'flash_sale'; // 秒杀资源
+        default:
+          return 'all';
+      }
+    },
+    
+    /**
      * 加载资源列表
      */
     loadResources() {
@@ -67,7 +102,8 @@ export default {
       // 这里应该调用实际的资源API，目前使用模拟数据
       // 在实际项目中，这里应该是真实的API调用
       setTimeout(() => {
-        const mockData = this.generateMockData(this.searchForm.pageNum)
+        const resourceType = this.getResourceType();
+        const mockData = this.generateMockData(this.searchForm.pageNum, resourceType);
         
         if (this.searchForm.pageNum === 1) {
           this.resources = mockData
@@ -88,7 +124,7 @@ export default {
     /**
      * 生成模拟数据
      */
-    generateMockData(pageNum) {
+    generateMockData(pageNum, resourceType = 'all') {
       const types = ['doc', 'code', 'video', 'book', 'source']
       const typeNames = ['文档', '代码', '视频', '电子书', '源码']
       
@@ -96,13 +132,31 @@ export default {
         const idx = (pageNum - 1) * 16 + index
         const typeIndex = idx % types.length
         
+        let price;
+        switch(resourceType) {
+          case 'free':
+            price = 0; // 免费资源价格为0
+            break;
+          case 'paid':
+            price = Math.floor(Math.random() * 50) + 10; // 付费资源价格10-60元
+            break;
+          case 'popular':
+            price = idx % 3 === 0 ? 0 : Math.floor(Math.random() * 100); // 热门资源部分免费
+            break;
+          case 'flash_sale':
+            price = Math.floor(Math.random() * 20); // 秒杀资源价格较低
+            break;
+          default:
+            price = idx % 5 === 0 ? 0 : Math.floor(Math.random() * 100);
+        }
+        
         return {
           id: idx + 1,
-          title: `精品${typeNames[typeIndex]}资源-${idx + 1}`,
+          title: `${this.getPrefixByType(resourceType)}${typeNames[typeIndex]}资源-${idx + 1}`,
           description: `这是一个高质量的${typeNames[typeIndex]}资源，适用于学习和开发。包含了详细的内容说明和实用的示例代码。`,
           type: types[typeIndex],
           cover: this.getDefaultCover(types[typeIndex]),
-          price: idx % 5 === 0 ? 0 : Math.floor(Math.random() * 100),
+          price: price,
           downloadCount: Math.floor(Math.random() * 10000),
           starCount: Math.floor(Math.random() * 1000),
           author: {
@@ -111,6 +165,24 @@ export default {
           }
         }
       })
+    },
+    
+    /**
+     * 根据资源类型获取标题前缀
+     */
+    getPrefixByType(resourceType) {
+      switch(resourceType) {
+        case 'free':
+          return '免费';
+        case 'paid':
+          return '付费';
+        case 'popular':
+          return '热门';
+        case 'flash_sale':
+          return '秒杀';
+        default:
+          return '精品';
+      }
     },
 
     /**
@@ -357,5 +429,9 @@ export default {
   .layout {
     padding: 0 8px;
   }
+}
+
+.tabs {
+  padding: 0 12px;
 }
 </style>

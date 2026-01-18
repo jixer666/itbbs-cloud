@@ -82,6 +82,16 @@ module.exports = {
           '^/ai-api': ''
         }
       },
+      '/resource-api': {
+        target: baseUrl,
+        changeOrigin: true,
+        headers: {
+          Host: 'resource.itbbs.com'
+        },
+        pathRewrite: {
+          '^/resource-api': ''
+        }
+      },
       // springdoc proxy
       '^/v3/api-docs/(.*)': {
         target: baseUrl,

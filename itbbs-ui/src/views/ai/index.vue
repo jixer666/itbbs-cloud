@@ -67,7 +67,26 @@
               <div v-if="message.reasoning_content" class="reasoning-text">
                 {{ message.reasoning_content }}
               </div>
-              <div class="text">{{ message.content }}</div>
+              <div class="text" v-html="formatMessageContent(message.content)" @click="handleLinkClick"></div>
+              <!-- 参考文章卡片 -->
+              <div v-if="message.reference_articles && message.reference_articles.length > 0" class="reference-section">
+                <h4 class="reference-title">参考资料</h4>
+                <div class="reference-cards">
+                  <div 
+                    v-for="(article, index) in message.reference_articles" 
+                    :key="index" 
+                    class="reference-card"
+                  >
+                    <div class="card-content">
+                      <h5 class="card-title"  @click="openArticle(article.htmlFilePath)">{{ article.title }}</h5>
+                      <p class="card-desc">{{ article.desc }}</p>
+                      <div class="card-footer">
+                        <span class="article-id">ID: {{ article.articleId }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
               <div class="timestamp">{{ formatDate(message.timestamp) }}</div>
             </div>
           </div>
@@ -324,6 +343,7 @@ export default {
           role: "ai",
           content: "",
           reasoning_content: "",
+          reference_articles: [], // 存储参考文章
           timestamp: new Date(),
         };
 
@@ -407,7 +427,22 @@ export default {
                       // 完成回答阶段，可以添加处理状态
                       break;
                     case 4: // FOURTH - 参考内容
-                      // 参考内容阶段，可以添加处理状态
+                      // 参考内容阶段，展示文章列表
+                      if (data.data && Array.isArray(data.data)) {
+                        // 将参考文章数据存储到专门的属性中
+                        currentMessages[messageIndex].reference_articles = [...data.data];
+                        
+                        // 使用$set确保响应式更新
+                        self.$set(
+                          self.chatHistory[currentChatIndex],
+                          "messages",
+                          currentMessages
+                        );
+                        // 滚动到底部
+                        self.$nextTick(() => {
+                          self.scrollToBottom();
+                        });
+                      }
                       break;
                     case -1: // END - 结束
                       // 结束处理，显式关闭加载状态
@@ -523,6 +558,31 @@ export default {
         return `${Math.floor(diffMins / 60)}小时前`;
       } else {
         return `${Math.floor(diffMins / 1440)}天前`;
+      }
+    },
+
+    // 格式化消息内容，将Markdown链接转换为HTML链接
+    formatMessageContent(content) {
+      if (!content) return "";
+      // 将Markdown链接格式 [text](url) 转换为HTML链接
+      return content.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="reference-link" data-url="$2">$1</a>');
+    },
+
+    // 处理链接点击事件
+    handleLinkClick(event) {
+      if (event.target.classList.contains('reference-link')) {
+        event.preventDefault();
+        const url = event.target.getAttribute('data-url');
+        if (url) {
+          window.open(url, '_blank');
+        }
+      }
+    },
+
+    // 打开文章链接
+    openArticle(url) {
+      if (url) {
+        window.open(url, '_blank');
       }
     },
   },
@@ -840,6 +900,95 @@ export default {
   white-space: pre-wrap;
   word-wrap: break-word;
   font-family: monospace; /* 等宽字体，更像代码推理 */
+}
+
+.reference-link {
+  color: #1890ff; /* Element UI 主色调 */
+  text-decoration: underline; /* 下划线显示为链接 */
+  cursor: pointer; /* 鼠标悬停时显示为手型 */
+  transition: color 0.3s; /* 颜色变化过渡效果 */
+}
+
+.reference-link:hover {
+  color: #409eff; /* 悬停时的颜色 */
+  text-decoration: none; /* 悬停时去掉下划线 */
+}
+
+/* 参考资料部分样式 */
+.reference-section {
+  margin-top: 16px;
+}
+
+.reference-title {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #303133;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #ebeef5;
+}
+
+.reference-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.reference-card {
+  background: #ffffff;
+  border: 1px solid #ebeef5;
+  border-radius: 8px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.reference-card:hover {
+  border-color: #c6e2ff;
+  box-shadow: 0 4px 12px rgba(140, 159, 184, 0.15);
+}
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-title {
+  margin: 0 0 8px 0;
+  font-size: 15px;
+  font-weight: 500;
+  color: #303133;
+  line-height: 1.4;
+}
+
+.reference-card:hover .card-title {
+  color: #409eff;
+}
+
+.card-desc {
+  margin: 0 0 12px 0;
+  font-size: 13px;
+  color: #909399;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.article-id {
+  font-size: 12px;
+  color: #c0c4cc;
+  background: #f4f4f5;
+  padding: 2px 8px;
+  border-radius: 4px;
 }
 
 @keyframes fadeIn {
