@@ -114,7 +114,7 @@
                 <div class="logo">ITBBS</div>
                 <div class="nav-links">
                     <!-- 使用Vue渲染导航项 -->
-                    <a v-for="item in navItems" :key="item">{{ item }}</a>
+                    <a :href="item.url" v-for="(item, index) in navItems" :key="index">{{ item.name }}</a>
                 </div>
             </div>
             <div class="search-box">
@@ -754,17 +754,33 @@
         data() {
             return {
                 searchText: '',
-                navItems: ['博客', '下载', '学习', '社区', '云服务']
+                navItems: []
             }
         },
         mounted() {
-            // 从Thymeleaf传递的数据中获取导航项
-            const navItemsAttr = this.$el.getAttribute('data-nav-items');
-            if (navItemsAttr) {
-                this.navItems = JSON.parse(navItemsAttr);
-            }
+            this.getNavbarList();
         },
         methods: {
+            async getNavbarList() {
+                try {
+                    const response = await fetch(`http://blog.itbbs.com/blog/navbar/list`,
+                        {
+                            method: 'GET',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                        });
+                    const responseBody = await response.json();
+
+                    if (responseBody.code != 200) {
+                        this.$message.error(responseBody.msg)
+                    }
+
+                    this.navItems = responseBody.data;
+                } catch (error) {
+                    console.error('获取导航栏出错:', error);
+                }
+            },
             handleSearch() {
                 if(!this.searchText) return;
                 alert('正在搜索：' + this.searchText);
