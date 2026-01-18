@@ -15,6 +15,7 @@
     "test:ci": "npm run lint && npm run test:unit"
   },
   "dependencies": {
+    "@microsoft/fetch-event-source": "^2.0.1",
     "@tiptap/extension-character-count": "^2.0.0",
     "@tiptap/extension-collaboration": "^2.0.0-beta.30",
     "@tiptap/extension-collaboration-cursor": "^2.0.0-beta.30",

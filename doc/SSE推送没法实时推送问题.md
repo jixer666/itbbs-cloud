@@ -11,29 +11,38 @@ Nginx 会缓存代理服务器的响应（聚合类型），服务推送的数�
 
 解决办法：**禁用缓存功能，添加响应头：`X-Accel-Buffering:no`**
 
-代码如下：
+Nginx配置如下：
 
-```java
-@ApiOperation("AI聊天Stream流")
-@PostMapping("/chat/stream")
-public SseEmitter chatStream(@RequestBody BotChatDTO botChatDTO,
-                             HttpServletResponse response) {
-    forbiddenNginxFlux(response);
-    return botService.chatStream(botChatDTO);
-}
-
-private void forbiddenNginxFlux(HttpServletResponse response) {
-    response.setHeader("X-Accel-Buffering", "no"); // 禁用Nginx缓冲
-    response.setHeader("Cache-Control", "no-cache");
-    response.setHeader("Connection", "keep-alive");
-    response.setHeader("Content-Type", "text/event-stream; charset=UTF-8");
-    response.setCharacterEncoding("UTF-8");
-    try {
-        // 立即刷新响应头
-        response.flushBuffer();
-    } catch (IOException e) {
-        throw new GlobalException(BizCodeEnum.BIZ_ERROR.getCode(), "刷新响应头失败");
-    }
+```nginx
+location /ai/bot/chat/stream {
+    # 基础代理配置
+    proxy_pass http://itbbs-gateway/ai/bot/chat/stream;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    
+    # ==== 关键：禁用缓冲 ====
+    proxy_buffering off;
+    
+    # ==== 适当设置缓冲区（避免关闭太快）====
+    proxy_buffer_size 4k;
+    proxy_buffers 4 4k;
+    
+    # ==== 超时时间（与后端匹配）====
+    proxy_read_timeout 300s;     # 5分钟（先测试短时间）
+    proxy_send_timeout 300s;
+    proxy_connect_timeout 30s;
+    
+    # ==== HTTP 1.1 ====
+    proxy_http_version 1.1;
+    
+    # ==== 保持连接 ====
+    proxy_set_header Connection '';
+    
+    # ==== 添加响应头 ====
+    add_header X-Accel-Buffering no;
+    add_header Cache-Control no-cache;
 }
 ```
 

@@ -6,6 +6,8 @@ public class DocumentConstants {
 
     public static final Integer CHUNK_OVER_LAP = 550;
 
+    public static final Float VECTOR_THRESHOLD = new Float("0.8");
+
     public static final String DOCUMENT_CHUNK_COLLECTION = "article_document_chunk";
 
 }

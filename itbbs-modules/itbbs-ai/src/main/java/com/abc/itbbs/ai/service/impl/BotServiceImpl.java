@@ -1,5 +1,6 @@
 package com.abc.itbbs.ai.service.impl;
 
+import cn.hutool.json.JSONUtil;
 import com.abc.itbbs.ai.domain.dto.BotChatDTO;
 import com.abc.itbbs.ai.domain.enums.BotChatStepEnum;
 import com.abc.itbbs.ai.domain.vo.BotChatVO;
@@ -113,7 +114,7 @@ public class BotServiceImpl implements BotService {
                 try {
                     AiMessage aiMessage = response.getChoices().get(0).getDelta();
                     checkOutputContent(aiMessage);
-
+                    System.out.println(aiMessage);
                     sendMessage(chatSseEmitter, BotChatStepEnum.SECOND, aiMessage);
                 } catch (Exception e) {
                     log.error("推送消息出错：{}", e.getMessage(), e);
@@ -195,10 +196,10 @@ public class BotServiceImpl implements BotService {
         return botChatVO;
     }
 
-    private void sendMessage(SseEmitter sseEmitter, BotChatStepEnum botChatStepEnum, Object data) {
+    private void sendMessage(ChatSseEmitter chatSseEmitter, BotChatStepEnum botChatStepEnum, Object data) {
         try {
             BotChatVO botChatVO = buildAiChatVo(botChatStepEnum.getStep(), data);
-            sseEmitter.send(botChatVO);
+            chatSseEmitter.sendMessage(JSONUtil.toJsonStr(botChatVO));
         } catch (Exception e) {
             log.error("聊天对话{}步骤出错：{}", botChatStepEnum.getDesc(), e.getMessage(), e);
         }

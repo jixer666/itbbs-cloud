@@ -1,10 +1,7 @@
 package com.abc.itbbs.common.ai;
 
-import org.springframework.http.HttpOutputMessage;
-import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import java.io.IOException;
-import java.io.OutputStream;
 
 /**
  *  聊天专用SSE发射器
@@ -46,7 +43,7 @@ public class ChatSseEmitter extends SseEmitter {
      */
     public void sendMessage(String message) throws IOException {
         // 封装标准的SSE消息格式
-        send(SseEmitter.event().name("message").data(message));
+        send(SseEmitter.event().id(String.valueOf(System.currentTimeMillis())).name("message").data(message));
     }
 
     /**

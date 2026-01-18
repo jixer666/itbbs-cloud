@@ -23,7 +23,6 @@ public class SseEventSourceListener extends EventSourceListener {
 
     @Override
     public void onEvent(EventSource eventSource, String id, String type, String data) {
-        System.out.println(data);
         if (!"[DONE]".equals(data)) {
             // 解析并处理数据
             AiMessageStreamResponse response = JSONUtil.toBean(data, AiMessageStreamResponse.class);

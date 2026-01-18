@@ -65,24 +65,35 @@ public class RagChatModeStrategy implements ChatModeStrategy {
                 DocumentConstants.DOCUMENT_CHUNK_COLLECTION,
                 vectorList,
                 ArticleDocumentEntityConstants.DOCUMENT_CHUNK_VECTOR,
-                5,
+                10,
                 Arrays.asList(ArticleDocumentEntityConstants.ARTICLE_ID, ArticleDocumentEntityConstants.DOCUMENT_CHUNK));
 
         List<ArticleDocumentMilvusEntity> articleDocumentMilvusEntityList = new ArrayList<>();
+        Set<Long> articleDocumentIdSet = new HashSet<>();
         for (List<SearchResp.SearchResult> searchResult : searchResp.getSearchResults()) {
             for (SearchResp.SearchResult result : searchResult) {
-                ArticleDocumentMilvusEntity articleDocumentMilvusEntity = new ArticleDocumentMilvusEntity();
+                if (result.getScore() < DocumentConstants.VECTOR_THRESHOLD) {
+                    // 余弦相似度小于阈值直接抛弃
+                    continue;
+                }
 
                 Long articleId = (Long) result.getEntity().get(ArticleDocumentEntityConstants.ARTICLE_ID);
+                if (articleDocumentIdSet.contains(articleId)) {
+                    // 去掉重复的文章，只保留一个优先级最大的文章即可
+                    continue;
+                }
+
+                ArticleDocumentMilvusEntity articleDocumentMilvusEntity = new ArticleDocumentMilvusEntity();
                 String documentChunk = result.getEntity().get(ArticleDocumentEntityConstants.DOCUMENT_CHUNK).toString();
                 articleDocumentMilvusEntity.setArticle_id(articleId);
                 articleDocumentMilvusEntity.setDocument_chunk(documentChunk);
 
                 articleDocumentMilvusEntityList.add(articleDocumentMilvusEntity);
+                articleDocumentIdSet.add(articleId);
             }
         }
 
-        return articleDocumentMilvusEntityList;
+        return articleDocumentMilvusEntityList.stream().limit(5).collect(Collectors.toList());
     }
 
     @Override

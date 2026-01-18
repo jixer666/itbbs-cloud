@@ -7,10 +7,14 @@
     <el-container class="layout">
       <el-main class="main">
         <!-- 广告横幅 -->
-        <Banner />
+        <!-- <Banner /> -->
 
         <!-- 内容列表 -->
         <div class="feed">
+          <el-tabs v-model="activeName" @tab-click="handleClick">
+            <el-tab-pane label="最新文章" name="first"></el-tab-pane>
+            <el-tab-pane label="热度榜单" name="second"></el-tab-pane>
+          </el-tabs>
           <div v-if="feed && feed.length > 0">
             <FeedItem
               v-for="(item, index) in feed"
@@ -19,8 +23,7 @@
             />
           </div>
           <div v-else class="empty-container">
-            暂无数据
-            <!-- <el-empty description="暂无数据"></el-empty> -->
+            <el-empty description="暂无数据"></el-empty>
           </div>
         </div>
       </el-main>
@@ -76,6 +79,7 @@ export default {
         '硬件开发'
       ],
       feed: [],
+      activeName: 'first', // 默认选中最新文章
       // 分页相关
       pagination: {
         current: 1,
@@ -84,6 +88,7 @@ export default {
       },
       loading: false,
       hasMore: true, // 是否还有更多数据
+      currentLoadType: 1, // 默认按时间排序（最新文章）
       authors: [
         {
           id: 1,
@@ -141,11 +146,16 @@ export default {
         pageNum: this.pagination.current,
         pageSize: this.pagination.size,
         status: 3,
-        loadType: 1
+        loadType: this.currentLoadType
       }).then(res => {
         const articles = res.data.list
 
-        this.feed = [...this.feed, ...articles]
+        // 如果是首次加载，替换现有数据；否则追加数据
+        if (this.pagination.current === 1) {
+          this.feed = articles
+        } else {
+          this.feed = [...this.feed, ...articles]
+        }
 
         // 更新分页信息
         this.pagination.total = res.data.total
@@ -158,6 +168,38 @@ export default {
       }).finally(() => {
         this.loading = false
       })
+    },
+
+    /**
+     * 切换标签页
+     */
+    handleClick(tab, event) {
+      if (tab.name === 'first') {
+        // 最新文章 - 按时间排序
+        this.currentLoadType = 1
+      } else if (tab.name === 'second') {
+        // 热度榜单 - 按热度排序
+        this.currentLoadType = 2
+      }
+      
+      // 重置分页参数
+      this.resetPagination()
+      
+      // 重新加载文章
+      this.loadArticles()
+    },
+
+    /**
+     * 重置分页参数
+     */
+    resetPagination() {
+      this.feed = []
+      this.pagination = {
+        current: 1,
+        size: 10,
+        total: 0
+      }
+      this.hasMore = true
     },
 
     /**
