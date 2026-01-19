@@ -5,6 +5,7 @@ import com.abc.itbbs.blog.domain.enums.ArticleStatusEnum;
 import com.abc.itbbs.common.core.util.AssertUtils;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -42,6 +43,8 @@ public class ArticleDTO {
     private Integer likeCount;
 
     private Integer status;
+
+    private BigDecimal price;
 
 
     // 用于批量删除

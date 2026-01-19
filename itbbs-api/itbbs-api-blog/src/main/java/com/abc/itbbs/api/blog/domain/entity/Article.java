@@ -9,6 +9,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 /**
  * 文章实体
  *
@@ -74,5 +76,7 @@ public class Article extends BaseEntity {
     @ApiModelProperty("HTML文件路径")
     private String htmlFilePath;
 
+    @ApiModelProperty("价格")
+    private BigDecimal price;
 
 }

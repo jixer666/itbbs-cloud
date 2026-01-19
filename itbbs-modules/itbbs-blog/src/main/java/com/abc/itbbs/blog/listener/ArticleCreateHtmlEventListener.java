@@ -5,14 +5,18 @@ import cn.hutool.json.JSONUtil;
 import com.abc.itbbs.api.system.UserServiceClient;
 import com.abc.itbbs.api.system.domain.entity.User;
 import com.abc.itbbs.api.system.domain.vo.FileVO;
+import com.abc.itbbs.blog.constant.ArticleConstants;
 import com.abc.itbbs.blog.constant.TemplateConstants;
 import com.abc.itbbs.api.blog.domain.entity.Article;
+import com.abc.itbbs.blog.domain.enums.ArticleVisibleRangeEnum;
 import com.abc.itbbs.blog.service.ArticleService;
 import com.abc.itbbs.blog.service.TemplateService;
 import com.abc.itbbs.common.core.constant.FileSuffixConstants;
 import com.abc.itbbs.common.core.domain.vo.ApiResult;
 import com.abc.itbbs.common.core.module.threadlocal.ThreadLocalTempVar;
 import com.abc.itbbs.common.core.util.BeanUtils;
+import com.abc.itbbs.common.core.util.JsoupUtils;
+import com.abc.itbbs.common.core.util.StringUtils;
 import com.abc.itbbs.common.mq.constant.RabbitMQConstants;
 import com.abc.itbbs.common.redis.constant.CacheConstants;
 import com.abc.itbbs.common.redis.util.RedisUtils;
@@ -88,6 +92,10 @@ public class ArticleCreateHtmlEventListener {
                 userServiceClient.getUserMapByUserIds(Arrays.asList(article.getUserId()))
         );
         articleContext.put("userInfo", userMap.get(article.getUserId()));
+        articleContext.put("previewContent", ArticleVisibleRangeEnum.isChargeRange(article.getVisibleRange()) ?
+                JsoupUtils.truncateHtml(article.getContent(), ArticleConstants.ARTICLE_PREVIEW_COUNT) :
+                article.getContent()
+        );
 
         return articleContext;
     }

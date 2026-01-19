@@ -184,6 +184,18 @@
                 </el-radio-group>
               </el-form-item>
 
+              <el-form-item label="价格" v-if="articleSettings.visibility === '5'">
+                <el-input-number
+                  v-model="articleSettings.price"
+                  :min="0"
+                  :max="999999"
+                  :precision="2"
+                  :step="0.01"
+                  placeholder="请输入价格"
+                  style="width: 100%"
+                />
+              </el-form-item>
+
               <!-- 创作声明 -->
               <el-form-item label="创作声明">
                 <el-radio-group v-model="articleSettings.creationStatement">
@@ -483,7 +495,8 @@ export default {
         articleType: this.articleData.articleType,
         reprintStatement: this.articleData.reprintStatement,
         visibility: this.articleData.visibility,
-        creationStatement: this.articleData.creationStatement
+        creationStatement: this.articleData.creationStatement,
+        price: this.articleData.price || 0
       },
 
       // 当前激活的设置标签
@@ -537,6 +550,7 @@ export default {
         reprintStatement: this.articleSettings.reprintStatement,
         visibleRange: this.articleSettings.visibility,
         creationStatement: this.articleSettings.creationStatement,
+        price: this.articleSettings.price,
         articleId: this.articleSettings.articleId
       }
 
@@ -559,6 +573,7 @@ export default {
         reprintStatement: this.articleSettings.reprintStatement,
         visibleRange: 'draft',
         creationStatement: this.articleSettings.creationStatement,
+        price: this.articleSettings.price,
         articleId: this.articleSettings.articleId
       }
 

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="article-id" th:content="${articleId}">
     <meta name="author-id" th:content="${userId}">
+    <meta name="price" th:content="${price}">
     <title th:text="${title} ? ${title} + ' - ITBBS' : 'ITBBS文章'"></title>
     <link rel="stylesheet" href="http://oss.itbbs.com/static/css/all-min.css">
     <link rel="stylesheet" href="http://oss.itbbs.com/static/css/element-ui.css">
@@ -86,8 +87,10 @@
                 <span th:each="tag : ${tagDetailsList}" th:text="'#' + ${tag}" class="tag-item"></span>
             </p>
 
-            <div id="content_views" th:utext="${content}">
-                <!-- 这里会显示从数据库读取的文章内容 -->
+            <div id="content_views" th:utext="${content}" v-if="articleStats.isPayment">
+            </div>
+
+            <div id="content_views" th:utext="${previewContent}" v-else>
             </div>
 
             <br><br>
@@ -921,6 +924,7 @@
                     commentCount: 0,
                     collectCount: 0,
                     isLiked: false,
+                    isPayment: false
                 },
 
                 // 作者信息
@@ -1050,7 +1054,9 @@
                     if (data.isCollected !== undefined) {
                         this.articleStats.isCollected = data.isCollected;
                     }
-
+                    if (data.isCollected !== undefined) {
+                        this.articleStats.isPayment = data.isPayment;
+                    }
                 } catch (error) {
                     console.error('加载文章元数据失败:', error);
                 } finally {

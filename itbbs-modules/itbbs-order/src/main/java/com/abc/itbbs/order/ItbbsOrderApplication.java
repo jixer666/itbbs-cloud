@@ -1,4 +1,4 @@
-package com.abc.itbbs.resource;
+package com.abc.itbbs.order;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -8,13 +8,14 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * @author LiJunXi
- * @date 2026/1/18
+ * @date 2026/1/19
  */
+@EnableScheduling
 @EnableFeignClients(basePackages = "com.abc.itbbs")
 @EnableDiscoveryClient
 @SpringBootApplication(scanBasePackages = "com.abc.itbbs")
-public class ItbbsResourceApplication {
+public class ItbbsOrderApplication {
     public static void main(String[] args) {
-        SpringApplication.run(ItbbsResourceApplication.class, args);
+        SpringApplication.run(ItbbsOrderApplication.class, args);
     }
 }

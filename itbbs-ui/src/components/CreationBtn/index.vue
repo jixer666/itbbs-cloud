@@ -1,7 +1,7 @@
 <template>
   <div class="creation-btn">
     <el-dropdown>
-      <el-button type="primary" round>
+      <el-button type="success" round>
         创作<i class="el-icon-arrow-down el-icon--right"></i>
       </el-button>
       <el-dropdown-menu slot="dropdown">

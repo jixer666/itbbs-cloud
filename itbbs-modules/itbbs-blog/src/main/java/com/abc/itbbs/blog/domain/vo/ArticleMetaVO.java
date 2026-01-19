@@ -23,4 +23,6 @@ public class ArticleMetaVO {
 
     private Boolean isLiked;
 
+    private Boolean isPayment;
+
 }

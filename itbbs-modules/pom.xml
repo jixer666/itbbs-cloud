@@ -14,7 +14,7 @@
     <modules>
         <module>itbbs-system</module>
         <module>itbbs-ai</module>
-        <module>itbbs-resource</module>
+        <module>itbbs-order</module>
     </modules>
 
     <properties>
