@@ -12,4 +12,5 @@ public interface TemplateService {
 
     FileVO saveStaticToOss(String filename, String templateName, Map<String, Object> contextMap);
 
+    FileVO saveJsonToOss(String filename, Map<String, String> contextMap);
 }

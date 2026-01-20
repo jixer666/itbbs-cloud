@@ -4,5 +4,7 @@ public class FileSuffixConstants {
 
     public static final String HTML = ".html";
 
+    public static final String JSON = ".json";
+
 
 }

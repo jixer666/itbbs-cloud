@@ -1,5 +1,6 @@
 package com.abc.itbbs.blog.service.impl;
 
+import cn.hutool.json.JSONUtil;
 import com.abc.itbbs.api.system.OssServiceClient;
 import com.abc.itbbs.api.system.domain.vo.FileVO;
 import com.abc.itbbs.blog.config.MultipartSupportConfig;
@@ -91,4 +92,39 @@ public class TemplateServiceImpl implements TemplateService {
         return file;
     }
 
+    @Override
+    public FileVO saveJsonToOss(String filename, Map<String, String> contextMap) {
+        AssertUtils.isFalse(contextMap.isEmpty(), "JSON内容不能为空");
+        AssertUtils.isNotEmpty(filename, "文件名称不能为空");
+
+        File file = generateJsonFile(filename, contextMap);
+
+        return saveToOss(file);
+    }
+
+    /**
+     * 生成JSON文件
+     * @param filename
+     * @param contextMap
+     */
+    private File generateJsonFile(String filename, Map<String, String> contextMap) {
+        if (StringUtils.isEmpty(filename) || contextMap.isEmpty()) {
+            return null;
+        }
+
+        File file = null;
+        try {
+            file = File.createTempFile(filename, FileSuffixConstants.JSON);
+            FileUtils.writeStringToFile(
+                    file,
+                    JSONUtil.toJsonStr(contextMap),
+                    StandardCharsets.UTF_8,
+                    false  // append: false表示覆盖，true表示追加
+            );
+        } catch (Exception e) {
+            log.error("文件写入异常：{}", e.getMessage(), e);
+        }
+
+        return file;
+    }
 }

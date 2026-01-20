@@ -211,7 +211,7 @@ public class ArticleServiceImpl extends BaseServiceImpl<ArticleMapper, Article> 
         AssertUtils.isNotEmpty(filePath, "文件路径不能为空");
 
         // 处理文章地址
-        if (!OssTypeEnum.LOCAL.equals(ossType)) {
+        if (!OssTypeEnum.LOCAL.getType().equals(ossType)) {
             filePath = ServerConstants.BLOG_SERVICE + "/article/" + filePath;
         }
 
@@ -234,11 +234,11 @@ public class ArticleServiceImpl extends BaseServiceImpl<ArticleMapper, Article> 
 
             articleMetaVO.setIsLiked(isUserLikeArticle(userId, articleId));
             articleMetaVO.setIsCollected(isUserCollectArticle(userId, articleId));
-            articleMetaVO.setIsPayment(true);
+            articleMetaVO.setIsPayment(false);
         } catch (Exception e) {
             articleMetaVO.setIsLiked(false);
             articleMetaVO.setIsCollected(false);
-            articleMetaVO.setIsPayment(true);
+            articleMetaVO.setIsPayment(false);
         }
         return articleMetaVO;
     }

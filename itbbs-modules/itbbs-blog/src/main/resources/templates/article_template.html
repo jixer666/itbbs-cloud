@@ -6,47 +6,16 @@
     <meta name="article-id" th:content="${articleId}">
     <meta name="author-id" th:content="${userId}">
     <meta name="price" th:content="${price}">
+    <meta name="visible-range" th:content="${visibleRange}">
+    <meta name="full-content-request-path" th:content="${fullContentRequestPath}">
     <title th:text="${title} ? ${title} + ' - ITBBS' : 'ITBBS文章'"></title>
     <link rel="stylesheet" href="http://oss.itbbs.com/static/css/all-min.css">
     <link rel="stylesheet" href="http://oss.itbbs.com/static/css/element-ui.css">
     <script src="http://oss.itbbs.com/static/js/vue.js"></script>
     <script src="http://oss.itbbs.com/static/js/element-ui.js"></script>
+    <link rel="stylesheet" href="http://oss.itbbs.com/static/css/article.css">
 
-    <style>
-        /* --- 全局样式 & Reset --- */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: -apple-system, "SF UI Text", Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
-            background-color: #f5f6f7;
-            color: #222226;
-            font-size: 14px;
-            line-height: 1.5;
-        }
-        a { text-decoration: none; color: inherit; cursor: pointer;}
-        ul { list-style: none; }
-        [v-cloak] { display: none; } /* 防止 Vue 加载前闪烁 */
-
-        /* 布局容器 */
-        .main-container {
-            width: 1380px;
-            max-width: 100%;
-            margin: 56px auto 0;
-            display: flex;
-            padding: 0 24px 20px;
-            gap: 10px;
-        }
-
-        /* 响应式 */
-        @media (max-width: 1400px) {
-            .main-container, .toolbar-container { width: 1200px !important; }
-            .left-toolbox { margin-left: 10px !important; position: sticky !important; top: 80px; align-self: flex-start;}
-        }
-        @media (max-width: 1000px) {
-            .right-sidebar { display: none !important; }
-            .left-toolbox { display: none !important; }
-            .main-container { width: 100%; padding: 0 10px; }
-        }
-    </style>
+    <style></style>
 </head>
 <body>
 
@@ -87,10 +56,16 @@
                 <span th:each="tag : ${tagDetailsList}" th:text="'#' + ${tag}" class="tag-item"></span>
             </p>
 
-            <div id="content_views" th:utext="${content}" v-if="articleStats.isPayment">
-            </div>
-
-            <div id="content_views" th:utext="${previewContent}" v-else>
+            <div>
+                <div id="content_views" th:utext="${previewContent}"></div>
+                <div class="preview-footer" v-if="articleStats.isPayment">
+                    <div class="preview-tip">
+                        本文为付费内容，购买后查看全文
+                    </div>
+                    <div>
+                        <button @click="handleSubscribe" class="subscribe-btn">购买解锁全文</button>
+                    </div>
+                </div>
             </div>
 
             <br><br>
@@ -223,525 +198,7 @@
 <!-- ================= Vue 逻辑代码 ================= -->
 <script>
     // --- 组件 CSS 样式 (注入到 Head 中以保持单文件整洁) ---
-    const styles = `
-        /* ================= 基础组件样式 ================= */
-
-        /* Navbar Styles */
-        .itbbs-toolbar {
-            height: 50px;
-            background: #fff;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 1000;
-            display: flex;
-            justify-content: center;
-        }
-        .toolbar-container {
-            width: 1380px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 24px;
-        }
-        .left-part {
-            display: flex;
-            align-items: center;
-        }
-        .logo {
-            font-size: 22px;
-            font-weight: 900;
-            color: #409EFF;
-            margin-right: 20px;
-        }
-        .nav-links a {
-            padding: 0 10px;
-            color: #555;
-            font-weight: 500;
-            cursor: pointer;
-        }
-        .nav-links a:hover {
-            color: #222;
-        }
-        .search-box {
-            flex: 1;
-            max-width: 400px;
-            margin: 0 20px;
-            position: relative;
-        }
-        .search-box input {
-            width: 100%;
-            height: 32px;
-            border: 1px solid #ccc;
-            border-radius: 16px;
-            padding: 0 15px;
-            background: #f5f6f7;
-            outline: none;
-            transition: 0.3s;
-        }
-        .search-box input:focus {
-            border-color: #409EFF;
-            background: #fff;
-        }
-        .search-btn {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #888;
-            cursor: pointer;
-        }
-        .user-actions {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-        .btn-write {
-            background: #409EFF;
-            color: #fff;
-            padding: 5px 16px;
-            border-radius: 16px;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            cursor: pointer;
-        }
-        .avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            overflow: hidden;
-            background: #eee;
-        }
-        .avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        /* Left Toolbox */
-        .left-toolbox {
-            width: 48px;
-            position: fixed;
-            margin-left: -60px;
-            top: 140px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            z-index: 99;
-        }
-        .tool-item {
-            width: 48px;
-            height: 48px;
-            background: #fff;
-            border-radius: 50%;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: #999;
-            transition: 0.2s;
-        }
-        .tool-item:hover {
-            color: #409EFF;
-        }
-        .tool-item i.active {
-            color: #409EFF;
-        }
-        .tool-item span {
-            font-size: 10px;
-        }
-
-        /* Article Area */
-        .article-area {
-            flex: 1;
-            background: #fff;
-            border-radius: 4px;
-            padding: 30px;
-            min-height: 800px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.04);
-            overflow: hidden;
-        }
-        .title-article {
-            font-size: 28px;
-            font-weight: 700;
-            color: #222;
-            margin-bottom: 15px;
-            word-break: break-all;
-        }
-        .article-info-box {
-            background: #f8f8f8;
-            padding: 10px;
-            border-radius: 4px;
-            display: flex;
-            justify-content: space-between;
-            color: #999abc;
-            margin-bottom: 20px;
-        }
-        .article-bar-top {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        .article-type-img {
-            height: 20px;
-            background: #409EFF;
-            color: #fff;
-            padding: 0 6px;
-            border-radius: 2px;
-            font-size: 12px;
-            line-height: 20px;
-            margin-right: 5px;
-        }
-        .author-name {
-            color: #555;
-            font-weight: 500;
-        }
-        .tags-row {
-            color: #999;
-            font-size: 12px;
-            margin-top: 20px;
-            margin-bottom: 30px;
-        }
-        .tag-item {
-            background: #f0f0f5;
-            padding: 2px 8px;
-            border-radius: 4px;
-            color: #555;
-            margin-right: 5px;
-        }
-
-        /* Content Styles */
-        #content_views {
-            font-size: 16px;
-            color: #222;
-            line-height: 26px;
-        }
-        #content_views h2 {
-            font-size: 22px;
-            margin: 30px 0 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #eee;
-        }
-        #content_views p {
-            margin-bottom: 16px;
-            text-align: justify;
-        }
-        #content_views pre {
-            background-color: #282c34;
-            color: #abb2bf;
-            padding: 15px;
-            border-radius: 4px;
-            overflow-x: auto;
-            font-family: monospace;
-            margin-bottom: 20px;
-            position: relative;
-        }
-        #content_views pre::before {
-            content: "code";
-            position: absolute;
-            top: 5px;
-            right: 10px;
-            color: #5c6370;
-            font-size: 12px;
-        }
-
-        /* ================= 右侧侧边栏样式 ================= */
-
-        /* 右侧侧边栏容器 */
-        .right-sidebar {
-            width: 300px;
-            flex-shrink: 0;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            position: sticky;
-            top: -122px;
-            align-self: flex-start;
-            height: fit-content;
-            max-height: 100vh;
-            overflow-y: auto;
-        }
-
-        /* 作者卡片样式 */
-        .profile-card, .recommend-box, .toc-box {
-            background: #fff;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.04);
-            border-radius: 4px;
-            padding: 16px;
-        }
-        .profile-card {
-            padding: 20px;
-        }
-        .profile-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        .profile-header img {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            margin-right: 10px;
-            border: 1px solid #eee;
-        }
-        .profile-info .name {
-            font-weight: bold;
-            font-size: 14px;
-            margin-bottom: 4px;
-        }
-        .profile-info .level {
-            font-size: 12px;
-            color: #999;
-        }
-        .data-info {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-        }
-        .data-item {
-            text-align: center;
-        }
-        .data-item .count {
-            display: block;
-            font-weight: bold;
-            font-size: 16px;
-        }
-        .data-item .label {
-            font-size: 12px;
-            color: #999;
-        }
-        .opt-btn-box {
-            display: flex;
-            gap: 10px;
-        }
-        .btn-follow {
-            flex: 1;
-            height: 32px;
-            border: 1px solid #409EFF;
-            color: #409EFF;
-            background: #fff;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .btn-follow:hover {
-            background: #fff5f2;
-        }
-        .btn-pm {
-            flex: 1;
-            height: 32px;
-            border: 1px solid #ccccd8;
-            color: #555;
-            background: #fff;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        /* 热门文章样式 */
-        .sidebar-title {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 10px;
-            border-left: 4px solid #409EFF;
-            padding-left: 10px;
-            line-height: 18px;
-        }
-        .rec-list li {
-            margin-bottom: 12px;
-        }
-        .rec-list a {
-            font-size: 14px;
-            color: #555;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-        .rec-list a:hover {
-            color: #409EFF;
-        }
-        .rec-info {
-            font-size: 12px;
-            color: #999;
-            margin-top: 4px;
-        }
-
-        /* ================= 目录吸附效果样式 ================= */
-
-        /* 目录吸附容器 */
-        .toc-sticky-wrapper {
-            position: relative;
-        }
-
-        /* 目录盒子 - 实现吸附效果的核心 */
-        .toc-box {
-            background: #fff;
-            padding: 16px;
-
-            /* 实现吸附效果的关键属性 */
-            position: sticky;
-            top: 70px; /* 距离顶部的距离，可根据导航栏高度调整 */
-
-            /* 限制尺寸 */
-            max-height: calc(100vh - 100px);
-            overflow-y: auto;
-
-            /* 过渡动画 */
-            transition: all 0.3s ease;
-
-            /* Safari兼容 */
-            position: -webkit-sticky;
-        }
-
-        /* 吸附时的增强效果 */
-        .toc-box[style*="position: sticky"] {
-            box-shadow:
-                0 2px 4px rgba(0,0,0,0.04),
-                0 4px 12px rgba(0,0,0,0.08);
-            z-index: 100;
-        }
-
-        /* 目录滚动条样式 */
-        .toc-box::-webkit-scrollbar {
-            width: 4px;
-        }
-        .toc-box::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 2px;
-        }
-        .toc-box::-webkit-scrollbar-thumb {
-            background: #c1c1c1;
-            border-radius: 2px;
-        }
-        .toc-box::-webkit-scrollbar-thumb:hover {
-            background: #a8a8a8;
-        }
-
-        /* 目录列表 */
-        .toc-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        /* 目录项 */
-        .toc-item {
-            padding: 8px 0;
-            font-size: 13px;
-            color: #555;
-            line-height: 1.4;
-            transition: all 0.2s ease;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            position: relative;
-            cursor: pointer;
-        }
-        .toc-item a {
-            color: inherit;
-            text-decoration: none;
-            display: block;
-            width: calc(100% - 20px);
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .toc-item:hover {
-            color: #409EFF;
-            transform: translateX(3px);
-        }
-
-        /* 不同级别的标题样式 */
-        .toc-item.level-1 {
-            font-weight: 600;
-            color: #333;
-            font-size: 14px;
-        }
-        .toc-item.level-2 {
-            font-weight: 500;
-            color: #555;
-            font-size: 13px;
-        }
-        .toc-item.level-3 {
-            font-weight: normal;
-            color: #666;
-            font-size: 13px;
-        }
-        .toc-item.level-4,
-        .toc-item.level-5,
-        .toc-item.level-6 {
-            color: #777;
-            font-size: 12px;
-        }
-
-        /* 当前活动项 */
-        .toc-item.active {
-            color: #409EFF !important;
-            font-weight: 600 !important;
-            background-color: #eef0f1;
-        }
-        .toc-item.active::before {
-            content: '';
-            position: absolute;
-            left: -4px;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background-color: #409EFF;
-            border-radius: 1px;
-        }
-
-        /* 响应式设计 */
-        @media (max-width: 1400px) {
-            .toc-box {
-                top: 60px;
-                max-height: calc(100vh - 90px);
-            }
-        }
-        @media (max-width: 1200px) {
-            .toc-box {
-                top: 50px;
-                max-height: calc(100vh - 80px);
-            }
-        }
-
-        /* 为内容中的标题添加锚点样式 */
-        #content_views h1,
-        #content_views h2,
-        #content_views h3,
-        #content_views h4,
-        #content_views h5,
-        #content_views h6 {
-            position: relative;
-            scroll-margin-top: 80px; /* 确保滚动到标题时不会被导航栏遮挡 */
-        }
-
-        /* 添加锚点图标 */
-        #content_views h1:hover::before,
-        #content_views h2:hover::before,
-        #content_views h3:hover::before,
-        #content_views h4:hover::before,
-        #content_views h5:hover::before,
-        #content_views h6:hover::before {
-            content: '#';
-            position: absolute;
-            left: -25px;
-            color: #409EFF;
-            opacity: 0.5;
-            font-weight: normal;
-        }
-        #content_views h1:hover::before,
-        #content_views h2:hover::before,
-        #content_views h3:hover::before,
-        #content_views h4:hover::before,
-        #content_views h5:hover::before,
-        #content_views h6:hover::before {
-            opacity: 1;
-        }
-    `;
+    const styles = ``;
 
     // 动态插入样式
     const styleEl = document.createElement('style');
@@ -956,6 +413,12 @@
             this.articleId = metaArticleId.getAttribute('content');
             const authorId = document.querySelector('meta[name="author-id"]');
             this.authorId = authorId.getAttribute('content');
+            const visibleRange = document.querySelector('meta[name="visible-range"]');
+            this.visibleRange = visibleRange.getAttribute('visibleRange');
+            if (!this.isNeedPayment()) {
+                // 若是免费文章则默认已支付
+                this.articleStats.isPayment = true;
+            }
             this.isLogin = document.cookie.split('; ').find(row => row.startsWith('Is-Login='))?.split('=')[1];
             if (this.isLogin) {
                 this.getUserInfo();
@@ -973,6 +436,12 @@
             });
         },
         methods: {
+            handleSubscribe() {
+                location.href = "http://order.itbbs.com";
+            },
+            isNeedPayment() {
+                return this.visibleRange === '5';
+            },
             async getUserInfo() {
                 if (!this.isLogin) return;
 
@@ -1054,11 +523,34 @@
                     if (data.isCollected !== undefined) {
                         this.articleStats.isCollected = data.isCollected;
                     }
-                    if (data.isCollected !== undefined) {
+                    if (this.isNeedPayment() && data.isPayment !== undefined) {
                         this.articleStats.isPayment = data.isPayment;
+                        if (data.isPayment) {
+                            // 调用完整内容
+                            await this.loadArticleFullContent();
+                        }
                     }
                 } catch (error) {
                     console.error('加载文章元数据失败:', error);
+                } finally {
+                    this.articleMetaLoading = false;
+                }
+            },
+            async loadArticleFullContent() {
+                try {
+                    this.articleMetaLoading = true;
+
+                    const fullContentRequestPath = document.querySelector('meta[name="full-content-request-path"]');
+                    const response = await fetch(fullContentRequestPath.getAttribute('fullContentRequestPath'));
+                    const responseBody = await response.json();
+
+                    console.log(responseBody);
+                    const contentElement = document.getElementById('content_views');
+                    if (contentElement) {
+                        contentElement.innerHTML = responseBody.content;
+                    }
+                } catch (error) {
+                    console.error('加载完整文章内容失败:', error);
                 } finally {
                     this.articleMetaLoading = false;
                 }
