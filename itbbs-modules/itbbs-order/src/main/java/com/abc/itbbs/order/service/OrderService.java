@@ -3,6 +3,7 @@ package com.abc.itbbs.order.service;
 import com.abc.itbbs.common.core.domain.vo.PageResult;
 import com.abc.itbbs.order.domain.dto.OrderDTO;
 import com.abc.itbbs.order.domain.entity.Order;
+import com.abc.itbbs.order.domain.vo.OrderVO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -20,4 +21,6 @@ public interface OrderService extends IService<Order> {
     void saveOrder(OrderDTO orderDTO);
 
     void deleteOrder(OrderDTO orderDTO);
+
+    OrderVO saveOrderConfirm(OrderDTO orderDTO);
 }

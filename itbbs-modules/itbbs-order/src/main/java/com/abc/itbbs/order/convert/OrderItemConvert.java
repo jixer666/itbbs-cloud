@@ -1,8 +1,7 @@
 package com.abc.itbbs.order.convert;
 
 import cn.hutool.core.bean.BeanUtil;
-com.abc.itbbs.common.core.util.IdUtils;
-import com.abc.common.util.SecurityUtils;
+import com.abc.itbbs.common.core.util.IdUtils;
 import com.abc.itbbs.order.domain.dto.OrderItemDTO;
 import com.abc.itbbs.order.domain.entity.OrderItem;
 

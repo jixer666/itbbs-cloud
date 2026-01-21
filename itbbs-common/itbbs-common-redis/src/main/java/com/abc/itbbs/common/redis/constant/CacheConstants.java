@@ -51,6 +51,10 @@ public class CacheConstants {
     public static final String ARTICLE_HOT_LIST = "articleHotList";
     public static final Long ARTICLE_HOT_LIST_EXPIRE_TIME = 3L;
 
+    public static final String ORDER_CONFIRM_UUID_KEY  = "orderConfirmUuidKey:%d";
+    public static final String ORDER_CONFIRM_KEY  = "orderConfirmUuidKey:%d";
+    public static final Long ORDER_CONFIRM_UUID_EXPIRE_TIME = 15L;
+
 
     public static String getFinalKey(String key, Object...values) {
         return String.format(SYSTEM_NAME + key, values);

@@ -58,7 +58,7 @@
 
             <div>
                 <div id="content_views" th:utext="${previewContent}"></div>
-                <div class="preview-footer" v-if="articleStats.isPayment">
+                <div class="preview-footer" v-if="!articleStats.isPayment">
                     <div class="preview-tip">
                         本文为付费内容，购买后查看全文
                     </div>
@@ -68,8 +68,6 @@
                 </div>
             </div>
 
-            <br><br>
-            <hr style="border:0; border-top:1px solid #eee;">
         </div>
 
         <!-- 右侧侧边栏组件 -->
@@ -414,7 +412,7 @@
             const authorId = document.querySelector('meta[name="author-id"]');
             this.authorId = authorId.getAttribute('content');
             const visibleRange = document.querySelector('meta[name="visible-range"]');
-            this.visibleRange = visibleRange.getAttribute('visibleRange');
+            this.visibleRange = visibleRange.getAttribute('content');
             if (!this.isNeedPayment()) {
                 // 若是免费文章则默认已支付
                 this.articleStats.isPayment = true;
@@ -541,10 +539,9 @@
                     this.articleMetaLoading = true;
 
                     const fullContentRequestPath = document.querySelector('meta[name="full-content-request-path"]');
-                    const response = await fetch(fullContentRequestPath.getAttribute('fullContentRequestPath'));
+                    const response = await fetch(fullContentRequestPath.getAttribute('content') + `article_id=${this.articleId}&biz_type=1`);
                     const responseBody = await response.json();
 
-                    console.log(responseBody);
                     const contentElement = document.getElementById('content_views');
                     if (contentElement) {
                         contentElement.innerHTML = responseBody.content;

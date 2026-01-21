@@ -12,6 +12,6 @@ public class ArticleConstants {
 
     public static final String ARTICLE_COLLECT_FIELD = "collectCount";
 
-    public static final Integer ARTICLE_PREVIEW_COUNT = 300;
+    public static final Integer ARTICLE_PREVIEW_COUNT = 450;
 
 }

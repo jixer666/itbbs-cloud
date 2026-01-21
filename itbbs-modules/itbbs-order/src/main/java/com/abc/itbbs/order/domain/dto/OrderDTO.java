@@ -4,8 +4,6 @@ import cn.hutool.core.collection.CollUtil;
 import com.abc.itbbs.common.core.util.AssertUtils;
 import lombok.Data;
 
-import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -29,9 +27,15 @@ public class OrderDTO {
 
     private Integer payType;
 
+    private List<OrderItemDTO> orderItemList;
+
+
 
     // 用于批量删除
     private List<Long> orderIds;
+
+    // 确认订单UUID
+    private String confirmUuid;
 
     public void checkUpdateParams() {
         AssertUtils.isNotEmpty(this, "订单参数不能为空");
@@ -43,6 +47,11 @@ public class OrderDTO {
         AssertUtils.isNotEmpty(this, "订单参数不能为空");
         AssertUtils.isNotEmpty(biz, "订单业务不能为空");
         AssertUtils.isNotEmpty(orderType, "订单类型不能为空");
+        AssertUtils.isFalse(CollUtil.isEmpty(orderItemList), "商品数量不足，无法创建");
+
+        for (OrderItemDTO orderItemDTO : orderItemList) {
+            AssertUtils.isTrue(orderItemDTO.getProductQuantity() > 0, "存在商品数量小于1，无法创建");
+        }
     }
 
     public void checkDeleteParams() {

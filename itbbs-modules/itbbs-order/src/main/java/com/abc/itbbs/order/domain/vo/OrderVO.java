@@ -1,6 +1,9 @@
 package com.abc.itbbs.order.domain.vo;
 
+import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
+
 import lombok.Data;
 
 /**
@@ -48,5 +51,9 @@ public class OrderVO {
 
     private Integer ver;
 
+    private List<OrderItemVO> orderItemList;
+
+    // 确认订单UUID
+    private String confirmUuid;
 
 }

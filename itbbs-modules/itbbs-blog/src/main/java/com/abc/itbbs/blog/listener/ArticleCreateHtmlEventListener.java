@@ -9,7 +9,7 @@ import com.abc.itbbs.api.system.domain.vo.FileVO;
 import com.abc.itbbs.blog.constant.ArticleConstants;
 import com.abc.itbbs.blog.constant.TemplateConstants;
 import com.abc.itbbs.api.blog.domain.entity.Article;
-import com.abc.itbbs.blog.domain.enums.ArticleVisibleRangeEnum;
+import com.abc.itbbs.api.blog.domain.enums.ArticleVisibleRangeEnum;
 import com.abc.itbbs.blog.service.ArticleService;
 import com.abc.itbbs.blog.service.TemplateService;
 import com.abc.itbbs.common.core.constant.FileSuffixConstants;
@@ -18,7 +18,6 @@ import com.abc.itbbs.common.core.domain.vo.ApiResult;
 import com.abc.itbbs.common.core.module.threadlocal.ThreadLocalTempVar;
 import com.abc.itbbs.common.core.util.BeanUtils;
 import com.abc.itbbs.common.core.util.JsoupUtils;
-import com.abc.itbbs.common.core.util.StringUtils;
 import com.abc.itbbs.common.mq.constant.RabbitMQConstants;
 import com.abc.itbbs.common.redis.constant.CacheConstants;
 import com.abc.itbbs.common.redis.util.RedisUtils;
@@ -99,12 +98,12 @@ public class ArticleCreateHtmlEventListener {
         Boolean isCharge = ArticleVisibleRangeEnum.isChargeRange(article.getVisibleRange());
         articleContext.put("previewContent", isCharge ?
                 JsoupUtils.truncateHtml(article.getContent(), ArticleConstants.ARTICLE_PREVIEW_COUNT) :
-                StringUtils.EMPTY
+                article.getContent()
         );
         if (isCharge) {
             // 若是收费内容，生成JSON格式的完整内容文件
             FileVO fileVO = templateService.saveJsonToOss(
-                    article.getArticleId() + "_" + article.getVer() + FileSuffixConstants.HTML,
+                    article.getArticleId() + "_" + article.getVer() + FileSuffixConstants.JSON,
                     MapUtil.of("content", article.getContent()));
             articleContext.put("fullContentRequestPath", ServerConstants.OSS_SERVICE + "/article/" + fileVO.getFilePath());
         }
@@ -114,6 +113,9 @@ public class ArticleCreateHtmlEventListener {
 
 
     private void saveArticleCache(Article article) {
+        // 强制获取最新数据
+        article = articleService.getById(article.getArticleId());
+
         // 添加最新文章缓存
         RedisUtils.zAdd(CacheConstants.getFinalKey(CacheConstants.ARTICLE_NEW_LIST),
                 article.getArticleId().toString(),

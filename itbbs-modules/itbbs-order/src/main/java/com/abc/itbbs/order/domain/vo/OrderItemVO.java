@@ -1,5 +1,6 @@
 package com.abc.itbbs.order.domain.vo;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import lombok.Data;
 

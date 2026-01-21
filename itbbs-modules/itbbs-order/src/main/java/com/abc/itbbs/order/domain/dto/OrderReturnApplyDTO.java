@@ -25,7 +25,7 @@ public class OrderReturnApplyDTO {
 
     private Long userId;
 
-    private String reaseon;
+    private String reason;
 
     private BigDecimal productAmount;
 

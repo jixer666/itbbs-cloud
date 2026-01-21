@@ -234,11 +234,11 @@ public class ArticleServiceImpl extends BaseServiceImpl<ArticleMapper, Article> 
 
             articleMetaVO.setIsLiked(isUserLikeArticle(userId, articleId));
             articleMetaVO.setIsCollected(isUserCollectArticle(userId, articleId));
-            articleMetaVO.setIsPayment(false);
+            articleMetaVO.setIsPayment(true);
         } catch (Exception e) {
             articleMetaVO.setIsLiked(false);
             articleMetaVO.setIsCollected(false);
-            articleMetaVO.setIsPayment(false);
+            articleMetaVO.setIsPayment(true);
         }
         return articleMetaVO;
     }

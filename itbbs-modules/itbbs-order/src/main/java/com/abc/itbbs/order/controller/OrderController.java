@@ -3,6 +3,7 @@ package com.abc.itbbs.order.controller;
 import com.abc.itbbs.common.core.domain.vo.ApiResult;
 import com.abc.itbbs.common.core.domain.vo.PageResult;
 import com.abc.itbbs.order.domain.dto.OrderDTO;
+import com.abc.itbbs.order.domain.vo.OrderVO;
 import com.abc.itbbs.order.service.OrderService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -53,6 +54,14 @@ public class OrderController {
         orderService.deleteOrder(orderDTO);
 
         return ApiResult.success();
+    }
+
+    @ApiOperation("新增确认订单")
+    @PostMapping("/confirm")
+    public ApiResult<OrderVO> saveOrderConfirm(@RequestBody OrderDTO orderDTO) {
+        OrderVO orderVO = orderService.saveOrderConfirm(orderDTO);
+
+        return ApiResult.success(orderVO);
     }
 
 }

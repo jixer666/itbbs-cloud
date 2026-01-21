@@ -5,7 +5,6 @@ import com.abc.itbbs.common.core.util.AssertUtils;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -32,16 +31,6 @@ public class OrderItemDTO {
     private Integer productQuantity;
 
     private BigDecimal promotionAmount;
-
-    private Integer growth;
-
-    private Date createTime;
-
-    private Date updateTime;
-
-    private Integer status;
-
-    private Integer ver;
 
 
     // 用于批量删除

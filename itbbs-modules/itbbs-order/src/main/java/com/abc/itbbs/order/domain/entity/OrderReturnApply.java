@@ -38,7 +38,7 @@ public class OrderReturnApply extends BaseEntity {
     private Long userId;
 
     @ApiModelProperty("退款理由")
-    private String reaseon;
+    private String reason;
 
     @ApiModelProperty("商品总额")
     private BigDecimal productAmount;

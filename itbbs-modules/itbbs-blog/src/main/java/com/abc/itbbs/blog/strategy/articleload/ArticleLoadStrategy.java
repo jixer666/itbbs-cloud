@@ -65,7 +65,7 @@ public interface ArticleLoadStrategy {
         RedisUtils.expire(articleNewListCacheKey, getArticleLoadExpireTime(), TimeUnit.HOURS);
 
         // 缓存文章详情信息
-        RedisUtils.batchHMSet(articlesMap, CacheConstants.ARTICLE_INFO_EXPIRE_TIME, TimeUnit.HOURS, true);
+        RedisUtils.batchHMSet(articlesMap, CacheConstants.ARTICLE_INFO_EXPIRE_TIME, TimeUnit.SECONDS, true);
     }
 
     default Long getArticleTotalSize() {
