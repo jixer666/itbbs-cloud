@@ -1,6 +1,7 @@
 package com.abc.itbbs.order.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import com.abc.itbbs.common.core.domain.service.BaseServiceImpl;
 import com.abc.itbbs.common.core.domain.vo.PageResult;
 import com.abc.itbbs.common.core.util.AssertUtils;
@@ -53,6 +54,15 @@ public class OrderItemServiceImpl extends BaseServiceImpl<OrderItemMapper, Order
         orderItemDTO.checkSaveParams();
         OrderItem orderItem = OrderItemConvert.buildDefaultOrderItemByOrderItemDTO(orderItemDTO);
         orderItemMapper.insert(orderItem);
+    }
+
+    @Override
+    public void saveOrderItemBatch(List<OrderItem> orderItemList) {
+        if (CollUtil.isEmpty(orderItemList)) {
+            return;
+        }
+
+        saveBatch(orderItemList);
     }
 
     @Override

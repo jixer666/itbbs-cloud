@@ -23,6 +23,25 @@
     <!-- 顶部导航组件 -->
     <nav-bar :user-avatar="currentUser.avatar"></nav-bar>
 
+    <!-- 确认订单弹窗 -->
+    <el-dialog title="确认订单" :visible.sync="orderConfirmDialogVisible" width="500px" @close="closeOrderConfirmDialog">
+        <div v-if="orderConfirmInfo">
+            <p><strong>订单编号：</strong>{{ orderConfirmInfo.orderSn }}</p>
+            <p><strong>订单类型：</strong>{{ orderConfirmInfo.orderType === 1 ? '文章付费' : '其他' }}</p>
+            <p><strong>总金额：</strong>¥{{ orderConfirmInfo.totalAmount }}</p>
+            <p><strong>商品详情：</strong></p>
+            <ul>
+                <li v-for="item in orderConfirmInfo.orderItemList" :key="item.orderItemId">
+                    {{ item.productName }} - ¥{{ item.productPrice }} x {{ item.productQuantity }}
+                </li>
+            </ul>
+        </div>
+        <div slot="footer" class="dialog-footer">
+            <el-button @click="closeOrderConfirmDialog">取消</el-button>
+            <el-button type="primary" @click="submitOrder">确认下单</el-button>
+        </div>
+    </el-dialog>
+
     <div class="main-container">
         <!-- 左侧悬浮组件 -->
         <left-toolbox :stats="articleStats" :id="articleId" v-loading="articleMetaLoading"></left-toolbox>
@@ -63,7 +82,7 @@
                         本文为付费内容，购买后查看全文
                     </div>
                     <div>
-                        <button @click="handleSubscribe" class="subscribe-btn">购买解锁全文</button>
+                        <button @click="handleSubscribe" class="subscribe-btn" :loading="subscribeBtnLoading">购买解锁全文</button>
                     </div>
                 </div>
             </div>
@@ -401,6 +420,11 @@
 
                 token: null,
 
+                // 订购相关
+                subscribeBtnLoading: false,
+                orderConfirmDialogVisible: false,
+                orderConfirmInfo: null,
+
                 // 目录数据
                 tocItems: [],
                 currentActiveId: null
@@ -435,7 +459,111 @@
         },
         methods: {
             handleSubscribe() {
-                location.href = "http://order.itbbs.com";
+                this.createConfirmOrder();
+            },
+
+            // 创建确认订单
+            async createConfirmOrder() {
+                try {
+                    this.subscribeBtnLoading = true;
+
+                    // 获取文章价格信息
+                    const priceMeta = document.querySelector('meta[name="price"]');
+                    const price = parseFloat(priceMeta.getAttribute('content'));
+                    const articleId = this.articleId;
+
+                    // 构建订单确认请求数据
+                    const orderConfirmData = {
+                        biz: 1,  // 文章业务类型
+                        orderType: 1,  // 文章付费订单
+                        orderItemList: [{
+                            productId: articleId,
+                            productName: document.title.replace(' - ITBBS', ''),
+                            productPrice: price,
+                            productQuantity: 1
+                        }]
+                    };
+
+                    const response = await fetch('http://order.itbbs.com/order/order/confirm', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(orderConfirmData)
+                    });
+
+                    const responseBody = await response.json();
+
+                    if (responseBody.code !== 200) {
+                        this.$message.error(responseBody.msg || '创建确认订单失败');
+                        return;
+                    }
+
+                    // 显示确认订单弹窗
+                    this.orderConfirmInfo = responseBody.data;
+                    this.orderConfirmDialogVisible = true;
+
+                } catch (error) {
+                    console.error('创建确认订单出错:', error);
+                    this.$message.error('网络错误，创建确认订单失败');
+                } finally {
+                    this.subscribeBtnLoading = false;
+                }
+            },
+
+            // 关闭确认订单弹窗
+            closeOrderConfirmDialog() {
+                this.orderConfirmDialogVisible = false;
+                this.orderConfirmInfo = null;
+            },
+
+            // 提交订单
+            async submitOrder() {
+                try {
+                    if (!this.orderConfirmInfo || !this.orderConfirmInfo.confirmUuid) {
+                        this.$message.error('确认订单信息不完整');
+                        return;
+                    }
+
+                    // 调用提交订单接口
+                    const orderSubmitData = {
+                        confirmUuid: this.orderConfirmInfo.confirmUuid,
+                        biz: this.orderConfirmInfo.biz,
+                        orderType: this.orderConfirmInfo.orderType,
+                        orderItemList: this.orderConfirmInfo.orderItemList
+                    };
+
+                    const response = await fetch('http://order.itbbs.com/order/order', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': document.cookie.split('; ').find(row => row.startsWith('Authorization='))?.split('=')[1] || ''
+                        },
+                        body: JSON.stringify(orderSubmitData)
+                    });
+
+                    const responseBody = await response.json();
+
+                    if (responseBody.code !== 200) {
+                        this.$message.error(responseBody.msg || '提交订单失败');
+                        return;
+                    }
+
+                    this.$message.success('订单提交成功，正在跳转支付页面...');
+                    
+                    // 关闭弹窗
+                    this.closeOrderConfirmDialog();
+                    
+                    // 重新加载文章，以显示全文
+                    await this.loadArticleFullContent();
+                    
+                    // 更新支付状态
+                    this.articleStats.isPayment = true;
+                    
+                } catch (error) {
+                    console.error('提交订单出错:', error);
+                    this.$message.error('网络错误，提交订单失败');
+                }
             },
             isNeedPayment() {
                 return this.visibleRange === '5';

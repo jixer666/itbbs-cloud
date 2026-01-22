@@ -11,5 +11,6 @@ public class ServerConstants {
     public final static String SYSTEM_SERVICE = "http://system.itbbs.com";
     public final static String BLOG_SERVICE = "http://blog.itbbs.com";
     public final static String OSS_SERVICE = "http://oss.itbbs.com";
+    public final static String ORDER_SERVICE = "http://order.itbbs.com";
 
 }

@@ -42,10 +42,10 @@ public class OrderController {
 
     @ApiOperation("新增订单")
     @PostMapping
-    public ApiResult<Void> saveOrder(@RequestBody OrderDTO orderDTO) {
-        orderService.saveOrder(orderDTO);
+    public ApiResult<Long> saveOrder(@RequestBody OrderDTO orderDTO) {
+        Long orderId = orderService.saveOrder(orderDTO);
 
-        return ApiResult.success();
+        return ApiResult.success(orderId);
     }
 
     @ApiOperation("删除订单")
@@ -63,5 +63,14 @@ public class OrderController {
 
         return ApiResult.success(orderVO);
     }
+
+    @ApiOperation("查询订单信息")
+    @GetMapping("/info/{orderId}")
+    public ApiResult<OrderVO> getOrderInfo(@PathVariable("orderId") Long orderId) {
+        OrderVO orderVO = orderService.getOrderInfo(orderId);
+
+        return ApiResult.success(orderVO);
+    }
+
 
 }

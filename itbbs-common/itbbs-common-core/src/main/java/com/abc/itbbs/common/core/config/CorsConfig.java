@@ -22,6 +22,7 @@ public class CorsConfig {
         config.addAllowedOriginPattern(ServerConstants.SYSTEM_SERVICE);
         config.addAllowedOriginPattern(ServerConstants.AUTH_SERVICE);
         config.addAllowedOriginPattern(ServerConstants.OSS_SERVICE);
+        config.addAllowedOriginPattern(ServerConstants.ORDER_SERVICE);
         // 设置访问源请求头
         config.addAllowedHeader("*");
         // 设置访问源请求方法

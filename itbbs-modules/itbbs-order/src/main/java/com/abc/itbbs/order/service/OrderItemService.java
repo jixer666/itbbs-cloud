@@ -5,6 +5,8 @@ import com.abc.itbbs.order.domain.dto.OrderItemDTO;
 import com.abc.itbbs.order.domain.entity.OrderItem;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 /**
  * 订单明细接口
  *
@@ -20,4 +22,6 @@ public interface OrderItemService extends IService<OrderItem> {
     void saveOrderItem(OrderItemDTO orderItemDTO);
 
     void deleteOrderItem(OrderItemDTO orderItemDTO);
+
+    void saveOrderItemBatch(List<OrderItem> orderItemList);
 }

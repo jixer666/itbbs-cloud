@@ -6,6 +6,8 @@ import org.springframework.data.util.Pair;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public abstract class AbstractRedisStringCache<IN,OUT> implements BatchCache<IN, OUT> {
@@ -93,4 +95,25 @@ public abstract class AbstractRedisStringCache<IN,OUT> implements BatchCache<IN,
      * @return
      */
     protected abstract Long getExpireSeconds();
+
+    @SuppressWarnings("unchecked")
+    public <T> T getOrSet(String key, Supplier<T> loader, Integer timeout, TimeUnit unit) {
+        // 1. 尝试从缓存获取
+        T value = (T) RedisUtils.get(key);
+
+        // 2. 如果缓存存在且不为空，直接返回
+        if (Objects.nonNull(value)) {
+            return value;
+        }
+
+        // 3. 缓存不存在，执行加载函数获取数据
+        value = loader.get();
+
+        // 5. 如果最终值不为null，存入缓存
+        if (Objects.nonNull(value)) {
+            RedisUtils.set(key, value, timeout, unit);
+        }
+
+        return value;
+    }
 }

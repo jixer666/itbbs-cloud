@@ -1273,4 +1273,20 @@ public class RedisUtils {
                 destKey);
     }
 
+    /**
+     * 检查key的值是否与value相等，相等就删除
+     * @param key
+     * @param value
+     * @return
+     */
+    public static Boolean cad(String key, String value) {
+        String script = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
+
+        // 通过Lua脚本原子验证令牌和删除令牌
+        Long result = stringRedisTemplate.execute(new DefaultRedisScript<Long>(script, Long.class),
+                Collections.singletonList(key),
+                value);
+
+        return !Objects.equals(result, 0L);
+    }
 }

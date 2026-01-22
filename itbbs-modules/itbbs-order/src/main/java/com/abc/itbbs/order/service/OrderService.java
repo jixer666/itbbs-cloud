@@ -18,9 +18,11 @@ public interface OrderService extends IService<Order> {
 
     void updateOrder(OrderDTO orderDTO);
 
-    void saveOrder(OrderDTO orderDTO);
+    Long saveOrder(OrderDTO orderDTO);
 
     void deleteOrder(OrderDTO orderDTO);
 
     OrderVO saveOrderConfirm(OrderDTO orderDTO);
+
+    OrderVO getOrderInfo(Long orderId);
 }

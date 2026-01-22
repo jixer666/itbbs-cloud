@@ -53,7 +53,7 @@ public class CacheConstants {
 
     public static final String ORDER_CONFIRM_UUID_KEY  = "orderConfirmUuidKey:%d";
     public static final String ORDER_CONFIRM_KEY  = "orderConfirmUuidKey:%d";
-    public static final Long ORDER_CONFIRM_UUID_EXPIRE_TIME = 15L;
+    public static final Long ORDER_CONFIRM_UUID_EXPIRE_TIME = 30L;
 
 
     public static String getFinalKey(String key, Object...values) {

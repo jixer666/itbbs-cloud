@@ -8,11 +8,12 @@ import java.util.Arrays;
 @Getter
 @AllArgsConstructor
 public enum OrderBizEnum {
-    ARTICLE(1, "文章", "articleOrderStrategy");
+    ARTICLE(1, "article", "articleOrderBizStrategy", 15);
 
     private Integer biz;
     private String desc;
     private String clazz;
+    private Integer validTime;
 
     public static String getDescByBiz(Integer biz) {
         return Arrays.stream(OrderBizEnum.values()).filter(item -> item.getBiz().equals(biz)).map(OrderBizEnum::getDesc).findFirst().orElse(null);
