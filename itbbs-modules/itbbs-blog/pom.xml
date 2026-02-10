@@ -5,9 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.abc</groupId>
-        <artifactId>itbbs</artifactId>
+        <artifactId>itbbs-modules</artifactId>
         <version>1.0-SNAPSHOT</version>
-        <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <artifactId>itbbs-blog</artifactId>

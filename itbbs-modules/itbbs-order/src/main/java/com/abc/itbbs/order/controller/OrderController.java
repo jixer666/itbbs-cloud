@@ -73,4 +73,10 @@ public class OrderController {
     }
 
 
+    @ApiOperation("测试")
+    @GetMapping("/test")
+    public ApiResult<String> test() {
+
+        return ApiResult.success("ok");
+    }
 }

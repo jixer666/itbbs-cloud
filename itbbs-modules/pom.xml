@@ -9,10 +9,11 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>itbbs-modules</artifactId>
+        <artifactId>itbbs-modules</artifactId>
     <packaging>pom</packaging>
     <modules>
         <module>itbbs-system</module>
+        <module>itbbs-blog</module>
         <module>itbbs-ai</module>
         <module>itbbs-order</module>
     </modules>

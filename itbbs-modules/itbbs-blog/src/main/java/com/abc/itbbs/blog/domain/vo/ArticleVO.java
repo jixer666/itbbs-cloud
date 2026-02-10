@@ -1,5 +1,6 @@
 package com.abc.itbbs.blog.domain.vo;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import com.abc.itbbs.api.system.domain.entity.User;
@@ -42,6 +43,8 @@ public class ArticleVO {
     private Integer likeCount;
 
     private Integer collectCount;
+
+    private BigDecimal price;
 
     private Date createTime;
 

@@ -42,7 +42,7 @@
     </sql>
 
     <sql id="selectArticleWithoutVo">
-        select article_id, user_id, title, summary, category_id, tag_details, cover, type, visible_range, views_count, like_count, collect_count, comment_count, share_count, create_time, status, ver, html_file_path from tb_article
+        select article_id, user_id, title, summary, category_id, tag_details, cover, type, visible_range, views_count, like_count, collect_count, comment_count, share_count, create_time, status, ver, html_file_path, price from tb_article
     </sql>
 
     <select id="selectArticleList" resultMap="ArticleResult">

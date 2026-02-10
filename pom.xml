@@ -15,7 +15,6 @@
         <module>itbbs-auth</module>
         <module>itbbs-gateway</module>
         <module>itbbs-api</module>
-        <module>itbbs-modules/itbbs-blog</module>
     </modules>
 
     <properties>

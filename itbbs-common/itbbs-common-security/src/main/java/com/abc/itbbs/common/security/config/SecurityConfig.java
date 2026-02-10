@@ -35,8 +35,8 @@ public class SecurityConfig {
     @Autowired
     private LogoutSuccessHandlerImpl logoutSuccessHandler;
 
-    @Autowired
-    private CorsFilter corsFilter;
+//    @Autowired
+//    private CorsFilter corsFilter;
 
     @Autowired
     private SystemConfig systemConfig;
@@ -95,8 +95,7 @@ public class SecurityConfig {
                 // 添加JWT filter
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 // 添加CORS filter
-                .addFilterBefore(corsFilter, JwtTokenFilter.class)
-                .addFilterBefore(corsFilter, LogoutFilter.class)
+                // .addFilterBefore(corsFilter, JwtTokenFilter.class)
                 // 添加Feign filter
                 .addFilterBefore(feignTokenFilter, JwtTokenFilter.class)
                 .build();
