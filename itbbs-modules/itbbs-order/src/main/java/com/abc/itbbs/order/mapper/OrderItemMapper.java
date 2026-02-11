@@ -16,4 +16,6 @@ import java.util.List;
 @Mapper
 public interface OrderItemMapper extends BaseMapper<OrderItem> {
     List<OrderItem> selectOrderItemList(OrderItemDTO orderItemDTO);
+
+    List<OrderItem> selectOrderItemListByOrderId(Long orderId);
 }

@@ -8,7 +8,7 @@ import java.util.Arrays;
 @Getter
 @AllArgsConstructor
 public enum OrderBizEnum {
-    ARTICLE(1, "article", "articleOrderBizStrategy", 15);
+    ARTICLE(1, "文章", "articleOrderBizStrategy", 15);
 
     private Integer biz;
     private String desc;

@@ -185,8 +185,22 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, Order> implem
     public OrderVO getOrderInfo(Long orderId) {
         AssertUtils.isNotEmpty(orderId, "订单ID不能为空");
 
-        // todo 获取订单信息
+        // 获取订单信息
+        Order order = orderMapper.selectById(orderId);
+        AssertUtils.isTrue(order.getUserId().equals(SecurityUtils.getUserId()), "权限不足");
 
-        return null;
+        List<OrderItem> orderItemList = orderItemService.selectOrderItemListByOrderId(orderId);
+
+        return OrderConvert.buildOrderVOByOrderAndItemList(order, orderItemList);
+    }
+
+    @Override
+    public Order selectOrderByOrderSn(String orderSn) {
+        AssertUtils.isNotEmpty(orderSn, "订单编号不能为空");
+
+        Order order = orderMapper.selectByOrderSn(orderSn);
+        AssertUtils.isTrue(order.getUserId().equals(SecurityUtils.getUserId()), "权限不足");
+
+        return order;
     }
 }

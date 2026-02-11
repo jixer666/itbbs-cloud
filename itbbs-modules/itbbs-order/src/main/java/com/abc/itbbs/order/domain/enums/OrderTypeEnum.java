@@ -3,6 +3,8 @@ package com.abc.itbbs.order.domain.enums;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.Arrays;
+
 @Getter
 @AllArgsConstructor
 public enum OrderTypeEnum {
@@ -12,4 +14,7 @@ public enum OrderTypeEnum {
     private Integer type;
     private String desc;
 
+    public static String getDescByType(Integer orderType) {
+        return Arrays.stream(OrderTypeEnum.values()).filter(item -> item.getType().equals(orderType)).map(OrderTypeEnum::getDesc).findFirst().orElse(null);
+    }
 }

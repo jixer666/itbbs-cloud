@@ -25,4 +25,6 @@ public interface OrderService extends IService<Order> {
     OrderVO saveOrderConfirm(OrderDTO orderDTO);
 
     OrderVO getOrderInfo(Long orderId);
+
+    Order selectOrderByOrderSn(String orderSn);
 }

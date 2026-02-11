@@ -32,6 +32,10 @@
     <select id="selectOrderList" resultMap="OrderResult">
         <include refid="selectOrderVo" />
     </select>
+    <select id="selectByOrderSn" resultMap="OrderResult">
+        <include refid="selectOrderVo" />
+        where order_sn = #{orderSn}
+    </select>
 
 
 </mapper>

@@ -15,7 +15,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 订单明细业务处理
@@ -71,6 +73,11 @@ public class OrderItemServiceImpl extends BaseServiceImpl<OrderItemMapper, Order
 
         orderItemMapper.deleteBatchIds(orderItemDTO.getOrderItemIds());
     }
-    
 
+    @Override
+    public List<OrderItem> selectOrderItemListByOrderId(Long orderId) {
+        AssertUtils.isNotEmpty(orderId, "订单ID不能为空");
+
+        return orderItemMapper.selectOrderItemListByOrderId(orderId);
+    }
 }

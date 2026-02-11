@@ -47,6 +47,7 @@
         <jsoup.version>1.15.4</jsoup.version>
         <redisson-spring-boot-starter.version>3.17.1</redisson-spring-boot-starter.version>
         <milvus.version>2.6.11</milvus.version>
+        <alipay-sdk-java.version>4.9.28.ALL</alipay-sdk-java.version>
 
     </properties>
 
@@ -309,6 +310,12 @@
                 <groupId>com.squareup.okhttp3</groupId>
                 <artifactId>okhttp-sse</artifactId>
                 <version>${okhttp.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.alipay.sdk</groupId>
+                <artifactId>alipay-sdk-java</artifactId>
+                <version>${alipay-sdk-java.version}</version>
             </dependency>
 
         </dependencies>

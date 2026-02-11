@@ -16,4 +16,6 @@ import java.util.List;
 @Mapper
 public interface OrderMapper extends BaseMapper<Order> {
     List<Order> selectOrderList(OrderDTO orderDTO);
+
+    Order selectByOrderSn(String orderSn);
 }

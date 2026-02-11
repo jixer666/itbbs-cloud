@@ -24,4 +24,6 @@ public interface OrderItemService extends IService<OrderItem> {
     void deleteOrderItem(OrderItemDTO orderItemDTO);
 
     void saveOrderItemBatch(List<OrderItem> orderItemList);
+
+    List<OrderItem> selectOrderItemListByOrderId(Long orderId);
 }
